@@ -1,0 +1,10 @@
+﻿  main.cpp
+C:\Users\TUSHAR\source\repos\Volume\Volume\header\ScalarField.hpp(169): warning C4552: '-': operator has no effect; expected operator with side-effect
+source\main.cpp(67): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+  Generating code
+c:\users\tushar\source\repos\volume\volume\header\scalarfield.hpp(171): warning C4715: 'lux::SFIcosahedron::eval': not all control paths return a value
+  25 of 770 functions ( 3.2%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    6 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  Volume.vcxproj -> C:\Users\TUSHAR\source\repos\Volume\bin\x64\Release\Volume.exe
