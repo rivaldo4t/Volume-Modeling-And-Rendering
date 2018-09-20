@@ -15,66 +15,6 @@
 
 namespace lux
 {
-	class Color
-	{
-	private:
-		double rgba[4];
-	public:
-		Color() { rgba[0] = rgba[1] = rgba[2] = rgba[4] = 0; }
-
-		Color(const Color& c)
-		{
-			rgba[0] = c.rgba[0];
-			rgba[1] = c.rgba[1];
-			rgba[2] = c.rgba[2];
-			rgba[3] = c.rgba[3];
-		}
-
-		Color(const double r, const double g, const double b, const double a)
-		{
-			rgba[0] = r;
-			rgba[1] = g;
-			rgba[2] = b;
-			rgba[3] = a;
-		}
-
-		~Color() {}
-
-		const double& operator[] (const int c) const { return rgba[c]; }
-		double& operator[] (const int c) { return rgba[c]; }
-		const double& operator() (const int c) const { return rgba[c]; }
-
-		const Color operator+ (const Color& c)
-		{
-			return Color(rgba[0] + c.rgba[0], rgba[1] + c.rgba[1], rgba[2] + c.rgba[2], rgba[3] + c.rgba[3]);
-		}
-
-		Color& operator+= (const Color& c)
-		{
-			rgba[0] += c.rgba[0]; rgba[1] += c.rgba[1]; rgba[2] += c.rgba[2]; rgba[3] += c.rgba[3]; return *this;
-		}
-
-		const Color operator- (const Color& c)
-		{
-			return Color(rgba[0] - c.rgba[0], rgba[1] - c.rgba[1], rgba[2] - c.rgba[2], rgba[3] - c.rgba[3]);
-		}
-
-		const Color operator* (const Color& c)
-		{
-			return Color(rgba[0] * c.rgba[0], rgba[1] * c.rgba[1], rgba[2] * c.rgba[2], rgba[3] * c.rgba[3]);
-		}
-		
-		const Color operator* (const double& f)
-		{
-			return Color(rgba[0] * f, rgba[1] * f, rgba[2] * f, rgba[3] * f);
-		}
-
-		const Color operator/ (const double& f)
-		{
-			return Color(rgba[0] / f, rgba[1] / f, rgba[2] / f, rgba[3] / f);
-		}
-	};
-
 	//! Vector is a 3D vector class
 	class Vector
 	{

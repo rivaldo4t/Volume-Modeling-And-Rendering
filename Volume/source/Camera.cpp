@@ -7,7 +7,7 @@ using namespace lux;
 Camera::Camera()
 {
    setEyeViewUp( Vector(0,0,1), Vector(0,0,-1), Vector(0,1,0) );
-   setFov(60.0);
+   setFov(90.0);
    setAspectRatio(16.0 / 9.0);
    setNearPlane(0.0);
    setFarPlane(1.0e6);

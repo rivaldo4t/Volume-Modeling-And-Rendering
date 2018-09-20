@@ -1,5 +1,6 @@
 #pragma once
 #include "Vector.hpp"
+#include "Color.hpp"
 #include <algorithm>
 
 namespace lux 
@@ -11,6 +12,7 @@ namespace lux
 		virtual Vector grad(const Vector& p) const = 0;
 		virtual std::unique_ptr<ScalarField> clone() const = 0;
 	};
+	typedef std::shared_ptr<lux::ScalarField> SField;
 	typedef std::vector<std::unique_ptr<lux::ScalarField>> SFields;
 
 	class SFSphere : public ScalarField
@@ -53,7 +55,6 @@ namespace lux
 		}
 		Vector grad(const Vector& p) const
 		{
-			// incomplete
 			return Vector();
 		}
 	};
@@ -65,7 +66,7 @@ namespace lux
 		Vector normal;
 	public:
 		SFTorus() {}
-		SFTorus(double r1, double r2, Vector c, Vector n) : majorRadius(r1), minorRadius(r2), center (c), normal(n.unitvector()) {}
+		SFTorus(double r1, double r2, Vector c, Vector n) : majorRadius(r1), minorRadius(r2), center(c), normal(n.unitvector()) {}
 		virtual std::unique_ptr<ScalarField> clone() const override
 		{
 			return std::make_unique<SFTorus>(*this);
@@ -76,15 +77,16 @@ namespace lux
 			
 			double fact1 = (perp - center).magnitude();
 			fact1 *= 2 * majorRadius;
+			fact1 *= fact1;
 			
 			double fact2 = (p - center).magnitude();
 			fact2 = fact2*fact2 + majorRadius*majorRadius - minorRadius*minorRadius;
+			fact2 *= fact2;
 			
-			return pow(fact1, 2) - pow(fact2, 2);
+			return fact1 - fact2;
 		}
 		Vector grad(const Vector& p) const
 		{
-			// incomplete
 			return Vector();
 		}
 	};
@@ -117,7 +119,6 @@ namespace lux
 		}
 		Vector grad(const Vector& p) const
 		{
-			// incomplete
 			return Vector();
 		}
 	};
@@ -140,7 +141,6 @@ namespace lux
 		}
 		Vector grad(const Vector& p) const
 		{
-			// incomplete
 			return Vector();
 		}
 	};
@@ -164,14 +164,13 @@ namespace lux
 			if (dist > fact1)
 				return -fact1;
 			else
-				cos(x + fact2 * y) + cos(x - fact2 * y) +
-				cos(y + fact2 * z) + cos(y - fact2 * z) +
-				cos(z + fact2 * x) + cos(z - fact2 * x) - 2.0;
+				return	cos(x + fact2 * y) + cos(x - fact2 * y) +
+						cos(y + fact2 * z) + cos(y - fact2 * z) +
+						cos(z + fact2 * x) + cos(z - fact2 * x) - 2.0;
 
 		}
 		Vector grad(const Vector& p) const
 		{
-			// incomplete
 			return Vector();
 		}
 	};
@@ -193,12 +192,13 @@ namespace lux
 			double fact1 = p*normal;
 			Vector perp = p - fact1*normal;
 			double fact2 = (perp - center).magnitude();
+			fact1 *= fact1 / (majorRadius * majorRadius);
+			fact2 *= fact2 / (minorRadius * minorRadius);
 
-			return 1 - pow((fact1 / majorRadius), 2) - pow((fact2 / minorRadius), 2);
+			return 1 - fact1 - fact2;
 		}
 		Vector grad(const Vector& p) const
 		{
-			// incomplete
 			return Vector();
 		}
 	};
@@ -218,7 +218,6 @@ namespace lux
 		}
 		Vector grad(const Vector& p) const
 		{
-			// incomplete
 			return Vector();
 		}
 	};
@@ -243,17 +242,20 @@ namespace lux
 		}
 		Vector grad(const Vector& p) const
 		{
-			// incomplete
 			return Vector();
+		}
+		double getHeight()
+		{
+			return height;
 		}
 	};
 
 	class SFIntersect : public ScalarField
 	{
-		std::shared_ptr<ScalarField> _f, _g;
+		SField _f, _g;
 	public:
 		SFIntersect() {}
-		SFIntersect(const std::shared_ptr<ScalarField>& f, const std::shared_ptr<ScalarField>& g) : _f(f), _g(g){}
+		SFIntersect(const SField& f, const SField& g) : _f(f), _g(g){}
 		virtual std::unique_ptr<ScalarField> clone() const override
 		{
 			return std::make_unique<SFIntersect>(*this);
@@ -270,10 +272,10 @@ namespace lux
 
 	class SFUnion : public ScalarField
 	{
-		std::shared_ptr<ScalarField> _f, _g;
+		SField _f, _g;
 	public:
 		SFUnion() {}
-		SFUnion(const std::shared_ptr<ScalarField>& f, const std::shared_ptr<ScalarField>& g) : _f(f), _g(g) {}
+		SFUnion(const SField& f, const SField& g) : _f(f), _g(g) {}
 		virtual std::unique_ptr<ScalarField> clone() const override
 		{
 			return std::make_unique<SFUnion>(*this);
@@ -290,10 +292,10 @@ namespace lux
 
 	class SFCutout : public ScalarField
 	{
-		std::shared_ptr<ScalarField> _f, _g;
+		SField _f, _g;
 	public:
 		SFCutout() {}
-		SFCutout(const std::shared_ptr<ScalarField>& f, const std::shared_ptr<ScalarField>& g) : _f(f), _g(g) {}
+		SFCutout(const SField& f, const SField& g) : _f(f), _g(g) {}
 		virtual std::unique_ptr<ScalarField> clone() const override
 		{
 			return std::make_unique<SFCutout>(*this);
@@ -310,11 +312,11 @@ namespace lux
 
 	class SFShell : public ScalarField
 	{
-		std::shared_ptr<ScalarField> _f;
+		SField _f;
 		double thickness;
 	public:
 		SFShell() {}
-		SFShell(const std::shared_ptr<ScalarField>& f, double t) : _f(f), thickness(t) {}
+		SFShell(const SField& f, double t) : _f(f), thickness(t) {}
 		virtual std::unique_ptr<ScalarField> clone() const override
 		{
 			return std::make_unique<SFShell>(*this);
@@ -322,11 +324,164 @@ namespace lux
 		double eval(const Vector& p) const
 		{
 			double eval = _f->eval(p);
-			return std::min(eval + thickness / 2.0, eval - thickness / 2.0);
+			return std::min(eval + thickness * 0.5, -(eval - thickness * 0.5));
 		}
 		Vector grad(const Vector& p) const
 		{
 			return Vector();
+		}
+	};
+
+	class SFTranslate : public ScalarField
+	{
+		SField _f;
+		Vector _x;
+	public:
+		SFTranslate() {}
+		SFTranslate(SField f, Vector x) : _f(f), _x(x) {}
+		virtual std::unique_ptr<ScalarField> clone() const override
+		{
+			return std::make_unique<SFTranslate>(*this);
+		}
+		double eval(const Vector& p) const
+		{
+			return _f->eval(p - _x);
+		}
+		Vector grad(const Vector& p) const
+		{
+			return Vector();
+		}
+	};
+
+	class SFScale : public ScalarField
+	{
+		SField _f;
+		double _s;
+	public:
+		SFScale() {}
+		SFScale(SField f, double s) : _f(f), _s(s) {}
+		virtual std::unique_ptr<ScalarField> clone() const override
+		{
+			return std::make_unique<SFScale>(*this);
+		}
+		double eval(const Vector& p) const
+		{
+			return _f->eval(p / _s);
+		}
+		Vector grad(const Vector& p) const
+		{
+			return Vector();
+		}
+	};
+
+	class SFRotate : public ScalarField
+	{
+		SField _f;
+		Vector axis;
+		double angle;
+	public:
+		SFRotate() {}
+		SFRotate(SField f, Vector ax, double an) : _f(f), axis(ax.unitvector()), angle(-an * M_PI / 180.0) {}
+		virtual std::unique_ptr<ScalarField> clone() const override
+		{
+			return std::make_unique<SFRotate>(*this);
+		}
+		double eval(const Vector& p) const
+		{
+			double A = cos(angle);
+			double B = (axis * p) * (1 - A);
+			double C = sin(angle);
+			Vector rotated_p = (A * p) + (B * axis) + (C * (p ^ axis));
+			return _f->eval(rotated_p);
+		}
+		Vector grad(const Vector& p) const
+		{
+			return Vector();
+		}
+	};
+
+	class SFMask : public ScalarField
+	{
+		SField _f;
+	public:
+		SFMask() {}
+		SFMask(SField f) : _f(f) {}
+		virtual std::unique_ptr<ScalarField> clone() const override
+		{
+			return std::make_unique<SFMask>(*this);
+		}
+		double eval(const Vector& p) const
+		{
+			return _f->eval(p) > 0.0 ? 1.0 : 0.0;
+		}
+		Vector grad(const Vector& p) const
+		{
+			return Vector();
+		}
+	};
+
+	class SFClamp : public ScalarField
+	{
+		SField _f;
+		double low, high;
+	public:
+		SFClamp() {}
+		SFClamp(SField f, double l, double h) : _f(f), low(l), high(h) {}
+		virtual std::unique_ptr<ScalarField> clone() const override
+		{
+			return std::make_unique<SFClamp>(*this);
+		}
+		double eval(const Vector& p) const
+		{
+			double eval = _f->eval(p);
+			return eval < low ? high : eval > high ? high : eval;
+		}
+		Vector grad(const Vector& p) const
+		{
+			return Vector();
+		}
+	};
+
+	class ColorField
+	{
+		SField _f, _g, _h;
+	public:
+		ColorField() {}
+		ColorField(SField f, SField g, SField h) : _f(f), _g(g), _h(h) {}
+		Color eval(const Vector& p) const
+		{
+			auto mask1 = std::make_shared<SFMask>(_f);
+			auto mask2 = std::make_shared<SFMask>(_g);
+			auto mask3 = std::make_shared<SFMask>(_h);
+
+			Color red(1.0, 0.2, 0.2, 1.0);
+			Color green(0.2, 1.0, 0.2, 1.0);
+			Color blue(0.2, 0.2, 1.0, 1.0);
+			
+			Color c = red * mask1->eval(p);
+			c += green * mask2->eval(p);
+			c += blue * mask3->eval(p);
+
+			return c;
+		}
+	};
+	typedef std::shared_ptr<lux::ColorField> CField;
+
+	class CFRotate : public ColorField
+	{
+		CField _f;
+		Vector axis;
+		double angle;
+	public:
+		CFRotate() {}
+		CFRotate(CField f, Vector ax, double an) : _f(f), axis(ax.unitvector()), angle(-an * M_PI / 180.0) {}
+		Color eval(const Vector& p) const
+		{
+			double A = cos(angle);
+			double B = (axis * p) * (1 - A);
+			double C = sin(angle);
+			Vector rotated_p = (A * p) + (B * axis) + (C * (p ^ axis));
+			return _f->eval(rotated_p);
 		}
 	};
 }

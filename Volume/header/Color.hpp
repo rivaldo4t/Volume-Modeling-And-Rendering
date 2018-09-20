@@ -45,6 +45,11 @@ class Color
       xyzw[3] = vw;
    }
 
+   bool isZero()
+   {
+	   return (xyzw[0] == 0.0 && xyzw[1] == 0.0 && xyzw[2] == 0.0 && xyzw[3] == 0.0);
+   }
+
    //! Add two colors together
    const Color operator+        (const Color& v) const 
    { 
