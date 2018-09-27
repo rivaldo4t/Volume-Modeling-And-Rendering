@@ -8,9 +8,8 @@ namespace IMF = OPENEXR_IMF_NAMESPACE;
 
 void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, lux::SField sfield, lux::CField cfield)
 {
-	const int num_frames = 120 / 1;
-	const double delta_rot = 360 / num_frames;
-	const double delta_rotr = delta_rot * M_PI / 180.0;
+	const int num_frames = 120 / 12;
+	const double delta_rot = 360 / num_frames * M_PI / 180.0;
 
 	std::vector<IMF::Rgba> exr;
 
@@ -25,20 +24,21 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, lu
 		exr.clear();
 		exr.reserve(img_h * img_w);
 
-		eye = lux::Vector(0, 0, 1) * cos(k * delta_rotr) + lux::Vector(1.4, 0, 0) * sin(k * delta_rotr);
+		eye = lux::Vector(0, 0, 1) * cos(k * delta_rot) + lux::Vector(1.4, 0, 0) * sin(k * delta_rot);
 		view = lux::Vector(0, 0.2, -0.4) - eye;
 		up = lux::Vector(0, 1, 0);
 		camera->setEyeViewUp(eye, view, up);
 
 		std::cout << "|0%|==|==|==|==|==|==|==|==|==|==|==|100%|\n|0%|";
-		for (int j = img_h; j >= 0; --j)
+#pragma omp parallel for 
+		for (int j = 0; j < img_h; ++j)
 		{
-			if ((img_h - j) % (img_h / 10) == 0)
+			if ((j) % (img_h / 10) == 0)
 				std::cout << "==|";
 			for (int i = 0; i < img_w; ++i)
 			{
 				lux::Color L = marchRays(camera, double(i) / (img_w - 1), double(j) / (img_h - 1), sfield, cfield);
-				exr.push_back(IMF::Rgba(half(L[0]), half(L[1]), half(L[2]), half(L[3])));
+				exr[(img_h - 1 - j) * img_w + i] = IMF::Rgba(half(L[0]), half(L[1]), half(L[2]), half(L[3]));
 			}
 		}
 		std::cout << "100%|\n";
