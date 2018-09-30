@@ -1,8 +1,7 @@
-﻿  RayMarch.cpp
-source\RayMarch.cpp(41): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+﻿  main.cpp
   Generating code
-  39 of 1137 functions ( 3.4%) were compiled, the rest were copied from previous compilation.
+  51 of 1898 functions ( 2.7%) were compiled, the rest were copied from previous compilation.
     1 functions were new in current compilation
-    2 functions had inline decision re-evaluated but remain unchanged
+    7 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   Volume.vcxproj -> C:\Users\TUSHAR\source\repos\Volume\bin\x64\Release\Volume.exe

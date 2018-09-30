@@ -1,5 +1,2 @@
 ﻿  main.cpp
-c:\users\tushar\source\repos\volume\volume\source\main.cpp(98): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-  RayMarch.cpp
-  Generating Code...
   Volume.vcxproj -> C:\Users\TUSHAR\source\repos\Volume\bin\x64\Debug\Volume.exe

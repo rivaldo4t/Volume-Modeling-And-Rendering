@@ -109,6 +109,9 @@ namespace lux
 
 	   const double magnitude() const 
 	   { return sqrt( xyz[0]*xyz[0] + xyz[1]*xyz[1] + xyz[2]*xyz[2] ); }
+
+	   const double magnitudeSquared() const
+	   { return xyz[0] * xyz[0] + xyz[1] * xyz[1] + xyz[2] * xyz[2]; }
    
 	   const Vector unitvector() const { return *this/magnitude(); }
 

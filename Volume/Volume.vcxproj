@@ -28,14 +28,21 @@
     <ClCompile Include="source\PerlinNoise.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="header\Grid.hpp" />
     <ClInclude Include="header\Camera.hpp" />
     <ClInclude Include="header\Color.hpp" />
+    <ClInclude Include="header\ColorField.hpp" />
     <ClInclude Include="header\Image.hpp" />
+    <ClInclude Include="header\Light.hpp" />
     <ClInclude Include="header\LinearAlgebra.hpp" />
+    <ClInclude Include="header\Main.hpp" />
     <ClInclude Include="header\Matrix.hpp" />
     <ClInclude Include="header\Noise.hpp" />
+    <ClInclude Include="header\OBJ_Loader.h" />
     <ClInclude Include="header\PerlinNoise.hpp" />
+    <ClInclude Include="header\Triangle.hpp" />
     <ClInclude Include="header\Vector.hpp" />
+    <ClInclude Include="header\VectorField.hpp" />
     <ClInclude Include="header\Volume.hpp" />
     <ClInclude Include="header\ScalarField.hpp" />
     <ClInclude Include="header\RayMarch.hpp" />

@@ -4,7 +4,10 @@
 #include "Vector.hpp"
 #include "Camera.hpp"
 #include "ScalarField.hpp"
+#include "ColorField.hpp"
 
-void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, lux::SField sfield, lux::CField cfield);
+void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, const lux::SField& sfield, const lux::CField& cfield);
 
-lux::Color marchRays(std::shared_ptr<Camera>& camera, double x, double y, lux::SField field, lux::CField c);
+lux::Color marchRays(lux::Vector pos, lux::Vector dir, const lux::SField& field, const lux::CField& c);
+
+double marchRaysDSM(lux::Vector pos, lux::Vector lightPos, const lux::SField& density);

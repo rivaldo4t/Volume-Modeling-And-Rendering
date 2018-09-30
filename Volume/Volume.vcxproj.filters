@@ -71,6 +71,27 @@
     <ClInclude Include="header\RayMarch.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="header\Light.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\OBJ_Loader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Triangle.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Main.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\VectorField.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\ColorField.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Grid.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

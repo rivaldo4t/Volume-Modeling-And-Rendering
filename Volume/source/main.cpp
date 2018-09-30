@@ -1,10 +1,4 @@
-#include <iostream>
-#include <memory>
-#include <vector>
-
-#include "ScalarField.hpp"
-#include "Camera.hpp"
-#include "RayMarch.hpp"
+#include "Main.hpp"
 
 std::pair<lux::SField, lux::CField> getHumanoid()
 {
@@ -88,8 +82,47 @@ std::pair<lux::SField, lux::CField> getHumanoid()
 	lux::SField horns_c = std::make_shared<lux::SFTranslate>(horns, lux::Vector(0.0, 0.2, -0.4));
 	lux::CField colorField = std::make_shared<lux::ColorField>(head_c, body_c, horns_c);
 
-	//humanoid = st;
+	//humanoid = std::make_shared<lux::SFSphere>(lux::Vector(0.0, 0.0, 0.0), 0.5);;
 	return std::make_pair(humanoid, colorField);
+}
+
+lux::SField loadObjField(std::string fileName)
+{
+	Triangles triangles;
+	objl::Loader Loader;
+	bool loadout = Loader.LoadFile(fileName);
+	if (loadout)
+	{
+		for (unsigned int i = 0; i < Loader.LoadedMeshes.size(); i++)
+		{
+			objl::Mesh curMesh = Loader.LoadedMeshes[i];
+			for (unsigned int j = 0; j < curMesh.Indices.size(); j += 3)
+			{
+				lux::Vector p0 = { curMesh.Vertices[curMesh.Indices[j + 0]].Position.X,
+					curMesh.Vertices[curMesh.Indices[j + 0]].Position.Y,
+					curMesh.Vertices[curMesh.Indices[j + 0]].Position.Z };
+				lux::Vector p1 = { curMesh.Vertices[curMesh.Indices[j + 1]].Position.X,
+					curMesh.Vertices[curMesh.Indices[j + 1]].Position.Y,
+					curMesh.Vertices[curMesh.Indices[j + 1]].Position.Z };
+				lux::Vector p2 = { curMesh.Vertices[curMesh.Indices[j + 2]].Position.X,
+					curMesh.Vertices[curMesh.Indices[j + 2]].Position.Y,
+					curMesh.Vertices[curMesh.Indices[j + 2]].Position.Z };
+
+				triangles.push_back(std::make_shared<Triangle>(p0, p1, p2));
+			}
+		}
+	}
+
+	int i = 0;
+	lux::SField obj = std::make_shared<lux::SFPlane>(triangles[i]->p0, -(triangles[i]->n).unitvector());
+	for (i = 1; i < 4; ++i)
+	{
+		lux::SField p = std::make_shared<lux::SFPlane>(triangles[i]->p0, -(triangles[i]->n).unitvector());
+		obj = std::make_shared<lux::SFIntersect>(obj, p);
+	}
+	obj = std::make_shared<lux::SFScale>(obj, 0.5);
+	// obj = std::make_shared<lux::SFRotate>(obj, lux::Vector(1.0, 1.0, 0.0), 30);
+	return obj;
 }
 
 int main()
@@ -97,13 +130,38 @@ int main()
 	// camera
 	std::shared_ptr<Camera> camera = std::make_shared<Camera>();
 
-	//scalar and color field
+	// scalar and color field
 	auto fields = getHumanoid();
 
 	const int img_w = 1920/10;
 	const int img_h = 1080/10;
 
-	render(img_w, img_h, camera, fields.first, fields.second);
+#if 0
+	// lights
+	{
+		Light key(lux::Vector(0.0, 4.0, 2.0));
+		key.computeDSM(fields.first);
+		key.writeDSM("D:/temp/vol/key2.dat");
+		//key.readDSM("D:/temp/vol/key.dat");
+	}
 
+	{
+		Light rim(lux::Vector(0.0, 0.0, -5.0));
+		rim.computeDSM(fields.first);
+		rim.writeDSM("D:/temp/vol/rim2.dat");
+		// rim.readDSM("D:/temp/vol/rim.dat");
+	}
+
+	{
+		Light fill(lux::Vector(0.0, -4.0, 0.0));
+		fill.computeDSM(fields.first);
+		fill.writeDSM("D:/temp/vol/fill2.dat");
+		// fill.readDSM("D:/temp/vol/fill.dat");
+	}
+#endif
+	auto obj = loadObjField("models/cleanteapot.obj");
+	render(img_w, img_h, camera, obj, fields.second);
+	int t;
+	std::cin >> t;
 	return 0;
 }
