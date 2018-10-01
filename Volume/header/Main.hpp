@@ -9,4 +9,5 @@
 #include "RayMarch.hpp"
 #include "Light.hpp"
 #include "Triangle.hpp"
+#include "Grid.hpp"
 #include "OBJ_Loader.h"

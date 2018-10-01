@@ -7,6 +7,7 @@
 
 class Grid
 {
+private:
 	unsigned int Nx, Ny, Nz;
 	lux::Vector llc, urc;
 	double delta_grid = 0.01;
@@ -23,9 +24,9 @@ public:
 				llc.Z() + (Nz - 1) * delta_grid };
 	}
 
-	int getIndex(int i, int j, int k)
+	unsigned int getIndex(unsigned int i, unsigned int j, unsigned int k) const
 	{
-		int index = i + (Nx * j) + (Nx * Ny * k);
+		unsigned int index = i + (Nx * j) + (Nx * Ny * k);
 		if (index > gridData.size())
 			throw std::runtime_error("grid index out of range");
 		return index;
@@ -49,14 +50,14 @@ public:
 		}
 	}
 
-	bool withinGrid(lux::Vector p)
+	bool withinGrid(lux::Vector p) const
 	{
 		return	p.X() >= llc.X() && p.X() <= urc.X() &&
 				p.Y() >= llc.Y() && p.Y() <= urc.Y() &&
 				p.Z() >= llc.Z() && p.Z() <= urc.Z();
 	}
 
-	double eval(lux::Vector p)
+	double eval(lux::Vector p) const
 	{
 		if (!withinGrid(p))
 			return defaultVal;
@@ -66,9 +67,9 @@ public:
 		double y = toPoint.Y();
 		double z = toPoint.Z();
 		
-		int i = floor(x / delta_grid);
-		int j = floor(y / delta_grid);
-		int k = floor(z / delta_grid);
+		unsigned int i = floor(x / delta_grid);
+		unsigned int j = floor(y / delta_grid);
+		unsigned int k = floor(z / delta_grid);
 
 		double wi = (x - i * delta_grid) / delta_grid;
 		double wj = (y - j * delta_grid) / delta_grid;
@@ -99,16 +100,24 @@ public:
 				{
 					lux::Vector p = llc + lux::Vector(double(i) * delta_grid, double(j) * delta_grid, double(k) * delta_grid);
 					double dist = std::numeric_limits<double>::max();
-					for (auto t : triangles)
+					int closestPointIndex = -1;
+					lux::Vector closestPoint;
+					for (int i = 0; i < triangles.size(); ++i)
 					{
-						lux::Vector cp = t->closestPoint(p);
+						lux::Vector cp = triangles[i]->closestPoint(p);
 						double mag = (cp - p).magnitude();
-						dist = std::min(dist, mag);
+						if (mag < dist)
+						{
+							dist = mag;
+							closestPointIndex = i;
+							closestPoint = cp;
+						}
 					}
+					if ((p - closestPoint) * triangles[closestPointIndex]->n > 0)
+						dist = -dist;
 					gridData[getIndex(i, j, k)] = dist;
 				}
 			}
 		}
-	}
 	}
 };

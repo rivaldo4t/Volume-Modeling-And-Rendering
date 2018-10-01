@@ -86,9 +86,8 @@ std::pair<lux::SField, lux::CField> getHumanoid()
 	return std::make_pair(humanoid, colorField);
 }
 
-lux::SField loadObjField(std::string fileName)
+lux::SField loadObjField(std::string fileName, Triangles& triangles)
 {
-	Triangles triangles;
 	objl::Loader Loader;
 	bool loadout = Loader.LoadFile(fileName);
 	if (loadout)
@@ -108,20 +107,22 @@ lux::SField loadObjField(std::string fileName)
 					curMesh.Vertices[curMesh.Indices[j + 2]].Position.Y,
 					curMesh.Vertices[curMesh.Indices[j + 2]].Position.Z };
 
-				triangles.push_back(std::make_shared<Triangle>(p0, p1, p2));
+				triangles.push_back(std::make_shared<Triangle>(p0 * 0.5, p1 * 0.5, p2 * 0.5));
 			}
 		}
 	}
+	std::cout << "Number of triangles loaded: " << triangles.size() << std::endl;
 
 	int i = 0;
+	// negative normal
 	lux::SField obj = std::make_shared<lux::SFPlane>(triangles[i]->p0, -(triangles[i]->n).unitvector());
-	for (i = 1; i < 4; ++i)
+	/*for (i = 1; i < triangles.size(); ++i)
 	{
 		lux::SField p = std::make_shared<lux::SFPlane>(triangles[i]->p0, -(triangles[i]->n).unitvector());
 		obj = std::make_shared<lux::SFIntersect>(obj, p);
 	}
 	obj = std::make_shared<lux::SFScale>(obj, 0.5);
-	// obj = std::make_shared<lux::SFRotate>(obj, lux::Vector(1.0, 1.0, 0.0), 30);
+	obj = std::make_shared<lux::SFRotate>(obj, lux::Vector(1.0, 1.0, 0.0), 30);*/
 	return obj;
 }
 
@@ -130,9 +131,7 @@ int main()
 	// camera
 	std::shared_ptr<Camera> camera = std::make_shared<Camera>();
 
-	// scalar and color field
-	auto fields = getHumanoid();
-
+	// render size
 	const int img_w = 1920/10;
 	const int img_h = 1080/10;
 
@@ -159,8 +158,16 @@ int main()
 		// fill.readDSM("D:/temp/vol/fill.dat");
 	}
 #endif
-	auto obj = loadObjField("models/cleanteapot.obj");
-	render(img_w, img_h, camera, obj, fields.second);
+	// scalar and color field
+	// auto fields = getHumanoid();
+
+	Triangles triangles;
+	auto obj = loadObjField("models/cube1.obj", triangles);
+	Grid g(lux::Vector(-5, -5, -5), 100, 100, 100, 0.1);
+	g.levelSet(triangles);
+	std::cout << "Levelset genereted\n";
+	// render(img_w, img_h, camera, obj, fields.second);
+	render2(img_w, img_h, camera, g);
 	int t;
 	std::cin >> t;
 	return 0;

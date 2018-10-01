@@ -14,5 +14,9 @@ namespace lux
 	};
 	typedef std::shared_ptr<lux::VectorField> VField;
 
+	VField operator-(const VField v)
+	{
+		VField u;
 
+	}
 }
