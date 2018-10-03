@@ -8,7 +8,8 @@ namespace IMF = OPENEXR_IMF_NAMESPACE;
 
 void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, const lux::SField& sfield, const lux::CField& cfield)
 {
-	const int num_frames = 120 / 120 - 1;
+	//const int num_frames = 120 / 120 - 1;
+	const int num_frames = 120 / 12;
 	const double delta_rot = 360 / num_frames * M_PI / 180.0;
 	std::chrono::time_point<std::chrono::system_clock> start, end;
 	std::vector<IMF::Rgba> exr;
@@ -20,8 +21,8 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, co
 		start = std::chrono::system_clock::now();
 		exr.clear();
 		exr.resize(img_h * img_w);
-		eye = lux::Vector(0, 0, 1) * cos(k * delta_rot) + lux::Vector(1.4, 0, 0) * sin(k * delta_rot);
-		view = lux::Vector(0, 0.2, -0.4) - eye;
+		eye = lux::Vector(0, 0.2, 2) * cos(k * delta_rot) + lux::Vector(2, 0.2, 0) * sin(k * delta_rot);
+		view = lux::Vector(0, 0.2, 0) - eye;
 		up = lux::Vector(0, 1, 0);
 		camera->setEyeViewUp(eye, view, up);
 
@@ -122,7 +123,8 @@ double marchRaysDSM(lux::Vector pos, lux::Vector lightPos, const lux::SField& de
 //-----------------------
 void render2(const int img_w, const int img_h, std::shared_ptr<Camera> camera, const Grid& g)
 {
-	const int num_frames = 120 / 120 - 1;
+	//const int num_frames = 120 / 120 - 1;
+	const int num_frames = 120 / 12;
 	const double delta_rot = 360 / num_frames * M_PI / 180.0;
 	std::chrono::time_point<std::chrono::system_clock> start, end;
 	std::vector<IMF::Rgba> exr;
@@ -136,11 +138,14 @@ void render2(const int img_w, const int img_h, std::shared_ptr<Camera> camera, c
 		exr.resize(img_h * img_w);
 		/*eye = lux::Vector(0, 0, 1) * cos(k * delta_rot) + lux::Vector(1.4, 0, 0) * sin(k * delta_rot);
 		view = lux::Vector(0, 0.2, -0.4) - eye;
+		up = lux::Vector(0, 1, 0);*/
+		eye = lux::Vector(0, 0, 1) * cos(k * delta_rot) + lux::Vector(1, 0, 0) * sin(k * delta_rot);
+		view = lux::Vector(0, 0, 0) - eye;
 		up = lux::Vector(0, 1, 0);
-		camera->setEyeViewUp(eye, view, up);*/
+		camera->setEyeViewUp(eye, view, up);
 
 		std::cout << "|0%|==|==|==|==|==|==|==|==|==|==|==|100%|\n|0%|";
-//#pragma omp parallel for
+#pragma omp parallel for
 		for (int j = 0; j < img_h; ++j)
 		{
 			if ((j) % (img_h / 10) == 0)
@@ -178,7 +183,7 @@ lux::Color marchRays2(lux::Vector pos, lux::Vector dir, const Grid& g)
 	lux::Color white(0.8, 0.8, 0.8, 1.0);
 	lux::Color red(1.0, 0.2, 0.2, 1.0);
 
-	double sNear = 0.5, sFar = 10.0;
+	double sNear = 2, sFar = 20.0;
 	double T = 1;
 	double delta_s = 0.01;
 	double delta_T;
@@ -194,7 +199,7 @@ lux::Color marchRays2(lux::Vector pos, lux::Vector dir, const Grid& g)
 		double d = g.eval(X);
 		lux::Color c = white;
 		// c = c.isZero() ? white : c;
-		//c *= marchRaysDSM2(X, lightPos, g);
+		c *= marchRaysDSM2(X, lightPos, g);
 
 		// explicit color to objects
 		if (d > 0)

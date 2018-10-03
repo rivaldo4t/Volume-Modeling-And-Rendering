@@ -63,6 +63,51 @@ public:
 				std::cout << i << std::endl;*/
 	}
 
+	void computeDSM2(const Grid& g)
+	{
+		lux::Vector llc(-5, -5, -5);
+		double delta_grid = 0.01;
+		int Nx = 1000, Ny = 1000, Nz = 1000;
+		double delta_s = 0.01;
+		/*Nx = Ny = Nz = 100;
+		delta_s = 0.1;*/
+		deepShadowMap.resize(Nx * Ny * Nz, 0);
+
+#pragma omp parallel for
+		for (int i = 0; i < Nx; ++i)
+		{
+			//std::cout << i << std::endl;
+			for (int j = 0; j < Ny; ++j)
+			{
+				for (int k = 0; k < Nz; ++k)
+				{
+					lux::Vector marchStartPos = llc + lux::Vector(double(i) * delta_grid, double(j) * delta_grid, double(k) * delta_grid);
+					lux::Vector nL = pos - marchStartPos;
+					double sFar = nL.magnitude(), sNear = 0, s = 0;
+					nL.normalize();
+					lux::Vector X = marchStartPos + sNear * nL;
+					int index = i + (Nx * j) + (Nx * Ny * k);
+
+					if (g.eval(X) > 0)
+					{
+						while (s <= sFar)
+						{
+							X += delta_s * nL;
+							double d = g.eval(X);
+							if (d > 0)
+								deepShadowMap[index] += d * delta_s;
+							s += delta_s;
+						}
+					}
+				}
+			}
+		}
+
+		/*for (auto i : deepShadowMap)
+		if (i > 0)
+		std::cout << i << std::endl;*/
+	}
+
 	void writeDSM(std::string fileName)
 	{
 		if (deepShadowMap.size() == 0)

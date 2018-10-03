@@ -32,12 +32,12 @@ public:
 
 		lux::Vector r = x - p0 - (n_unit * (n_unit * (x - p0)));
 
-		/*double v = ((e1 ^ r) * (n)) / n_mag_sq;
-		double u = ((e2 ^ r) * (-n)) / n_mag_sq;*/
-		double den = (e1^e2).magnitude();
+		double v = ((e1 ^ r) * (n)) / n_mag_sq;
+		double u = ((e2 ^ r) * (-n)) / n_mag_sq;
+		/*double den = (e1^e2).magnitude();
 		double v = ((e1 ^ r) * (e1 ^ e2)) / (den*den);
 		den = (e2^e1).magnitude();
-		double u = ((e2 ^ r) * (e2 ^ e1)) / (den*den);
+		double u = ((e2 ^ r) * (e2 ^ e1)) / (den*den);*/
 		double d = std::numeric_limits<double>::max();
 
 		if ((0 <= u) && (u <= 1) && 
@@ -58,25 +58,26 @@ public:
 	void /*bool*/ closestPointOnEdges(lux::Vector x, lux::Vector& p, double prevDist = std::numeric_limits<double>::max())
 	{
 		double e1_mag_sq = e1.magnitudeSquared();
-		//double q1 = (e1 * (x - p0)) / e1_mag_sq;
-		lux::Vector temp = x - p0;
+		double q1 = (e1 * (x - p0)) / e1_mag_sq;
+		/*lux::Vector temp = x - p0;
 		double tem = e1 * temp;
 		tem /= e1_mag_sq;
-		double q1 = tem;
+		double q1 = tem;*/
 
 		double e2_mag_sq = e2.magnitudeSquared();
-		//double q2 = (e2 * (x - p0)) / e2_mag_sq;
-		temp = x - p0;
+		double q2 = (e2 * (x - p0)) / e2_mag_sq;
+		/*temp = x - p0;
 		tem = e2 * temp;
 		tem /= e2_mag_sq;
-		double q2 = tem;
+		double q2 = tem;*/
 
 		double e3_mag_sq = e3.magnitudeSquared();
-		//double q3 = (e3 * (x - p1)) / e3_mag_sq;
-		temp = x - p1;
+		double q3 = (e3 * (x - p1)) / e3_mag_sq;
+		/*temp = x - p1;
 		tem = e3 * temp;
 		tem /= e3_mag_sq;
-		double q3 = tem;
+		double q3 = tem;*/
+
 		double d = prevDist;//std::numeric_limits<double>::max();
 
 		if (((0 <= q1) && (q1 <= 1)) || 

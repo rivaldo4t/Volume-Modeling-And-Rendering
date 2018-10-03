@@ -1,6 +1,9 @@
 #pragma once
 #include <iostream>
+#include <fstream>
+#include <iterator>
 #include <vector>
+#include <string>
 #include <memory>
 #include "ScalarField.hpp"
 #include "Triangle.hpp"
@@ -71,10 +74,10 @@ public:
 		unsigned int j = floor(y / delta_grid);
 		unsigned int k = floor(z / delta_grid);
 
-		// debugging
-		auto index = getIndex(i, j, k);
-		double d = gridData[index];
-		return d;
+		//// debugging
+		//auto index = getIndex(i, j, k);
+		//double d = gridData[index];
+		//return d;
 
 		double wi = (x - i * delta_grid) / delta_grid;
 		double wj = (y - j * delta_grid) / delta_grid;
@@ -97,7 +100,7 @@ public:
 		gridData.clear();
 		gridData.resize(Nx * Ny * Nz, 0);
 
-//#pragma omp parallel for
+#pragma omp parallel for
 		for (int i = 0; i < Nx; ++i)
 		{
 			for (int j = 0; j < Ny; ++j)
@@ -106,9 +109,9 @@ public:
 				{
 					lux::Vector p = llc + lux::Vector(double(i) * delta_grid, double(j) * delta_grid, double(k) * delta_grid);
 					double dist = std::numeric_limits<double>::max();
-					int closestPointIndex = -1;
+					//int closestPointIndex = -1;
 					std::vector<std::pair<int, lux::Vector>> triangleIndexAndClosestPoint;
-					lux::Vector closestPoint;
+					//lux::Vector closestPoint;
 					/*if (p.X() == -2.0 && p.Y() == 0.1 && p.Z() == 1.1)
 					{
 						double t = 5;
@@ -122,8 +125,8 @@ public:
 						if (mag <= dist)
 						{
 							dist = mag;
-							closestPointIndex = i;
-							closestPoint = cp;
+							/*closestPointIndex = i;
+							closestPoint = cp;*/
 							// tempIndices.push_back(i);
 							triangleIndexAndClosestPoint.push_back(std::make_pair(i, cp));
 						}
@@ -133,9 +136,10 @@ public:
 					for (auto indexAndPoint : triangleIndexAndClosestPoint)
 					{
 						//combinedNormal = triangles[tri]->n;
-						auto n = triangles[indexAndPoint.first]->n;
-						auto dotpro = (p - indexAndPoint.second) * n;
-						if (dotpro >= 0)
+						// auto n = triangles[indexAndPoint.first]->n;
+						// auto dotpro = (p - indexAndPoint.second) * n;
+						// if (dotpro >= 0)
+						if ((p - indexAndPoint.second) * triangles[indexAndPoint.first]->n >= 0)
 						{
 							atleastOnePositive = true;
 							break;
@@ -158,5 +162,36 @@ public:
 				}
 			}
 		}
+	}
+
+	void writelevelSet(std::string fileName)
+	{
+		if (gridData.size() == 0)
+			throw std::runtime_error("DSM empty");
+
+		std::ofstream ofs(fileName, std::ios::out | std::ofstream::binary);
+		if (!ofs)
+			throw std::runtime_error("error opening file");
+
+		size_t size = gridData.size();
+		ofs.write(reinterpret_cast<const char*>(&size), sizeof(size));
+		ofs.write(reinterpret_cast<const char*>(&gridData[0]), size * sizeof(gridData[0]));
+		ofs.close();
+		std::cout << "file write: " << fileName << std::endl;
+	}
+
+	void readlevelSet(std::string fileName)
+	{
+		std::ifstream ifs(fileName, std::ios::in | std::ifstream::binary);
+		if (!ifs)
+			throw std::runtime_error("error opening file");
+
+		size_t size;
+		ifs.read(reinterpret_cast<char*>(&size), sizeof(size));
+		gridData.clear();
+		gridData.resize(size, 0);
+		ifs.read(reinterpret_cast<char*>(&gridData[0]), size * sizeof(gridData[0]));
+		ifs.close();
+		std::cout << "file read: " << fileName << std::endl;
 	}
 };
