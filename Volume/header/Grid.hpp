@@ -71,6 +71,11 @@ public:
 		unsigned int j = floor(y / delta_grid);
 		unsigned int k = floor(z / delta_grid);
 
+		// debugging
+		auto index = getIndex(i, j, k);
+		double d = gridData[index];
+		return d;
+
 		double wi = (x - i * delta_grid) / delta_grid;
 		double wj = (y - j * delta_grid) / delta_grid;
 		double wk = (z - k * delta_grid) / delta_grid;
@@ -89,9 +94,10 @@ public:
 
 	void levelSet(Triangles& triangles)
 	{
+		gridData.clear();
 		gridData.resize(Nx * Ny * Nz, 0);
 
-#pragma omp parallel for
+//#pragma omp parallel for
 		for (int i = 0; i < Nx; ++i)
 		{
 			for (int j = 0; j < Ny; ++j)
@@ -101,20 +107,53 @@ public:
 					lux::Vector p = llc + lux::Vector(double(i) * delta_grid, double(j) * delta_grid, double(k) * delta_grid);
 					double dist = std::numeric_limits<double>::max();
 					int closestPointIndex = -1;
+					std::vector<std::pair<int, lux::Vector>> triangleIndexAndClosestPoint;
 					lux::Vector closestPoint;
+					/*if (p.X() == -2.0 && p.Y() == 0.1 && p.Z() == 1.1)
+					{
+						double t = 5;
+						t *= 5;
+					}*/
 					for (int i = 0; i < triangles.size(); ++i)
 					{
 						lux::Vector cp = triangles[i]->closestPoint(p);
 						double mag = (cp - p).magnitude();
-						if (mag < dist)
+						//if (mag < dist)
+						if (mag <= dist)
 						{
 							dist = mag;
 							closestPointIndex = i;
 							closestPoint = cp;
+							// tempIndices.push_back(i);
+							triangleIndexAndClosestPoint.push_back(std::make_pair(i, cp));
 						}
 					}
-					if ((p - closestPoint) * triangles[closestPointIndex]->n > 0)
+					//lux::Vector combinedNormal;
+					bool atleastOnePositive = false;
+					for (auto indexAndPoint : triangleIndexAndClosestPoint)
+					{
+						//combinedNormal = triangles[tri]->n;
+						auto n = triangles[indexAndPoint.first]->n;
+						auto dotpro = (p - indexAndPoint.second) * n;
+						if (dotpro >= 0)
+						{
+							atleastOnePositive = true;
+							break;
+						}
+					}
+					if (atleastOnePositive)
 						dist = -dist;
+					//combinedNormal = triangles[closestPointIndex]->n;
+					//double dotpro = (p - closestPoint) * combinedNormal;
+					/*if (dotpro >= 0)
+					{
+						dist = -dist;
+					}
+					else
+					{
+						if (dist == -1.13342423423)
+							dist = -1.13342423423;
+					}*/
 					gridData[getIndex(i, j, k)] = dist;
 				}
 			}

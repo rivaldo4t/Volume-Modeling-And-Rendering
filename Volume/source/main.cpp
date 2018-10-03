@@ -107,7 +107,8 @@ lux::SField loadObjField(std::string fileName, Triangles& triangles)
 					curMesh.Vertices[curMesh.Indices[j + 2]].Position.Y,
 					curMesh.Vertices[curMesh.Indices[j + 2]].Position.Z };
 
-				triangles.push_back(std::make_shared<Triangle>(p0 * 0.5, p1 * 0.5, p2 * 0.5));
+				//triangles.push_back(std::make_shared<Triangle>(p0 * 1.5, p1 * 1.5, p2 * 1.5));
+				triangles.push_back(std::make_shared<Triangle>(p0, p1, p2));
 			}
 		}
 	}
@@ -159,16 +160,17 @@ int main()
 	}
 #endif
 	// scalar and color field
-	// auto fields = getHumanoid();
+	auto fields = getHumanoid();
 
 	Triangles triangles;
-	auto obj = loadObjField("models/cube1.obj", triangles);
-	Grid g(lux::Vector(-5, -5, -5), 100, 100, 100, 0.1);
+	auto obj = loadObjField("models/pyramid.obj", triangles);
+	Grid g(lux::Vector(-2, -2, -2), 40, 40, 40, 0.1);
 	g.levelSet(triangles);
+	// g.stamp(fields.first);
 	std::cout << "Levelset genereted\n";
 	// render(img_w, img_h, camera, obj, fields.second);
 	render2(img_w, img_h, camera, g);
-	int t;
-	std::cin >> t;
+	/*int t;
+	std::cin >> t;*/
 	return 0;
 }

@@ -134,13 +134,13 @@ void render2(const int img_w, const int img_h, std::shared_ptr<Camera> camera, c
 		start = std::chrono::system_clock::now();
 		exr.clear();
 		exr.resize(img_h * img_w);
-		eye = lux::Vector(0, 0, 1) * cos(k * delta_rot) + lux::Vector(1.4, 0, 0) * sin(k * delta_rot);
+		/*eye = lux::Vector(0, 0, 1) * cos(k * delta_rot) + lux::Vector(1.4, 0, 0) * sin(k * delta_rot);
 		view = lux::Vector(0, 0.2, -0.4) - eye;
 		up = lux::Vector(0, 1, 0);
-		camera->setEyeViewUp(eye, view, up);
+		camera->setEyeViewUp(eye, view, up);*/
 
 		std::cout << "|0%|==|==|==|==|==|==|==|==|==|==|==|100%|\n|0%|";
-#pragma omp parallel for
+//#pragma omp parallel for
 		for (int j = 0; j < img_h; ++j)
 		{
 			if ((j) % (img_h / 10) == 0)
@@ -178,7 +178,7 @@ lux::Color marchRays2(lux::Vector pos, lux::Vector dir, const Grid& g)
 	lux::Color white(0.8, 0.8, 0.8, 1.0);
 	lux::Color red(1.0, 0.2, 0.2, 1.0);
 
-	double sNear = 0.5, sFar = 3.0;
+	double sNear = 0.5, sFar = 10.0;
 	double T = 1;
 	double delta_s = 0.01;
 	double delta_T;
