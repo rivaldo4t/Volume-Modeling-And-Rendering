@@ -9,14 +9,20 @@
 
 class Light
 {
-private:
-//public:
+//private:
+public:
 	lux::Vector pos;
 	lux::Color color;
 	std::vector<double> deepShadowMap;
-public:
+	lux::Vector llc;
+	unsigned int Nx, Ny, Nz;
+	double delta_grid;
+	double delta_s;
+	double defaultVal = 0.0;
+//public:
 	Light() {}
-	Light(lux::Vector p, lux::Color c = lux::Color(1.0, 1.0, 1.0, 1.0)) : pos(p), color(c) {}
+	Light(lux::Vector p, lux::Vector l, int nx, unsigned int ny, unsigned int nz, double d, double ds = 0.01, lux::Color c = lux::Color(1.0, 1.0, 1.0, 1.0))
+		: pos(p), llc(l), Nx(nx), Ny(ny), Nz(nz), delta_grid(d), delta_s(ds), color(c) {}
 
 	void computeDSM(lux::SField density)
 	{
@@ -65,10 +71,15 @@ public:
 
 	void computeDSM2(const Grid& g)
 	{
-		lux::Vector llc(-5, -5, -5);
-		double delta_grid = 0.01;
-		int Nx = 1000, Ny = 1000, Nz = 1000;
-		double delta_s = 0.01;
+		//lux::Vector llc(-5, -5, -5);
+		//double delta_grid = 0.01;
+		//int Nx = 1000, Ny = 1000, Nz = 1000;
+		/*llc = g.llc;
+		Nx = g.Nx; 
+		Ny = g.Ny; 
+		Nz = g.Nz;
+		delta_grid = g.delta_grid;
+		delta_s = 0.01;*/
 		/*Nx = Ny = Nz = 100;
 		delta_s = 0.1;*/
 		deepShadowMap.resize(Nx * Ny * Nz, 0);
@@ -137,5 +148,63 @@ public:
 		ifs.read(reinterpret_cast<char*>(&deepShadowMap[0]), size * sizeof(deepShadowMap[0]));
 		ifs.close();
 		std::cout << "file read: " << fileName << std::endl;
+	}
+
+	unsigned int getIndex(unsigned int i, unsigned int j, unsigned int k) const
+	{
+		i = std::min(i, Nx - 1);
+		j = std::min(j, Ny - 1);
+		k = std::min(k, Nz - 1);
+
+		unsigned int index = i + (Nx * j) + (Nx * Ny * k);
+		if (index > deepShadowMap.size())
+			throw std::runtime_error("grid index out of range");
+		return index;
+	}
+
+	bool withinGrid(lux::Vector p) const
+	{
+		lux::Vector urc = { llc.X() + (Nx - 1) * delta_grid,
+							llc.Y() + (Ny - 1) * delta_grid,
+							llc.Z() + (Nz - 1) * delta_grid };
+
+		return	p.X() >= llc.X() && p.X() <= urc.X() &&
+				p.Y() >= llc.Y() && p.Y() <= urc.Y() &&
+				p.Z() >= llc.Z() && p.Z() <= urc.Z();
+	}
+
+	double eval(lux::Vector p) const
+	{
+		if (!withinGrid(p))
+			return defaultVal;
+
+		lux::Vector toPoint = p - llc;
+		double x = toPoint.X();
+		double y = toPoint.Y();
+		double z = toPoint.Z();
+
+		unsigned int i = floor(x / delta_grid);
+		unsigned int j = floor(y / delta_grid);
+		unsigned int k = floor(z / delta_grid);
+
+		//// debugging
+		//auto index = getIndex(i, j, k);
+		//double d = gridData[index];
+		//return d;
+
+		double wi = (x - i * delta_grid) / delta_grid;
+		double wj = (y - j * delta_grid) / delta_grid;
+		double wk = (z - k * delta_grid) / delta_grid;
+
+		double c00 = deepShadowMap[getIndex(i, j, k)] * (1 - wi) + deepShadowMap[getIndex(i + 1, j, k)] * wi;
+		double c01 = deepShadowMap[getIndex(i, j, k + 1)] * (1 - wi) + deepShadowMap[getIndex(i + 1, j, k + 1)] * wi;
+		double c10 = deepShadowMap[getIndex(i, j + 1, k)] * (1 - wi) + deepShadowMap[getIndex(i + 1, j + 1, k)] * wi;
+		double c11 = deepShadowMap[getIndex(i, j + 1, k + 1)] * (1 - wi) + deepShadowMap[getIndex(i + 1, j + 1, k + 1)] * wi;
+
+		double c0 = c00 * (1 - wj) + c10 * wj;
+		double c1 = c01 * (1 - wj) + c11 * wj;
+
+		double c = c0 * (1 - wk) + c1 * wk;
+		return c;
 	}
 };

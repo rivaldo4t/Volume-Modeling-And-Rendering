@@ -10,13 +10,14 @@
 
 class Grid
 {
-private:
+// private:
+public:
 	unsigned int Nx, Ny, Nz;
 	lux::Vector llc, urc;
 	double delta_grid = 0.01;
 	std::vector<double> gridData;
 	double defaultVal = 0.0;
-public:
+// public:
 	Grid() { Nx = 0; Ny = 0; Nz = 0; }
 	Grid(lux::Vector o, unsigned int x, unsigned int y, unsigned int z, double delta, std::vector<double>& data = std::vector<double>())
 		: llc(o), Nx(x), Ny(y), Nz(z), delta_grid(delta)
@@ -29,28 +30,14 @@ public:
 
 	unsigned int getIndex(unsigned int i, unsigned int j, unsigned int k) const
 	{
+		i = std::min(i, Nx - 1);
+		j = std::min(j, Ny - 1);
+		k = std::min(k, Nz - 1);
+		
 		unsigned int index = i + (Nx * j) + (Nx * Ny * k);
 		if (index > gridData.size())
 			throw std::runtime_error("grid index out of range");
 		return index;
-	}
-
-	void stamp(lux::SField s)
-	{
-		gridData.resize(Nx * Ny * Nz, 0);
-
-#pragma omp parallel for
-		for (int i = 0; i < Nx; ++i)
-		{
-			for (int j = 0; j < Ny; ++j)
-			{
-				for (int k = 0; k < Nz; ++k)
-				{
-					lux::Vector p = llc + lux::Vector(double(i) * delta_grid, double(j) * delta_grid, double(k) * delta_grid);
-					gridData[getIndex(i, j, k)] = s->eval(p);
-				}
-			}
-		}
 	}
 
 	bool withinGrid(lux::Vector p) const
@@ -93,6 +80,24 @@ public:
 
 		double c = c0 * (1 - wk) + c1 * wk;
 		return c;
+	}
+
+	void stamp(lux::SField s)
+	{
+		gridData.resize(Nx * Ny * Nz, 0);
+
+#pragma omp parallel for
+		for (int i = 0; i < Nx; ++i)
+		{
+			for (int j = 0; j < Ny; ++j)
+			{
+				for (int k = 0; k < Nz; ++k)
+				{
+					lux::Vector p = llc + lux::Vector(double(i) * delta_grid, double(j) * delta_grid, double(k) * delta_grid);
+					gridData[getIndex(i, j, k)] = s->eval(p);
+				}
+			}
+		}
 	}
 
 	void levelSet(Triangles& triangles)
@@ -193,5 +198,15 @@ public:
 		ifs.read(reinterpret_cast<char*>(&gridData[0]), size * sizeof(gridData[0]));
 		ifs.close();
 		std::cout << "file read: " << fileName << std::endl;
+	}
+};
+
+class GridUnion : public Grid
+{
+	std::shared_ptr<Grid> f, g;
+public:
+	double eval(lux::Vector p)
+	{
+		return std::max(f->eval(p), g->eval(p));
 	}
 };

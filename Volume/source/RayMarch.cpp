@@ -121,10 +121,10 @@ double marchRaysDSM(lux::Vector pos, lux::Vector lightPos, const lux::SField& de
 }
 
 //-----------------------
-void render2(const int img_w, const int img_h, std::shared_ptr<Camera> camera, const Grid& g)
+void render2(const int img_w, const int img_h, std::shared_ptr<Camera> camera, const Grid& g, const std::vector<std::shared_ptr<Light>>& lights)
 {
-	//const int num_frames = 120 / 120 - 1;
-	const int num_frames = 120 / 12;
+	const int num_frames = 120 / 120 - 1;
+	//const int num_frames = 120 / 12;
 	const double delta_rot = 360 / num_frames * M_PI / 180.0;
 	std::chrono::time_point<std::chrono::system_clock> start, end;
 	std::vector<IMF::Rgba> exr;
@@ -139,7 +139,7 @@ void render2(const int img_w, const int img_h, std::shared_ptr<Camera> camera, c
 		/*eye = lux::Vector(0, 0, 1) * cos(k * delta_rot) + lux::Vector(1.4, 0, 0) * sin(k * delta_rot);
 		view = lux::Vector(0, 0.2, -0.4) - eye;
 		up = lux::Vector(0, 1, 0);*/
-		eye = lux::Vector(0, 0, 1) * cos(k * delta_rot) + lux::Vector(1, 0, 0) * sin(k * delta_rot);
+		eye = lux::Vector(0, 0, 2) * cos(k * delta_rot) + lux::Vector(2, 0, 0) * sin(k * delta_rot);
 		view = lux::Vector(0, 0, 0) - eye;
 		up = lux::Vector(0, 1, 0);
 		camera->setEyeViewUp(eye, view, up);
@@ -159,7 +159,7 @@ void render2(const int img_w, const int img_h, std::shared_ptr<Camera> camera, c
 				lux::Vector q_ij = (u * camera->right()) + (v * camera->up());
 				lux::Vector n_ij = (q_ij + camera->view()).unitvector();
 
-				lux::Color L = marchRays2(camera->eye(), n_ij, g);
+				lux::Color L = marchRays2(camera->eye(), n_ij, g, lights);
 				exr[(img_h - 1 - j) * img_w + i] = IMF::Rgba(half(L[0]), half(L[1]), half(L[2]), half(L[3]));
 			}
 		}
@@ -177,7 +177,7 @@ void render2(const int img_w, const int img_h, std::shared_ptr<Camera> camera, c
 	}
 }
 
-lux::Color marchRays2(lux::Vector pos, lux::Vector dir, const Grid& g)
+lux::Color marchRays2(lux::Vector pos, lux::Vector dir, const Grid& g, const std::vector<std::shared_ptr<Light>>& lights)
 {
 	lux::Color L(0.0, 0.0, 0.0, 1.0);
 	lux::Color white(0.8, 0.8, 0.8, 1.0);
@@ -199,9 +199,21 @@ lux::Color marchRays2(lux::Vector pos, lux::Vector dir, const Grid& g)
 		double d = g.eval(X);
 		lux::Color c = white;
 		// c = c.isZero() ? white : c;
-		c *= marchRaysDSM2(X, lightPos, g);
+		//double t = marchRaysDSM2(X, lightPos, g);
+		/*double tt = lights.eval(X);
+		if (tt > 0)
+		{
+			double x = 5;
+			x += 5;
+		}
+		double t = exp(-kappa * tt);
+		c *= t;*/
+		//double t = exp(-kappa * lights.eval(X));
+		//c *= t;
+		lux::Color c2 = white;
+		for (auto l : lights)
+			c += c2 * exp(-kappa * l->eval(X));
 
-		// explicit color to objects
 		if (d > 0)
 		{
 			delta_T = exp(-kappa * delta_s * d);
