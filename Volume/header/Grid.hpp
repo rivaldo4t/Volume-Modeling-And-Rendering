@@ -47,41 +47,6 @@ public:
 				p.Z() >= llc.Z() && p.Z() <= urc.Z();
 	}
 
-	double eval(lux::Vector p) const
-	{
-		if (!withinGrid(p))
-			return defaultVal;
-		
-		lux::Vector toPoint = p - llc;
-		double x = toPoint.X();
-		double y = toPoint.Y();
-		double z = toPoint.Z();
-		
-		unsigned int i = floor(x / delta_grid);
-		unsigned int j = floor(y / delta_grid);
-		unsigned int k = floor(z / delta_grid);
-
-		//// debugging
-		//auto index = getIndex(i, j, k);
-		//double d = gridData[index];
-		//return d;
-
-		double wi = (x - i * delta_grid) / delta_grid;
-		double wj = (y - j * delta_grid) / delta_grid;
-		double wk = (z - k * delta_grid) / delta_grid;
-
-		double c00 = gridData[getIndex(i, j, k)] * (1 - wi) + gridData[getIndex(i + 1, j, k)] * wi;
-		double c01 = gridData[getIndex(i, j, k + 1)] * (1 - wi) + gridData[getIndex(i + 1, j, k + 1)] * wi;
-		double c10 = gridData[getIndex(i, j + 1, k)] * (1 - wi) + gridData[getIndex(i + 1, j + 1, k)] * wi;
-		double c11 = gridData[getIndex(i, j + 1, k + 1)] * (1 - wi) + gridData[getIndex(i + 1, j + 1, k + 1)] * wi;
-
-		double c0 = c00 * (1 - wj) + c10 * wj;
-		double c1 = c01 * (1 - wj) + c11 * wj;
-
-		double c = c0 * (1 - wk) + c1 * wk;
-		return c;
-	}
-
 	void stamp(lux::SField s)
 	{
 		gridData.resize(Nx * Ny * Nz, 0);
@@ -167,6 +132,36 @@ public:
 				}
 			}
 		}
+	}
+
+	double eval(lux::Vector p) const
+	{
+		if (!withinGrid(p))
+			return defaultVal;
+
+		lux::Vector toPoint = p - llc;
+		double x = toPoint.X();
+		double y = toPoint.Y();
+		double z = toPoint.Z();
+
+		unsigned int i = floor(x / delta_grid);
+		unsigned int j = floor(y / delta_grid);
+		unsigned int k = floor(z / delta_grid);
+
+		double wi = (x - i * delta_grid) / delta_grid;
+		double wj = (y - j * delta_grid) / delta_grid;
+		double wk = (z - k * delta_grid) / delta_grid;
+
+		double c00 = gridData[getIndex(i, j, k)] * (1 - wi) + gridData[getIndex(i + 1, j, k)] * wi;
+		double c01 = gridData[getIndex(i, j, k + 1)] * (1 - wi) + gridData[getIndex(i + 1, j, k + 1)] * wi;
+		double c10 = gridData[getIndex(i, j + 1, k)] * (1 - wi) + gridData[getIndex(i + 1, j + 1, k)] * wi;
+		double c11 = gridData[getIndex(i, j + 1, k + 1)] * (1 - wi) + gridData[getIndex(i + 1, j + 1, k + 1)] * wi;
+
+		double c0 = c00 * (1 - wj) + c10 * wj;
+		double c1 = c01 * (1 - wj) + c11 * wj;
+
+		double c = c0 * (1 - wk) + c1 * wk;
+		return c;
 	}
 
 	void writelevelSet(std::string fileName)

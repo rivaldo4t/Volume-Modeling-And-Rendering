@@ -6,12 +6,11 @@
 
 class Triangle
 {
-//private:
 public:
 	lux::Vector p0, p1, p2;
 	lux::Vector e1, e2, e3;
 	lux::Vector n;
-//public:
+
 	Triangle(lux::Vector _p0, lux::Vector _p1, lux::Vector _p2)
 	{
 		p0 = _p0;
@@ -20,8 +19,6 @@ public:
 		e1 = p1 - p0;
 		e2 = p2 - p0;
 		e3 = p2 - p1;
-		// maybe
-		//e3 = -e3;
 		n = (e1 ^ e2);
 	}
 

@@ -8,8 +8,7 @@ namespace IMF = OPENEXR_IMF_NAMESPACE;
 
 void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, const lux::SField& sfield, const lux::CField& cfield)
 {
-	//const int num_frames = 120 / 120 - 1;
-	const int num_frames = 120 / 12;
+	const int num_frames = 120 / 1;
 	const double delta_rot = 360 / num_frames * M_PI / 180.0;
 	std::chrono::time_point<std::chrono::system_clock> start, end;
 	std::vector<IMF::Rgba> exr;
@@ -120,31 +119,32 @@ double marchRaysDSM(lux::Vector pos, lux::Vector lightPos, const lux::SField& de
 	return exp(-kappa * dsm);
 }
 
-//-----------------------
 void render2(const int img_w, const int img_h, std::shared_ptr<Camera> camera, const Grid& g, const std::vector<std::shared_ptr<Light>>& lights)
 {
-	const int num_frames = 120 / 120 - 1;
-	//const int num_frames = 120 / 12;
+	const int num_frames = 120 / 120;
 	const double delta_rot = 360 / num_frames * M_PI / 180.0;
 	std::chrono::time_point<std::chrono::system_clock> start, end;
 	std::vector<IMF::Rgba> exr;
 	lux::Vector eye, view, up;
 
 	std::cout << "\t\t    ...\n\t         Keep Calm\n\t\t    and\n\t    Let The Rays March\n\t\t    ...\n\n";
+
 	for (int k = 0; k <= num_frames; k++)
 	{
 		start = std::chrono::system_clock::now();
 		exr.clear();
 		exr.resize(img_h * img_w);
-		/*eye = lux::Vector(0, 0, 1) * cos(k * delta_rot) + lux::Vector(1.4, 0, 0) * sin(k * delta_rot);
-		view = lux::Vector(0, 0.2, -0.4) - eye;
-		up = lux::Vector(0, 1, 0);*/
-		eye = lux::Vector(0, 0, 2) * cos(k * delta_rot) + lux::Vector(2, 0, 0) * sin(k * delta_rot);
-		view = lux::Vector(0, 0, 0) - eye;
+		
+		eye = lux::Vector(0, 0.2, 2) * cos(k * delta_rot) + lux::Vector(2, 0.2, 0) * sin(k * delta_rot);
+		view = lux::Vector(0, 0.2, 0) - eye;
+		up = lux::Vector(0, 1, 0);
+		eye = lux::Vector(0, 0.0, 2) * cos(k * 30) + lux::Vector(2, 0.0, 0) * sin(k * 30);
+		view = lux::Vector(0, 0.0, 0) - eye;
 		up = lux::Vector(0, 1, 0);
 		camera->setEyeViewUp(eye, view, up);
 
 		std::cout << "|0%|==|==|==|==|==|==|==|==|==|==|==|100%|\n|0%|";
+
 #pragma omp parallel for
 		for (int j = 0; j < img_h; ++j)
 		{
@@ -163,14 +163,15 @@ void render2(const int img_w, const int img_h, std::shared_ptr<Camera> camera, c
 				exr[(img_h - 1 - j) * img_w + i] = IMF::Rgba(half(L[0]), half(L[1]), half(L[2]), half(L[3]));
 			}
 		}
+
 		std::cout << "100%|\n";
 
 		std::string fileName = "output/Render_1/frame_" + std::to_string(k + 1) + ".exr";
 		IMF::RgbaOutputFile file(fileName.c_str(), img_w, img_h, IMF::WRITE_RGBA);
 		file.setFrameBuffer(const_cast<IMF::Rgba*>(exr.data()), 1, img_w);
 		file.writePixels(img_h);
-		std::cout << "Frame Written : " << k + 1 << "\n";
 
+		std::cout << "Frame Written : " << k + 1 << "\n";
 		end = std::chrono::system_clock::now();
 		std::chrono::duration<double> elapsed_seconds = end - start;
 		std::cout << "Elapsed time: " << elapsed_seconds.count() << "s\n\t\t    ...\n\n";
@@ -179,11 +180,11 @@ void render2(const int img_w, const int img_h, std::shared_ptr<Camera> camera, c
 
 lux::Color marchRays2(lux::Vector pos, lux::Vector dir, const Grid& g, const std::vector<std::shared_ptr<Light>>& lights)
 {
+	// should alpha be initialized to 1?
 	lux::Color L(0.0, 0.0, 0.0, 1.0);
 	lux::Color white(0.8, 0.8, 0.8, 1.0);
-	lux::Color red(1.0, 0.2, 0.2, 1.0);
 
-	double sNear = 2, sFar = 20.0;
+	double sNear = 0.2, sFar = 6.0;
 	double T = 1;
 	double delta_s = 0.01;
 	double delta_T;
@@ -191,28 +192,17 @@ lux::Color marchRays2(lux::Vector pos, lux::Vector dir, const Grid& g, const std
 	double s = sNear;
 
 	lux::Vector X = pos + sNear * dir;
-	lux::Vector lightPos(0.0, 0.8, 0.0);
 
 	while (s <= sFar)
 	{
 		X += delta_s * dir;
 		double d = g.eval(X);
-		lux::Color c = white;
-		// c = c.isZero() ? white : c;
-		//double t = marchRaysDSM2(X, lightPos, g);
-		/*double tt = lights.eval(X);
-		if (tt > 0)
-		{
-			double x = 5;
-			x += 5;
-		}
-		double t = exp(-kappa * tt);
-		c *= t;*/
-		//double t = exp(-kappa * lights.eval(X));
-		//c *= t;
-		lux::Color c2 = white;
+		lux::Color c(0.0, 0.0, 0.0, 1.0);
+		
+		//fieldColor = white;
 		for (auto l : lights)
-			c += c2 * exp(-kappa * l->eval(X));
+			c += white * l->color * exp(-kappa * l->eval(X));
+		//c = white;
 
 		if (d > 0)
 		{
@@ -249,4 +239,3 @@ double marchRaysDSM2(lux::Vector pos, lux::Vector lightPos, const Grid& g)
 	}
 	return exp(-kappa * dsm);
 }
-//-----------------------

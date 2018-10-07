@@ -90,13 +90,13 @@ std::pair<lux::SField, lux::CField> getHumanoid()
 
 	lux::SField humanoid2 = std::make_shared<lux::SFTranslate>(humanoid_temp_2, lux::Vector(0.0, 0.2, 0.15));
 	lux::SField humanoid = std::make_shared<lux::SFUnion>(humanoid2, st2);
+	//humanoid = std::make_shared<lux::SFScale>(humanoid, 0.5);
 
 	lux::SField head_c = std::make_shared<lux::SFTranslate>(head, lux::Vector(0.0, 0.2, 0.15));
 	lux::SField body_c = std::make_shared<lux::SFTranslate>(body, lux::Vector(0.0, 0.2, 0.15));
 	lux::SField horns_c = std::make_shared<lux::SFTranslate>(horns, lux::Vector(0.0, 0.2, 0.15));
 	lux::CField colorField = std::make_shared<lux::ColorField>(head_c, body_c, horns_c);
 
-	//humanoid = std::make_shared<lux::SFSphere>(lux::Vector(0.0, 0.0, 0.0), 0.5);;
 	return std::make_pair(humanoid, colorField);
 }
 
