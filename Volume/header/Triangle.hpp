@@ -22,7 +22,7 @@ public:
 		n = (e1 ^ e2);
 	}
 
-	void /*bool*/ closestPointOnPlane(lux::Vector x, lux::Vector& p)
+	void closestPointOnPlane(lux::Vector x, lux::Vector& p)
 	{
 		double n_mag_sq = n.magnitudeSquared();
 		lux::Vector n_unit = n.unitvector();
@@ -31,10 +31,6 @@ public:
 
 		double v = ((e1 ^ r) * (n)) / n_mag_sq;
 		double u = ((e2 ^ r) * (-n)) / n_mag_sq;
-		/*double den = (e1^e2).magnitude();
-		double v = ((e1 ^ r) * (e1 ^ e2)) / (den*den);
-		den = (e2^e1).magnitude();
-		double u = ((e2 ^ r) * (e2 ^ e1)) / (den*den);*/
 		double d = std::numeric_limits<double>::max();
 
 		if ((0 <= u) && (u <= 1) && 
@@ -43,39 +39,22 @@ public:
 		{
 			p = p0 + (u * e1) + (v * e2);
 			d = (x - p).magnitude();
-			//return true;
 		}
-		// else
-		{
-			closestPointOnEdges(x, p, d);
-		}
-		//return false;
+		closestPointOnEdges(x, p, d);
 	}
 
-	void /*bool*/ closestPointOnEdges(lux::Vector x, lux::Vector& p, double prevDist = std::numeric_limits<double>::max())
+	void closestPointOnEdges(lux::Vector x, lux::Vector& p, double prevDist = std::numeric_limits<double>::max())
 	{
 		double e1_mag_sq = e1.magnitudeSquared();
 		double q1 = (e1 * (x - p0)) / e1_mag_sq;
-		/*lux::Vector temp = x - p0;
-		double tem = e1 * temp;
-		tem /= e1_mag_sq;
-		double q1 = tem;*/
-
+		
 		double e2_mag_sq = e2.magnitudeSquared();
 		double q2 = (e2 * (x - p0)) / e2_mag_sq;
-		/*temp = x - p0;
-		tem = e2 * temp;
-		tem /= e2_mag_sq;
-		double q2 = tem;*/
-
+		
 		double e3_mag_sq = e3.magnitudeSquared();
 		double q3 = (e3 * (x - p1)) / e3_mag_sq;
-		/*temp = x - p1;
-		tem = e3 * temp;
-		tem /= e3_mag_sq;
-		double q3 = tem;*/
-
-		double d = prevDist;//std::numeric_limits<double>::max();
+		
+		double d = prevDist;
 
 		if (((0 <= q1) && (q1 <= 1)) || 
 			((0 <= q2) && (q2 <= 1)) || 
@@ -109,11 +88,8 @@ public:
 					p = p1 + q3 * e3;
 				}
 			}
-
-			//return true;
 		}
 		closestVertex(x, p, d);
-		//return false;
 	}
 
 	void closestVertex(lux::Vector x, lux::Vector& p, double prevDist = std::numeric_limits<double>::max())
@@ -138,10 +114,6 @@ public:
 	{
 		lux::Vector p(0.0, 0.0, 0.0);
 		closestPointOnPlane(x, p);
-		/*if (!closestPointOnPlane(x, p))
-			closestPointOnEdges(x, p);*/
-			/*if (!closestPointOnEdges(x, p))
-				closestVertex(x, p);*/
 		return p;
 	}
 };

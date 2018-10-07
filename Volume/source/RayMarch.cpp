@@ -184,7 +184,7 @@ lux::Color marchRays2(lux::Vector pos, lux::Vector dir, const Grid& g, const std
 	lux::Color L(0.0, 0.0, 0.0, 1.0);
 	lux::Color white(0.8, 0.8, 0.8, 1.0);
 
-	double sNear = 0.2, sFar = 6.0;
+	double sNear = 0.2, sFar = 10.0;
 	double T = 1;
 	double delta_s = 0.01;
 	double delta_T;
