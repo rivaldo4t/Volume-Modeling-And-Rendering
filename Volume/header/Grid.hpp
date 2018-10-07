@@ -136,7 +136,7 @@ public:
 		return c;
 	}
 
-	void writelevelSet(std::string fileName)
+	void writeGrid(std::string fileName)
 	{
 		if (gridData.size() == 0)
 			throw std::runtime_error("DSM empty");
@@ -145,6 +145,12 @@ public:
 		if (!ofs)
 			throw std::runtime_error("error opening file");
 
+		ofs.write(reinterpret_cast<const char*>(&llc), sizeof(llc));
+		ofs.write(reinterpret_cast<const char*>(&Nx), sizeof(Nx));
+		ofs.write(reinterpret_cast<const char*>(&Ny), sizeof(Ny));
+		ofs.write(reinterpret_cast<const char*>(&Nz), sizeof(Nz));
+		ofs.write(reinterpret_cast<const char*>(&delta_grid), sizeof(delta_grid));
+
 		size_t size = gridData.size();
 		ofs.write(reinterpret_cast<const char*>(&size), sizeof(size));
 		ofs.write(reinterpret_cast<const char*>(&gridData[0]), size * sizeof(gridData[0]));
@@ -152,11 +158,21 @@ public:
 		std::cout << "file write: " << fileName << std::endl;
 	}
 
-	void readlevelSet(std::string fileName)
+	void readGrid(std::string fileName)
 	{
 		std::ifstream ifs(fileName, std::ios::in | std::ifstream::binary);
 		if (!ifs)
 			throw std::runtime_error("error opening file");
+
+		ifs.read(reinterpret_cast<char*>(&llc), sizeof(llc));
+		ifs.read(reinterpret_cast<char*>(&Nx), sizeof(Nx));
+		ifs.read(reinterpret_cast<char*>(&Ny), sizeof(Ny));
+		ifs.read(reinterpret_cast<char*>(&Nz), sizeof(Nz));
+		ifs.read(reinterpret_cast<char*>(&delta_grid), sizeof(delta_grid));
+		
+		urc = { llc.X() + (Nx - 1) * delta_grid,
+			llc.Y() + (Ny - 1) * delta_grid,
+			llc.Z() + (Nz - 1) * delta_grid };
 
 		size_t size;
 		ifs.read(reinterpret_cast<char*>(&size), sizeof(size));

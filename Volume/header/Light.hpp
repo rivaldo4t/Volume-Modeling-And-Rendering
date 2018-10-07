@@ -6,50 +6,22 @@
 #include "Vector.hpp"
 #include "Color.hpp"
 #include "ScalarField.hpp"
+#include "Grid.hpp"
 
-class Light
+class Light : public Grid
 {
 public:
 	lux::Vector pos;
 	lux::Color color;
-	std::vector<double> deepShadowMap;
-	lux::Vector llc, urc;
-	unsigned int Nx, Ny, Nz;
-	double delta_grid;
 	double delta_s;
-	double defaultVal = 0.0;
 
 	Light() {}
 	Light(lux::Vector p, lux::Vector l, int nx, unsigned int ny, unsigned int nz, double d, double ds = 0.01, lux::Color c = lux::Color(0.8, 0.8, 0.8, 1.0))
-		: pos(p), llc(l), Nx(nx), Ny(ny), Nz(nz), delta_grid(d), delta_s(ds), color(c) 
-	{
-		urc = { llc.X() + (Nx - 1) * delta_grid,
-				llc.Y() + (Ny - 1) * delta_grid,
-				llc.Z() + (Nz - 1) * delta_grid };
-	}
-
-	unsigned int getIndex(unsigned int i, unsigned int j, unsigned int k) const
-	{
-		i = std::min(i, Nx - 1);
-		j = std::min(j, Ny - 1);
-		k = std::min(k, Nz - 1);
-
-		unsigned int index = i + (Nx * j) + (Nx * Ny * k);
-		if (index > deepShadowMap.size())
-			throw std::runtime_error("grid index out of range");
-		return index;
-	}
-
-	bool withinGrid(lux::Vector p) const
-	{
-		return	p.X() >= llc.X() && p.X() <= urc.X() &&
-			p.Y() >= llc.Y() && p.Y() <= urc.Y() &&
-			p.Z() >= llc.Z() && p.Z() <= urc.Z();
-	}
+		: Grid(l, nx, ny, nz, d), pos(p), delta_s(ds), color(c) {}
 
 	void computeDSM(lux::SField density)
 	{
-		deepShadowMap.resize(Nx * Ny * Nz, 0);
+		gridData.resize(Nx * Ny * Nz, 0);
 		
 #pragma omp parallel for
 		for (int i = 0; i < Nx; ++i)
@@ -71,7 +43,7 @@ public:
 							X += delta_s * nL;
 							double d = density->eval(X);
 							if (d > 0)
-								deepShadowMap[getIndex(i, j, k)] += d * delta_s;
+								gridData[getIndex(i, j, k)] += d * delta_s;
 							s += delta_s;
 						}
 					}
@@ -80,9 +52,9 @@ public:
 		}
 	}
 
-	void computeDSM2(const Grid& g)
+	void computeDSM(const Grid& g)
 	{
-		deepShadowMap.resize(Nx * Ny * Nz, 0);
+		gridData.resize(Nx * Ny * Nz, 0);
 
 #pragma omp parallel for
 		for (int i = 0; i < Nx; ++i)
@@ -104,7 +76,7 @@ public:
 							X += delta_s * nL;
 							double d = g.eval(X);
 							if (d > 0)
-								deepShadowMap[getIndex(i, j, k)] += d * delta_s;
+								gridData[getIndex(i, j, k)] += d * delta_s;
 							s += delta_s;
 						}
 					}
@@ -113,48 +85,28 @@ public:
 		}
 	}
 
-	double eval(lux::Vector p) const
-	{
-		if (!withinGrid(p))
-			return defaultVal;
-
-		lux::Vector toPoint = p - llc;
-		double x = toPoint.X();
-		double y = toPoint.Y();
-		double z = toPoint.Z();
-
-		unsigned int i = floor(x / delta_grid);
-		unsigned int j = floor(y / delta_grid);
-		unsigned int k = floor(z / delta_grid);
-
-		double wi = (x - i * delta_grid) / delta_grid;
-		double wj = (y - j * delta_grid) / delta_grid;
-		double wk = (z - k * delta_grid) / delta_grid;
-
-		double c00 = deepShadowMap[getIndex(i, j, k)] * (1 - wi) + deepShadowMap[getIndex(i + 1, j, k)] * wi;
-		double c01 = deepShadowMap[getIndex(i, j, k + 1)] * (1 - wi) + deepShadowMap[getIndex(i + 1, j, k + 1)] * wi;
-		double c10 = deepShadowMap[getIndex(i, j + 1, k)] * (1 - wi) + deepShadowMap[getIndex(i + 1, j + 1, k)] * wi;
-		double c11 = deepShadowMap[getIndex(i, j + 1, k + 1)] * (1 - wi) + deepShadowMap[getIndex(i + 1, j + 1, k + 1)] * wi;
-
-		double c0 = c00 * (1 - wj) + c10 * wj;
-		double c1 = c01 * (1 - wj) + c11 * wj;
-
-		double c = c0 * (1 - wk) + c1 * wk;
-		return c;
-	}
-
 	void writeDSM(std::string fileName)
 	{
-		if (deepShadowMap.size() == 0)
+		if (gridData.size() == 0)
 			throw std::runtime_error("DSM empty");
 
 		std::ofstream ofs(fileName, std::ios::out | std::ofstream::binary);
 		if (!ofs)
 			throw std::runtime_error("error opening file");
 
-		size_t size = deepShadowMap.size();
+		ofs.write(reinterpret_cast<const char*>(&pos), sizeof(pos));
+		ofs.write(reinterpret_cast<const char*>(&delta_s), sizeof(delta_s));
+		ofs.write(reinterpret_cast<const char*>(&color), sizeof(color));
+		
+		ofs.write(reinterpret_cast<const char*>(&llc), sizeof(llc));
+		ofs.write(reinterpret_cast<const char*>(&Nx), sizeof(Nx));
+		ofs.write(reinterpret_cast<const char*>(&Ny), sizeof(Ny));
+		ofs.write(reinterpret_cast<const char*>(&Nz), sizeof(Nz));
+		ofs.write(reinterpret_cast<const char*>(&delta_grid), sizeof(delta_grid));
+
+		size_t size = gridData.size();
 		ofs.write(reinterpret_cast<const char*>(&size), sizeof(size));
-		ofs.write(reinterpret_cast<const char*>(&deepShadowMap[0]), size * sizeof(deepShadowMap[0]));
+		ofs.write(reinterpret_cast<const char*>(&gridData[0]), size * sizeof(gridData[0]));
 		ofs.close();
 		std::cout << "file write: " << fileName << std::endl;
 	}
@@ -165,11 +117,25 @@ public:
 		if (!ifs)
 			throw std::runtime_error("error opening file");
 
+		ifs.read(reinterpret_cast<char*>(&pos), sizeof(pos));
+		ifs.read(reinterpret_cast<char*>(&delta_s), sizeof(delta_s));
+		ifs.read(reinterpret_cast<char*>(&color), sizeof(color));
+
+		ifs.read(reinterpret_cast<char*>(&llc), sizeof(llc));
+		ifs.read(reinterpret_cast<char*>(&Nx), sizeof(Nx));
+		ifs.read(reinterpret_cast<char*>(&Ny), sizeof(Ny));
+		ifs.read(reinterpret_cast<char*>(&Nz), sizeof(Nz));
+		ifs.read(reinterpret_cast<char*>(&delta_grid), sizeof(delta_grid));
+
+		urc = { llc.X() + (Nx - 1) * delta_grid,
+			llc.Y() + (Ny - 1) * delta_grid,
+			llc.Z() + (Nz - 1) * delta_grid };
+
 		size_t size;
 		ifs.read(reinterpret_cast<char*>(&size), sizeof(size));
-		deepShadowMap.clear();
-		deepShadowMap.resize(size, 0);
-		ifs.read(reinterpret_cast<char*>(&deepShadowMap[0]), size * sizeof(deepShadowMap[0]));
+		gridData.clear();
+		gridData.resize(size, 0);
+		ifs.read(reinterpret_cast<char*>(&gridData[0]), size * sizeof(gridData[0]));
 		ifs.close();
 		std::cout << "file read: " << fileName << std::endl;
 	}

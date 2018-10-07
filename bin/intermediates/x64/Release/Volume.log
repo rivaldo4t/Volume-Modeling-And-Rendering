@@ -1,25 +1,40 @@
-﻿  main.cpp
+﻿  RayMarch.cpp
 c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(55): warning C4018: '<': signed/unsigned mismatch
 c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(57): warning C4018: '<': signed/unsigned mismatch
 c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(59): warning C4018: '<': signed/unsigned mismatch
 c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(74): warning C4018: '<': signed/unsigned mismatch
 c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(76): warning C4018: '<': signed/unsigned mismatch
 c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(78): warning C4018: '<': signed/unsigned mismatch
-c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(147): warning C4244: 'initializing': conversion from 'double' to 'unsigned int', possible loss of data
-c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(148): warning C4244: 'initializing': conversion from 'double' to 'unsigned int', possible loss of data
-c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(149): warning C4244: 'initializing': conversion from 'double' to 'unsigned int', possible loss of data
-c:\users\tushar\source\repos\volume\volume\header\Light.hpp(55): warning C4018: '<': signed/unsigned mismatch
-c:\users\tushar\source\repos\volume\volume\header\Light.hpp(57): warning C4018: '<': signed/unsigned mismatch
-c:\users\tushar\source\repos\volume\volume\header\Light.hpp(59): warning C4018: '<': signed/unsigned mismatch
-c:\users\tushar\source\repos\volume\volume\header\Light.hpp(88): warning C4018: '<': signed/unsigned mismatch
-c:\users\tushar\source\repos\volume\volume\header\Light.hpp(90): warning C4018: '<': signed/unsigned mismatch
-c:\users\tushar\source\repos\volume\volume\header\Light.hpp(92): warning C4018: '<': signed/unsigned mismatch
-c:\users\tushar\source\repos\volume\volume\header\Light.hpp(126): warning C4244: 'initializing': conversion from 'double' to 'unsigned int', possible loss of data
-c:\users\tushar\source\repos\volume\volume\header\Light.hpp(127): warning C4244: 'initializing': conversion from 'double' to 'unsigned int', possible loss of data
-c:\users\tushar\source\repos\volume\volume\header\Light.hpp(128): warning C4244: 'initializing': conversion from 'double' to 'unsigned int', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(119): warning C4244: 'initializing': conversion from 'double' to 'unsigned int', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(120): warning C4244: 'initializing': conversion from 'double' to 'unsigned int', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(121): warning C4244: 'initializing': conversion from 'double' to 'unsigned int', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Light.hpp(27): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\Light.hpp(29): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\Light.hpp(31): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\Light.hpp(60): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\Light.hpp(62): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\Light.hpp(64): warning C4018: '<': signed/unsigned mismatch
+source\RayMarch.cpp(44): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+source\RayMarch.cpp(163): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+  main.cpp
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(55): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(57): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(59): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(74): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(76): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(78): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(119): warning C4244: 'initializing': conversion from 'double' to 'unsigned int', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(120): warning C4244: 'initializing': conversion from 'double' to 'unsigned int', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(121): warning C4244: 'initializing': conversion from 'double' to 'unsigned int', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Light.hpp(27): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\Light.hpp(29): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\Light.hpp(31): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\Light.hpp(60): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\Light.hpp(62): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\Light.hpp(64): warning C4018: '<': signed/unsigned mismatch
   Generating code
-  24 of 670 functions ( 3.6%) were compiled, the rest were copied from previous compilation.
-    4 functions were new in current compilation
-    22 functions had inline decision re-evaluated but remain unchanged
+  49 of 624 functions ( 7.9%) were compiled, the rest were copied from previous compilation.
+    2 functions were new in current compilation
+    55 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   Volume.vcxproj -> C:\Users\TUSHAR\source\repos\Volume\bin\x64\Release\Volume.exe

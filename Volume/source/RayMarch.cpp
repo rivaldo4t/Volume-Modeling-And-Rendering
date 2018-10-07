@@ -138,12 +138,12 @@ void render2(const int img_w, const int img_h, std::shared_ptr<Camera> camera, c
 		eye = lux::Vector(0, 0.2, 2) * cos(k * delta_rot) + lux::Vector(2, 0.2, 0) * sin(k * delta_rot);
 		view = lux::Vector(0, 0.2, 0) - eye;
 		up = lux::Vector(0, 1, 0);
-		eye = lux::Vector(0, 0.0, 2) * cos(k * 30) + lux::Vector(2, 0.0, 0) * sin(k * 30);
-		view = lux::Vector(0, 0.0, 0) - eye;
+		eye = lux::Vector(0, 0, 2) * cos(k * 30) + lux::Vector(2, 0, 0) * sin(k * 30);
+		view = lux::Vector(0, 0, 0) - eye;
 		up = lux::Vector(0, 1, 0);
 		camera->setEyeViewUp(eye, view, up);
 
-		std::cout << "|0%|==|==|==|==|==|==|==|==|==|==|==|100%|\n|0%|";
+		std::cout << "|0%|==|==|==|==|==|==|==|==|==|==|100%|\n|0%|";
 
 #pragma omp parallel for
 		for (int j = 0; j < img_h; ++j)
