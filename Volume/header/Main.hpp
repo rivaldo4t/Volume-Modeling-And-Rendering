@@ -121,7 +121,6 @@ lux::SField loadObjField(std::string fileName, Triangles& triangles)
 					curMesh.Vertices[curMesh.Indices[j + 2]].Position.Y,
 					curMesh.Vertices[curMesh.Indices[j + 2]].Position.Z };
 
-				//triangles.push_back(std::make_shared<Triangle>(p0 * 1.5, p1 * 1.5, p2 * 1.5));
 				triangles.push_back(std::make_shared<Triangle>(p0, p1, p2));
 			}
 		}

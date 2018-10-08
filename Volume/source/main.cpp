@@ -12,36 +12,61 @@ int main()
 	// scalar and color field
 	//auto fields = getHumanoid();
 
-	//render loop
 	//render(img_w, img_h, camera, fields.first, fields.second);
+	
+	/*Grid g2(lux::Vector(-0.8, -0.8, -0.8), 16, 16, 16, 0.1);
+	g2.stamp(getHumanoid().first);
 	
 	Triangles triangles;
 	auto obj = loadObjField("models/cleanbunny.obj", triangles);
-	Grid g(lux::Vector(-0.8, -0.8, -0.8), 320, 320, 320, 0.005);
+	Grid g(lux::Vector(-0.8, -0.8, -0.8), 16, 16, 16, 0.1);
 	g.levelSet(triangles);
-	g.writeGrid("D:/temp/vol/level_cleanbunny_fine.dat");
+	g.writeGrid("D:/temp/vol/level_cleanbunny.dat");*/
 	
-	Light key(lux::Vector(0.0, 3.0, 3.0), lux::Vector(-0.8, -0.8, -0.8), 160, 160, 160, 0.01);
+	/*Light key(lux::Vector(0.0, 3.0, 3.0), lux::Vector(-0.8, -0.8, -0.8), 16, 16, 16, 0.1);
 	key.color = lux::Color(0.8, 0.2, 0.2, 1.0);
 	key.computeDSM(g);
-	key.writeDSM("D:/temp/vol/key_level_cleanbunny_fine.dat");
+	key.writeDSM("D:/temp/vol/key_level_cleanbunny.dat");
 	
-	Light rim(lux::Vector(0.0, 0.0, -3.0), lux::Vector(-0.8, -0.8, -0.8), 160, 160, 160, 0.01);
+	Light rim(lux::Vector(0.0, 0.0, -3.0), lux::Vector(-0.8, -0.8, -0.8), 16, 16, 16, 0.1);
 	rim.color = lux::Color(0.2, 0.8, 0.2, 1.0);
 	rim.computeDSM(g);
-	rim.writeDSM("D:/temp/vol/rim_level_cleanbunny_fine.dat");
+	rim.writeDSM("D:/temp/vol/rim_level_cleanbunny.dat");
 	
-	Light fill(lux::Vector(0.0, -3.0, 0.0), lux::Vector(-0.8, -0.8, -0.8), 160, 160, 160, 0.01);
+	Light fill(lux::Vector(0.0, -3.0, 0.0), lux::Vector(-0.8, -0.8, -0.8), 16, 16, 16, 0.1);
 	fill.color = lux::Color(0.2, 0.2, 0.8, 1.0);
 	fill.computeDSM(g);
-	fill.writeDSM("D:/temp/vol/fill_level_cleanbunny_fine.dat");
+	fill.writeDSM("D:/temp/vol/fill_level_cleanbunny.dat");*/
+
+	/*Grid g;
+	g.readGrid("D:/temp/vol/level_cleanbunny_fine.dat");
+	Light key;
+	key.readDSM("D:/temp/vol/key_level_cleanbunny_fine.dat");
+	Light rim;
+	rim.readDSM("D:/temp/vol/rim_level_cleanbunny_fine.dat");
+	Light fill;
+	fill.readDSM("D:/temp/vol/fill_level_cleanbunny_fine.dat");*/
 	
-	/*std::vector<std::shared_ptr<Light>> lights;
-	lights.emplace_back(std::make_shared<Light>(key));
+	std::vector<std::shared_ptr<Light>> lights;
+	/*lights.emplace_back(std::make_shared<Light>(key));
 	lights.emplace_back(std::make_shared<Light>(rim));
-	lights.emplace_back(std::make_shared<Light>(fill));
+	lights.emplace_back(std::make_shared<Light>(fill));*/
 	
-	render2(img_w, img_h, camera, g, lights);*/
+	//std::shared_ptr<Grid> g1 = std::make_shared<Grid>(lux::Vector(-0.8, -0.8, -0.8), 16, 16, 16, 0.1);
+	std::shared_ptr<Grid> g1 = std::make_shared<Grid>(lux::Vector(-3, -3, -3), 60, 60, 60, 0.1);
+	g1->stamp(getHumanoid().first);
+
+	/*std::shared_ptr<Grid> g2 = std::make_shared<Grid>(lux::Vector(-0.8, -0.8, -0.8), 16, 16, 16, 0.1);
+	Triangles triangles;
+	auto obj = loadObjField("models/cleanbunny.obj", triangles);
+	g2->levelSet(triangles);
+
+	std::shared_ptr<Grid> g3 = std::make_shared<GridUnion>(g1, g2);
+
+	std::shared_ptr<Grid> g4 = std::make_shared<GridScale>(g1, 0.1);
+	std::shared_ptr<Grid> g5 = std::make_shared<GridTranslate>(g1, lux::Vector(2, 0, 0));*/
+
+	render2(img_w, img_h, camera, g1, lights);
 
 	int t;
 	std::cin >> t;

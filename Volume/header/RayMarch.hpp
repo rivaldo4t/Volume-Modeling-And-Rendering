@@ -14,8 +14,8 @@ lux::Color marchRays(lux::Vector pos, lux::Vector dir, const lux::SField& field,
 
 double marchRaysDSM(lux::Vector pos, lux::Vector lightPos, const lux::SField& density);
 
-void render2(const int img_w, const int img_h, std::shared_ptr<Camera> camera, const Grid& g, const std::vector<std::shared_ptr<Light>>& lights);
+void render2(const int img_w, const int img_h, std::shared_ptr<Camera> camera, const std::shared_ptr<Grid>& g, const std::vector<std::shared_ptr<Light>>& lights);
 
-lux::Color marchRays2(lux::Vector pos, lux::Vector dir, const Grid& g, const std::vector<std::shared_ptr<Light>>& lights);
+lux::Color marchRays2(lux::Vector pos, lux::Vector dir, const std::shared_ptr<Grid>& g, const std::vector<std::shared_ptr<Light>>& lights);
 
-double marchRaysDSM2(lux::Vector pos, lux::Vector lightPos, const Grid& g);
+double marchRaysDSM2(lux::Vector pos, lux::Vector lightPos, const std::shared_ptr<Grid>& g);

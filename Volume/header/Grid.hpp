@@ -36,7 +36,8 @@ public:
 		
 		unsigned int index = i + (Nx * j) + (Nx * Ny * k);
 		if (index > gridData.size())
-			throw std::runtime_error("grid index out of range");
+			//throw std::runtime_error("grid index out of range");
+			return std::numeric_limits<int>::max();
 		return index;
 	}
 
@@ -106,7 +107,7 @@ public:
 		}
 	}
 
-	double eval(lux::Vector p) const
+	virtual double eval(lux::Vector p) const
 	{
 		if (!withinGrid(p))
 			return defaultVal;
@@ -188,8 +189,62 @@ class GridUnion : public Grid
 {
 	std::shared_ptr<Grid> f, g;
 public:
-	double eval(lux::Vector p)
+	GridUnion(std::shared_ptr<Grid> _f, std::shared_ptr<Grid> _g) : f(_f), g(_g) 
+	{	
+		Nx = std::max(f->Nx, g->Nx);
+		Ny = std::max(f->Ny, g->Ny);
+		Nz = std::max(f->Nz, g->Nz);
+		delta_grid = std::max(f->delta_grid, g->delta_grid); //or min?
+		
+		lux::Vector origin(0, 0, 0);
+		llc = (f->llc - origin).magnitude() > (g->llc - origin).magnitude() ? f->llc : g->llc;
+		urc = { llc.X() + (Nx - 1) * delta_grid,
+			llc.Y() + (Ny - 1) * delta_grid,
+			llc.Z() + (Nz - 1) * delta_grid };
+
+		gridData.clear();
+		gridData.resize(Nx * Ny * Nz, 0);
+
+#pragma omp parallel for
+		for (int i = 0; i < Nx; ++i)
+		{
+			for (int j = 0; j < Ny; ++j)
+			{
+				for (int k = 0; k < Nz; ++k)
+				{
+					int index = f->getIndex(i, j, k);
+					double f_data = index == std::numeric_limits<int>::max() ? f->defaultVal : f->gridData[index];
+					
+					index = g->getIndex(i, j, k);
+					double g_data = index == std::numeric_limits<int>::max() ? g->defaultVal : g->gridData[index];
+
+					gridData[index] = std::max(f_data, g_data);
+				}
+			}
+		}
+	}
+};
+
+class GridScale : public Grid
+{
+	std::shared_ptr<Grid> f;
+	double s;
+public:
+	GridScale(std::shared_ptr<Grid> _f, double _s) : f(_f), s(_s) {}
+	double eval(lux::Vector p) const
 	{
-		return std::max(f->eval(p), g->eval(p));
+		return f->eval(p / s);
+	}
+};
+
+class GridTranslate : public Grid
+{
+	std::shared_ptr<Grid> f;
+	lux::Vector x;
+public:
+	GridTranslate(std::shared_ptr<Grid> _f, lux::Vector _x) : f(_f), x(_x) {}
+	double eval(lux::Vector p) const
+	{
+		return f->eval(p - x);
 	}
 };

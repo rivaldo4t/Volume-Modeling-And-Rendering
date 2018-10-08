@@ -119,15 +119,15 @@ double marchRaysDSM(lux::Vector pos, lux::Vector lightPos, const lux::SField& de
 	return exp(-kappa * dsm);
 }
 
-void render2(const int img_w, const int img_h, std::shared_ptr<Camera> camera, const Grid& g, const std::vector<std::shared_ptr<Light>>& lights)
+void render2(const int img_w, const int img_h, std::shared_ptr<Camera> camera, const std::shared_ptr<Grid>& g, const std::vector<std::shared_ptr<Light>>& lights)
 {
-	const int num_frames = 120 / 120;
+	const int num_frames = 120 / 1;
 	const double delta_rot = 360 / num_frames * M_PI / 180.0;
 	std::chrono::time_point<std::chrono::system_clock> start, end;
 	std::vector<IMF::Rgba> exr;
 	lux::Vector eye, view, up;
 
-	std::cout << "\t\t    ...\n\t         Keep Calm\n\t\t    and\n\t    Let The Rays March\n\t\t    ...\n\n";
+	std::cout << "\t\t  ...\n\t       Keep Calm\n\t\t  and\n\t  Let The Rays March\n\t\t  ...\n\n";
 
 	for (int k = 0; k <= num_frames; k++)
 	{
@@ -138,7 +138,7 @@ void render2(const int img_w, const int img_h, std::shared_ptr<Camera> camera, c
 		eye = lux::Vector(0, 0.2, 2) * cos(k * delta_rot) + lux::Vector(2, 0.2, 0) * sin(k * delta_rot);
 		view = lux::Vector(0, 0.2, 0) - eye;
 		up = lux::Vector(0, 1, 0);
-		eye = lux::Vector(0, 0, 2) * cos(k * 30) + lux::Vector(2, 0, 0) * sin(k * 30);
+		eye = lux::Vector(0, 0, 3) * cos(k * delta_rot) + lux::Vector(3, 0, 0) * sin(k * delta_rot);
 		view = lux::Vector(0, 0, 0) - eye;
 		up = lux::Vector(0, 1, 0);
 		camera->setEyeViewUp(eye, view, up);
@@ -178,13 +178,13 @@ void render2(const int img_w, const int img_h, std::shared_ptr<Camera> camera, c
 	}
 }
 
-lux::Color marchRays2(lux::Vector pos, lux::Vector dir, const Grid& g, const std::vector<std::shared_ptr<Light>>& lights)
+lux::Color marchRays2(lux::Vector pos, lux::Vector dir, const std::shared_ptr<Grid>& g, const std::vector<std::shared_ptr<Light>>& lights)
 {
 	// should alpha be initialized to 1?
-	lux::Color L(0.0, 0.0, 0.0, 1.0);
+	lux::Color L(0.0, 0.0, 0.0, 0.0);
 	lux::Color white(0.8, 0.8, 0.8, 1.0);
 
-	double sNear = 0.2, sFar = 10.0;
+	double sNear = 0.2, sFar = 8.0;
 	double T = 1;
 	double delta_s = 0.01;
 	double delta_T;
@@ -196,13 +196,13 @@ lux::Color marchRays2(lux::Vector pos, lux::Vector dir, const Grid& g, const std
 	while (s <= sFar)
 	{
 		X += delta_s * dir;
-		double d = g.eval(X);
-		lux::Color c(0.0, 0.0, 0.0, 1.0);
+		double d = g->eval(X);
+		lux::Color c(0.0, 0.0, 0.0, 0.0);
 		
 		//fieldColor = white;
 		for (auto l : lights)
 			c += white * l->color * exp(-kappa * l->eval(X));
-		//c = white;
+		c = white;
 
 		if (d > 0)
 		{
@@ -216,7 +216,7 @@ lux::Color marchRays2(lux::Vector pos, lux::Vector dir, const Grid& g, const std
 	return L;
 }
 
-double marchRaysDSM2(lux::Vector pos, lux::Vector lightPos, const Grid& g)
+double marchRaysDSM2(lux::Vector pos, lux::Vector lightPos, const std::shared_ptr<Grid>& g)
 {
 	lux::Vector nL = lightPos - pos;
 	double sFar = nL.magnitude(), sNear = 0, s = 0;
@@ -226,12 +226,12 @@ double marchRaysDSM2(lux::Vector pos, lux::Vector lightPos, const Grid& g)
 	double dsm = 0.0;
 	double kappa = 10;
 
-	if (g.eval(X) > 0)
+	if (g->eval(X) > 0)
 	{
 		while (s <= sFar)
 		{
 			X += delta_s * nL;
-			double d = g.eval(X);
+			double d = g->eval(X);
 			if (d > 0)
 				dsm += d * delta_s;
 			s += delta_s;

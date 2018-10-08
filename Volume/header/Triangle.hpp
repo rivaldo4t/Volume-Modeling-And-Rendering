@@ -100,12 +100,16 @@ public:
 
 		if (d0 < prevDist || d1 < prevDist || d2 < prevDist)
 		{
-			double d = std::min(d0, std::min(d1, d2));
-			if (d == d0)
-				p = p0;
-			else if (d == d1)
+			if (d0 < d1)
+			{
+				if (d0 < d2)
+					p = p0;
+				else
+					p = p2;
+			}
+			else if (d1 < d2)
 				p = p1;
-			else if (d == d2)
+			else
 				p = p2;
 		}
 	}
