@@ -197,11 +197,10 @@ lux::Color marchRays2(lux::Vector pos, lux::Vector dir, const std::shared_ptr<Gr
 	{
 		X += delta_s * dir;
 		double d = g->eval(X);
-		lux::Color c(0.0, 0.0, 0.0, 0.0);
 		
-		//fieldColor = white;
+		lux::Color c(0.0, 0.0, 0.0, 0.0);
 		for (auto l : lights)
-			c += white * l->color * exp(-kappa * l->eval(X));
+			c += white * l->getColor() * exp(-kappa * l->eval(X));
 		c = c.isZero() ? white : c;
 
 		if (d > 0)

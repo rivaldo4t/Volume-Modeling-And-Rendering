@@ -10,14 +10,16 @@
 
 class Light : public Grid
 {
-public:
+private:
 	lux::Vector pos;
 	lux::Color color;
 	double delta_s;
-
+public:
 	Light() {}
 	Light(lux::Vector p, lux::Vector l, int nx, unsigned int ny, unsigned int nz, double d, double ds = 0.01, lux::Color c = lux::Color(0.8, 0.8, 0.8, 1.0))
 		: Grid(l, nx, ny, nz, d), pos(p), delta_s(ds), color(c) {}
+	
+	lux::Color getColor() const { return color; }
 
 	void computeDSM(lux::SField density)
 	{
@@ -139,4 +141,5 @@ public:
 		ifs.close();
 		std::cout << "file read: " << fileName << std::endl;
 	}
+
 };

@@ -10,14 +10,13 @@
 
 class Grid
 {
-// private:
-public:
+ protected:
 	unsigned int Nx, Ny, Nz;
 	double delta_grid = 0.01;
 	double defaultVal = 0.0;
 	lux::Vector llc, urc;
 	std::vector<double> gridData;
-// public:
+ public:
 	Grid() { Nx = 0; Ny = 0; Nz = 0; }
 	Grid(lux::Vector o, unsigned int x, unsigned int y, unsigned int z, double delta, std::vector<double>& data = std::vector<double>())
 		: llc(o), Nx(x), Ny(y), Nz(z), delta_grid(delta)
@@ -36,8 +35,8 @@ public:
 		
 		unsigned int index = i + (Nx * j) + (Nx * Ny * k);
 		if (index >= gridData.size())
-			//throw std::runtime_error("grid index out of range");
-			return std::numeric_limits<int>::max();
+			throw std::runtime_error("grid index out of range");
+			//return std::numeric_limits<int>::max();
 		return index;
 	}
 
