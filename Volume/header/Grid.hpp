@@ -15,10 +15,10 @@ class Grid
 	double delta_grid = 0.01;
 	double defaultVal = 0.0;
 	lux::Vector llc, urc;
-	std::vector<double> gridData;
+	std::vector<float> gridData;
  public:
 	Grid() { Nx = 0; Ny = 0; Nz = 0; }
-	Grid(lux::Vector o, unsigned int x, unsigned int y, unsigned int z, double delta, std::vector<double>& data = std::vector<double>())
+	Grid(lux::Vector o, unsigned int x, unsigned int y, unsigned int z, double delta, std::vector<float>& data = std::vector<float>())
 		: llc(o), Nx(x), Ny(y), Nz(z), delta_grid(delta)
 	{ 
 		gridData = std::move(data); 
@@ -104,6 +104,8 @@ class Grid
 				}
 			}
 		}
+
+		std::cout << "Levelset generated\n";
 	}
 
 	virtual double eval(lux::Vector p) const

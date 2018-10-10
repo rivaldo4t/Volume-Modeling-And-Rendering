@@ -20,6 +20,7 @@ public:
 		: Grid(l, nx, ny, nz, d), pos(p), delta_s(ds), color(c) {}
 	
 	lux::Color getColor() const { return color; }
+	void setColor(lux::Color c) { color = c; }
 
 	void computeDSM(lux::SField density)
 	{
@@ -54,7 +55,7 @@ public:
 		}
 	}
 
-	void computeDSM(const Grid& g)
+	void computeDSM(const std::shared_ptr<Grid>& g)
 	{
 		gridData.resize(Nx * Ny * Nz, 0);
 
@@ -71,20 +72,23 @@ public:
 					nL.normalize();
 					lux::Vector X = marchStartPos + sNear * nL;
 
-					if (g.eval(X) > 0)
+					if (g->eval(X) > 0)
 					{
+						int index = getIndex(i, j, k);
 						while (s <= sFar)
 						{
 							X += delta_s * nL;
-							double d = g.eval(X);
+							double d = g->eval(X);
 							if (d > 0)
-								gridData[getIndex(i, j, k)] += d * delta_s;
+								gridData[index] += d * delta_s;
 							s += delta_s;
 						}
 					}
 				}
 			}
 		}
+
+		std::cout << "Deep Shadow Map computed\n";
 	}
 
 	void writeDSM(std::string fileName)
@@ -141,5 +145,4 @@ public:
 		ifs.close();
 		std::cout << "file read: " << fileName << std::endl;
 	}
-
 };

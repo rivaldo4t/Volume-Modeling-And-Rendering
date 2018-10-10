@@ -135,9 +135,6 @@ void render2(const int img_w, const int img_h, std::shared_ptr<Camera> camera, c
 		exr.clear();
 		exr.resize(img_h * img_w);
 		
-		eye = lux::Vector(0, 0.2, 2) * cos(k * delta_rot) + lux::Vector(2, 0.2, 0) * sin(k * delta_rot);
-		view = lux::Vector(0, 0.2, 0) - eye;
-		up = lux::Vector(0, 1, 0);
 		eye = lux::Vector(0, 0, 2) * cos(k * delta_rot) + lux::Vector(2, 0, 0) * sin(k * delta_rot);
 		view = lux::Vector(0, 0, 0) - eye;
 		up = lux::Vector(0, 1, 0);
@@ -176,19 +173,20 @@ void render2(const int img_w, const int img_h, std::shared_ptr<Camera> camera, c
 		std::chrono::duration<double> elapsed_seconds = end - start;
 		std::cout << "Elapsed time: " << elapsed_seconds.count() << "s\n\t\t    ...\n\n";
 	}
+
+	std::cout << "Exit Render Loop\n";
 }
 
 lux::Color marchRays2(lux::Vector pos, lux::Vector dir, const std::shared_ptr<Grid>& g, const std::vector<std::shared_ptr<Light>>& lights)
 {
-	// should alpha be initialized to 1?
 	lux::Color L(0.0, 0.0, 0.0, 0.0);
-	lux::Color white(0.8, 0.8, 0.8, 1.0);
+	lux::Color white(0.4, 0.4, 0.4, 0.4);
 
 	double sNear = 0.2, sFar = 4.0;
 	double T = 1;
 	double delta_s = 0.01;
 	double delta_T;
-	double kappa = 10;
+	double kappa = 400;
 	double s = sNear;
 
 	lux::Vector X = pos + sNear * dir;
@@ -201,7 +199,7 @@ lux::Color marchRays2(lux::Vector pos, lux::Vector dir, const std::shared_ptr<Gr
 		lux::Color c(0.0, 0.0, 0.0, 0.0);
 		for (auto l : lights)
 			c += white * l->getColor() * exp(-kappa * l->eval(X));
-		c = c.isZero() ? white : c;
+		//c = white;
 
 		if (d > 0)
 		{
