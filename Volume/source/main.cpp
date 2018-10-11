@@ -10,28 +10,31 @@ int main()
 	//auto fields = getHumanoid();
 	//render(img_w, img_h, camera, fields.first, fields.second);
 
-	/*std::shared_ptr<Grid> g = std::make_shared<Grid>(lux::Vector(-0.8, -0.8, -0.8), 320, 320, 320, 0.005);
+	/*std::shared_ptr<Grid> g = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 20, 20, 20, 0.1);
 	Triangles triangles;
-	auto obj = loadObjField("models/cleanbunny.obj", triangles);
-	g->levelSet(triangles);
-	g->writeGrid("D:/temp/vol/level_cleanbunny.dat");
+	auto obj = loadObjField("models/teapot.obj", triangles);
+	g->levelSet(triangles);*/
+	//g->writeGrid("D:/temp/vol/level_cleanbunny.dat");
 
-	std::shared_ptr<Light> key = std::make_shared<Light>(lux::Vector(-2.0, 1.0, 0.5), lux::Vector(-0.8, -0.8, -0.8), 320, 320, 320, 0.005);
-	key->setColor(lux::Color(0.6, 0.2, 0.4, 0.8));
-	key->computeDSM(g);
-	key->writeDSM("D:/temp/vol/key_level_cleanbunny.dat");
+	//std::shared_ptr<Light> key = std::make_shared<Light>(lux::Vector(-2.0, 1.0, 0.5), lux::Vector(-1, -1, -1), 20, 20, 20, 0.1);
+	//key->setColor(lux::Color(0.6, 0.2, 0.4, 0.8));
+	//key->computeDSM(g);
+	////key->writeDSM("D:/temp/vol/key_level_cleanbunny.dat");
 
-	std::shared_ptr<Light> rim = std::make_shared<Light>(lux::Vector(0.5, 0.1, -3.0), lux::Vector(-0.8, -0.8, -0.8), 320, 320, 320, 0.005);
-	rim->setColor(lux::Color(0.2, 0.4, 0.6, 0.2));
-	rim->computeDSM(g);
-	rim->writeDSM("D:/temp/vol/rim_level_cleanbunny.dat");
+	//std::shared_ptr<Light> rim = std::make_shared<Light>(lux::Vector(0.5, 0.1, -3.0), lux::Vector(-1, -1, -1), 20, 20, 20, 0.1);
+	//rim->setColor(lux::Color(0.2, 0.4, 0.6, 0.2));
+	//rim->computeDSM(g);
+	////rim->writeDSM("D:/temp/vol/rim_level_cleanbunny.dat");
 
-	std::shared_ptr<Light> fill = std::make_shared<Light>(lux::Vector(0.0, -2.0, 0.0), lux::Vector(-0.8, -0.8, -0.8), 320, 320, 320, 0.005);
-	fill->setColor(lux::Color(0.2, 0.2, 0.2, 0.2));
-	fill->computeDSM(g);
-	fill->writeDSM("D:/temp/vol/fill_level_cleanbunny.dat");*/
+	//std::shared_ptr<Light> fill = std::make_shared<Light>(lux::Vector(0.0, -2.0, 0.0), lux::Vector(-1, -1, -1), 20, 20, 20, 0.1);
+	//fill->setColor(lux::Color(0.2, 0.2, 0.2, 0.2));
+	//fill->computeDSM(g);
+	//fill->writeDSM("D:/temp/vol/fill_level_cleanbunny.dat");
 
-	Grid g;
+	//std::vector<std::shared_ptr<Light>> lights;// = { key, rim, fill };
+	//render2(img_w, img_h, camera, g, lights);
+
+	/*Grid g;
 	g.readGrid("D:/temp/vol/level_cleanbunny.dat");
 	std::shared_ptr<Grid> g1 = std::make_shared<Grid>(g);
 
@@ -48,7 +51,7 @@ int main()
 	std::shared_ptr<Light> fill = std::make_shared<Light>(l3);
 
 	std::vector<std::shared_ptr<Light>> lights = {key, rim, fill};
-	render2(img_w, img_h, camera, g1, lights);
+	render2(img_w, img_h, camera, g1, lights);*/
 
 	int t;
 	std::cin >> t;

@@ -92,6 +92,9 @@
     <ClInclude Include="header\Grid.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="header\tiny_obj_loader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

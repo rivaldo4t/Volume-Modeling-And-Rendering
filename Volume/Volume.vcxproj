@@ -40,6 +40,7 @@
     <ClInclude Include="header\Noise.hpp" />
     <ClInclude Include="header\OBJ_Loader.h" />
     <ClInclude Include="header\PerlinNoise.hpp" />
+    <ClInclude Include="header\tiny_obj_loader.h" />
     <ClInclude Include="header\Triangle.hpp" />
     <ClInclude Include="header\Vector.hpp" />
     <ClInclude Include="header\VectorField.hpp" />
