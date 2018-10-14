@@ -8,9 +8,12 @@ private:
 	lux::Vector p;
 	float pScale;
 	float fade;
-	FSPN fspn; // params
+	FSPN fspn;
 public:
-	StampedNoise(lux::Vector _p, float pScale) : Grid() {} // p+- pscale, pscale, pscale, fill grid params
+	StampedNoise() : Grid () {}
+	StampedNoise(lux::Vector _p, float pS, float f, FSPN& fractalNoise ,lux::Vector l, int nx, unsigned int ny, unsigned int nz, double d) : 
+		Grid(l, nx, ny, nz, d), p(_p), pScale(pS), fade(f), fspn(fractalNoise) { fspn = FSPN(); }
+
 	void computeNoise()
 	{
 		gridData.resize(Nx * Ny * Nz, 0);
@@ -24,13 +27,14 @@ public:
 				{
 					lux::Vector xijk = llc + lux::Vector(double(i) * delta_grid, double(j) * delta_grid, double(k) * delta_grid);
 					lux::Vector vec = xijk - p;
-					if (vec.magnitude() <= pScale)
+					float dist = vec.magnitude();
+					if (dist <= pScale)
 					{
-						float fadeFact = vec.magnitude() / pScale;
+						float fadeFact = dist / pScale;
 						fadeFact = 1 - fadeFact;
 						fadeFact = pow(fadeFact, fade);
 						
-						float noiseVal = fspn.eval(xijk);
+						float noiseVal = fspn.eval(xijk.unitvector()); //xijk or unit vector? pn gives zero if not unit vec
 						noiseVal *= fadeFact;
 
 						int index = getIndex(i, j, k);

@@ -10,6 +10,7 @@
 #include "Light.hpp"
 #include "Triangle.hpp"
 #include "Grid.hpp"
+#include "StampedNoise.hpp"
 
 #include "OBJ_Loader.h"
 #define TINYOBJLOADER_IMPLEMENTATION

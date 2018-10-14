@@ -171,6 +171,7 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, co
 				lux::Vector n_ij = (q_ij + camera->view()).unitvector();
 
 				lux::Color L = marchRays(camera->eye(), n_ij, g, lights);
+				//lux::Color L = marchRays(camera->eye(), n_ij, g1, lights1);
 				exr[(img_h - 1 - j) * img_w + i] = IMF::Rgba(half(L[0]), half(L[1]), half(L[2]), half(L[3]));
 			}
 		}

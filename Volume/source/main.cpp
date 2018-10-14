@@ -7,18 +7,12 @@ int main()
 	const int img_w = 960 / 1;
 	const int img_h = 540 / 1;
 	
-	lux::SField sphere = std::make_shared<lux::SFSphere>(lux::Vector(0.0, 0.0, 0.0), 0.5);
-	std::shared_ptr<Grid> g = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 20, 20, 20, 0.1);
-	//g->stampWithDisplacement(sphere);
+	FSPN f;
+	std::shared_ptr<StampedNoise> g1 = std::make_shared<StampedNoise>(lux::Vector(0.0, 0.0, 0.0), 0.8, 1, f,
+		lux::Vector(-1, -1, -1), 200, 200, 200, 0.01);
+	//g1->computeNoise();
 
-	/*std::shared_ptr<Light> key = std::make_shared<Light>(lux::Vector(-2.0, 1.0, 0.5), lux::Vector(-1, -1, -1), 20, 20, 20, 0.1);
-	key->setColor(lux::Color(0.6, 0.2, 0.4, 0.8));
-	key->computeDSM(g);
-
-	std::shared_ptr<Light> rim = std::make_shared<Light>(lux::Vector(0.5, 0.1, -3.0), lux::Vector(-1, -1, -1), 20, 20, 20, 0.1);
-	rim->setColor(lux::Color(0.2, 0.4, 0.6, 0.2));
-	rim->computeDSM(g);*/
-
+	std::shared_ptr<Grid> g = g1;
 	std::vector<std::shared_ptr<Light>> lights;// = { key, rim };
 	render(img_w, img_h, camera, g, lights);
 

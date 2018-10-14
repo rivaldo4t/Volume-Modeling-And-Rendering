@@ -98,9 +98,6 @@
     <ClInclude Include="header\FractalSummedPerlinNoise.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\PyroclasticSphere.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="header\StampedNoise.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>

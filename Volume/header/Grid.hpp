@@ -37,7 +37,8 @@ class Grid
 	std::vector<float> gridData;
  public:
 	Grid() { Nx = 0; Ny = 0; Nz = 0; }
-	Grid(lux::Vector o, unsigned int x, unsigned int y, unsigned int z, double delta, std::vector<float>& data = std::vector<float>())
+	Grid(lux::Vector o, unsigned int x, unsigned int y, unsigned int z, double delta, 
+		std::vector<float>& data = std::vector<float>())
 		: llc(o), Nx(x), Ny(y), Nz(z), delta_grid(delta)
 	{ 
 		gridData = std::move(data); 
@@ -114,7 +115,7 @@ class Grid
 
 		FSPN fspn = FSPN(oct[_oct], freq[_freq], fjump[_fjump], rough[_rough]);
 		float gamma = gam[_gam];
-		float scalingFact = 1;
+		float scalingFact = 0.6;
 
 		_rough++;
 		if (_rough == rough.size())

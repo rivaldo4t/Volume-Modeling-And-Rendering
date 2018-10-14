@@ -14,7 +14,7 @@ public:
 	FSPN()
 	{ 
 		PN = lux::PerlinNoise();
-		octaves = 1;
+		octaves = 2;
 		freq = 10;
 		fJump = 2;
 		roughness = 2;
