@@ -119,9 +119,9 @@ double marchRaysDSM(lux::Vector pos, lux::Vector lightPos, const lux::SField& de
 	return exp(-kappa * dsm);
 }
 
-void render2(const int img_w, const int img_h, std::shared_ptr<Camera> camera, const std::shared_ptr<Grid>& g, const std::vector<std::shared_ptr<Light>>& lights)
+void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, const std::shared_ptr<Grid>& g1, const std::vector<std::shared_ptr<Light>>& lights1)
 {
-	const int num_frames = 120 / 1;
+	const int num_frames = 500 / 1;
 	const double delta_rot = 360 / num_frames * M_PI / 180.0;
 	std::chrono::time_point<std::chrono::system_clock> start, end;
 	std::vector<IMF::Rgba> exr;
@@ -129,16 +129,30 @@ void render2(const int img_w, const int img_h, std::shared_ptr<Camera> camera, c
 
 	std::cout << "\t\t  ...\n\t       Keep Calm\n\t\t  and\n\t  Let The Rays March\n\t\t  ...\n\n";
 
+	lux::SField sphere = std::make_shared<lux::SFSphere>(lux::Vector(0.0, 0.0, 0.0), 0.5);
+	std::shared_ptr<Grid> g = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
+	std::shared_ptr<Light> key = std::make_shared<Light>(lux::Vector(-2.0, 1.0, 0.5), lux::Vector(-1, -1, -1), 200, 200, 200, 0.01);
+	key->setColor(lux::Color(0.6, 0.2, 0.4, 0.8));
+	std::shared_ptr<Light> rim = std::make_shared<Light>(lux::Vector(0.5, 0.1, -3.0), lux::Vector(-1, -1, -1), 200, 200, 200, 0.01);
+	rim->setColor(lux::Color(0.2, 0.4, 0.6, 0.2));
+
 	for (int k = 0; k <= num_frames; k++)
 	{
 		start = std::chrono::system_clock::now();
+
+		g->stampWithDisplacement(sphere);
+		key->computeDSM(g);
+		rim->computeDSM(g);
+		std::vector<std::shared_ptr<Light>> lights = { key, rim };
+		
 		exr.clear();
 		exr.resize(img_h * img_w);
 		
-		eye = lux::Vector(0, 0, 3) * cos(k * delta_rot) + lux::Vector(3, 0, 0) * sin(k * delta_rot);
-		view = lux::Vector(0, 0, 0) - eye;
-		up = lux::Vector(0, 1, 0);
-		camera->setEyeViewUp(eye, view, up);
+		//round table camera movement
+		//eye = lux::Vector(0, 0, 2) * cos(k * delta_rot) + lux::Vector(2, 0, 0) * sin(k * delta_rot);
+		//view = lux::Vector(0, 0, 0) - eye;
+		//up = lux::Vector(0, 1, 0);
+		//camera->setEyeViewUp(eye, view, up);
 
 		std::cout << "|0%|==|==|==|==|==|==|==|==|==|==|100%|\n|0%|";
 
@@ -156,14 +170,14 @@ void render2(const int img_w, const int img_h, std::shared_ptr<Camera> camera, c
 				lux::Vector q_ij = (u * camera->right()) + (v * camera->up());
 				lux::Vector n_ij = (q_ij + camera->view()).unitvector();
 
-				lux::Color L = marchRays2(camera->eye(), n_ij, g, lights);
+				lux::Color L = marchRays(camera->eye(), n_ij, g, lights);
 				exr[(img_h - 1 - j) * img_w + i] = IMF::Rgba(half(L[0]), half(L[1]), half(L[2]), half(L[3]));
 			}
 		}
 
 		std::cout << "100%|\n";
 
-		std::string fileName = "output/Render_1/frame_" + std::to_string(k + 1) + ".exr";
+		std::string fileName = "output/Render_2/frame_" + std::to_string(k + 1) + ".exr";
 		IMF::RgbaOutputFile file(fileName.c_str(), img_w, img_h, IMF::WRITE_RGBA);
 		file.setFrameBuffer(const_cast<IMF::Rgba*>(exr.data()), 1, img_w);
 		file.writePixels(img_h);
@@ -177,7 +191,7 @@ void render2(const int img_w, const int img_h, std::shared_ptr<Camera> camera, c
 	std::cout << "Exit Render Loop\n";
 }
 
-lux::Color marchRays2(lux::Vector pos, lux::Vector dir, const std::shared_ptr<Grid>& g, const std::vector<std::shared_ptr<Light>>& lights)
+lux::Color marchRays(lux::Vector pos, lux::Vector dir, const std::shared_ptr<Grid>& g, const std::vector<std::shared_ptr<Light>>& lights)
 {
 	lux::Color L(0.0, 0.0, 0.0, 0.0);
 	lux::Color white(0.4, 0.4, 0.4, 0.4);
@@ -186,7 +200,7 @@ lux::Color marchRays2(lux::Vector pos, lux::Vector dir, const std::shared_ptr<Gr
 	double T = 1;
 	double delta_s = 0.01;
 	double delta_T;
-	double kappa = 400;
+	double kappa = 50;
 	double s = sNear;
 
 	lux::Vector X = pos + sNear * dir;
@@ -199,7 +213,7 @@ lux::Color marchRays2(lux::Vector pos, lux::Vector dir, const std::shared_ptr<Gr
 		lux::Color c(0.0, 0.0, 0.0, 0.0);
 		for (auto l : lights)
 			c += white * l->getColor() * exp(-kappa * l->eval(X));
-		c = white;
+		//c = white;
 
 		if (d > 0)
 		{
@@ -211,28 +225,4 @@ lux::Color marchRays2(lux::Vector pos, lux::Vector dir, const std::shared_ptr<Gr
 	}
 
 	return L;
-}
-
-double marchRaysDSM2(lux::Vector pos, lux::Vector lightPos, const std::shared_ptr<Grid>& g)
-{
-	lux::Vector nL = lightPos - pos;
-	double sFar = nL.magnitude(), sNear = 0, s = 0;
-	nL.normalize();
-	lux::Vector X = pos + sNear * nL;
-	double delta_s = 0.01;
-	double dsm = 0.0;
-	double kappa = 10;
-
-	if (g->eval(X) > 0)
-	{
-		while (s <= sFar)
-		{
-			X += delta_s * nL;
-			double d = g->eval(X);
-			if (d > 0)
-				dsm += d * delta_s;
-			s += delta_s;
-		}
-	}
-	return exp(-kappa * dsm);
 }

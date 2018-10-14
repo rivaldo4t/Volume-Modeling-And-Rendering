@@ -7,6 +7,25 @@
 #include <memory>
 #include "ScalarField.hpp"
 #include "Triangle.hpp"
+#include "FractalSummedPerlinNoise.hpp"
+
+//
+#include <random>
+#include <iterator>
+template<typename Iter, typename RandomGenerator>
+Iter select_randomly(Iter start, Iter end, RandomGenerator& g) {
+	std::uniform_int_distribution<> dis(0, std::distance(start, end) - 1);
+	std::advance(start, dis(g));
+	return start;
+}
+
+template<typename Iter>
+Iter select_randomly(Iter start, Iter end) {
+	static std::random_device rd;
+	static std::mt19937 gen(rd());
+	return select_randomly(start, end, gen);
+}
+//
 
 class Grid
 {
@@ -63,6 +82,71 @@ class Grid
 				}
 			}
 		}
+
+		std::cout << "Field stamped\n";
+	}
+
+	void stampWithDisplacement(lux::SField s)
+	{
+		gridData.resize(Nx * Ny * Nz, 0);
+		
+		static int _oct, _gam, _freq, _fjump, _rough;
+		std::vector<double> oct = { 1, 1.6, 2, 2.4, 3, 4 };
+		std::vector<double> gam = { 0.33, 1, 1.6, 2 };
+		std::vector<double> freq = { 1, 5, 10 };
+		std::vector<double> fjump = { 1.2, 2 };
+		std::vector<double> rough = { 0.1, 0.4, 1.0, 1.6 };
+		
+		/*FSPN fspn(	float(*select_randomly(oct.begin(), oct.end())),
+					float(*select_randomly(freq.begin(), freq.end())),
+					float(*select_randomly(fjump.begin(), fjump.end())),
+					float(*select_randomly(rough.begin(), rough.end()))		);
+		float gamma = *select_randomly(gam.begin(), gam.end());
+		float scalingFact = 0.6;*/
+
+		std::cout << "----------\n";
+		std::cout << "octaves: " << oct[_oct] << std::endl;
+		std::cout << "gamma: " << gam[_gam] << std::endl;
+		std::cout << "freq: " << freq[_freq] << std::endl;
+		std::cout << "fjump: " << fjump[_fjump] << std::endl;
+		std::cout << "roughness: " << rough[_rough] << std::endl;
+		std::cout << "----------\n";
+
+		FSPN fspn = FSPN(oct[_oct], freq[_freq], fjump[_fjump], rough[_rough]);
+		float gamma = gam[_gam];
+		float scalingFact = 1;
+
+		_rough++;
+		if (_rough == rough.size())
+			_fjump++;
+		if (_fjump == fjump.size())
+			_freq++;
+		if (_freq == freq.size())
+			_gam++;
+		if (_gam == gam.size())
+			_oct++;
+
+		_rough = _rough % rough.size();
+		_fjump = _fjump % fjump.size();
+		_freq = _freq % freq.size();
+		_gam = _gam % gam.size();
+		_oct = _oct % oct.size();
+
+#pragma omp parallel for
+		for (int i = 0; i < Nx; ++i)
+		{
+			for (int j = 0; j < Ny; ++j)
+			{
+				for (int k = 0; k < Nz; ++k)
+				{
+					lux::Vector p = llc + lux::Vector(double(i) * delta_grid, double(j) * delta_grid, double(k) * delta_grid);
+					gridData[getIndex(i, j, k)] = s->eval(p) + 
+						scalingFact * pow(abs(fspn.eval(p.unitvector())), gamma);
+				}
+			}
+		}
+
+		std::cout << "Field stamped\n";
 	}
 
 	void levelSet(Triangles& triangles)
