@@ -7,6 +7,7 @@
 #include "ColorField.hpp"
 #include "Grid.hpp"
 #include "Light.hpp"
+#include "StampedNoise.hpp"
 
 // for scalar fields
 void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, const lux::SField& sfield, const lux::CField& cfield);

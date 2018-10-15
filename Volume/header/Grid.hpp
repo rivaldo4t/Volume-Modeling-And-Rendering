@@ -117,6 +117,9 @@ class Grid
 		float gamma = gam[_gam];
 		float scalingFact = 0.6;
 
+		/*fspn = FSPN(1.6, 5, 2, 1.6);
+		gamma = 1.6;*/
+
 		_rough++;
 		if (_rough == rough.size())
 			_fjump++;

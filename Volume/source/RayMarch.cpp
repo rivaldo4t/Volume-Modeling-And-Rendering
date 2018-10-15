@@ -129,21 +129,33 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, co
 
 	std::cout << "\t\t  ...\n\t       Keep Calm\n\t\t  and\n\t  Let The Rays March\n\t\t  ...\n\n";
 
-	lux::SField sphere = std::make_shared<lux::SFSphere>(lux::Vector(0.0, 0.0, 0.0), 0.5);
-	std::shared_ptr<Grid> g = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
-	std::shared_ptr<Light> key = std::make_shared<Light>(lux::Vector(-2.0, 1.0, 0.5), lux::Vector(-1, -1, -1), 200, 200, 200, 0.01);
-	key->setColor(lux::Color(0.6, 0.2, 0.4, 0.8));
-	std::shared_ptr<Light> rim = std::make_shared<Light>(lux::Vector(0.5, 0.1, -3.0), lux::Vector(-1, -1, -1), 200, 200, 200, 0.01);
-	rim->setColor(lux::Color(0.2, 0.4, 0.6, 0.2));
+	//
+	FSPN f = FSPN(1.6, 5, 2, 1.6);
+	std::shared_ptr<StampedNoise> gg = std::make_shared<StampedNoise>(lux::Vector(0.0, 0.0, 0.0), 0.8, 1, f,
+		lux::Vector(-1, -1, -1), 200, 200, 200, 0.01);
+	gg->computeNoise();
+
+	std::shared_ptr<Grid> g = gg;
+	//
+
+	//lux::SField sphere = std::make_shared<lux::SFSphere>(lux::Vector(0.0, 0.0, 0.0), 0.5);
+	//std::shared_ptr<Grid> g = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
+	std::shared_ptr<Light> key = std::make_shared<Light>(lux::Vector(-0.0, 0.5, 2.0), lux::Vector(-1, -1, -1), 200, 200, 200, 0.01);
+	key->setColor(lux::Color(0.6, 0.2, 0.4, 0.5));
+	std::shared_ptr<Light> fill = std::make_shared<Light>(lux::Vector(0.0, -2.4, 0.2), lux::Vector(-1, -1, -1), 200, 200, 200, 0.01);
+	fill->setColor(lux::Color(0.1, 0.2, 0.6, 0.2));
+	
+	key->computeDSM(g);
+	fill->computeDSM(g);
 
 	for (int k = 0; k <= num_frames; k++)
 	{
 		start = std::chrono::system_clock::now();
 
-		g->stampWithDisplacement(sphere);
-		key->computeDSM(g);
-		rim->computeDSM(g);
-		std::vector<std::shared_ptr<Light>> lights = { key, rim };
+		//g->stampWithDisplacement(sphere);
+		//key->computeDSM(g);
+		//fill->computeDSM(g);
+		std::vector<std::shared_ptr<Light>> lights = { key, fill };
 		
 		exr.clear();
 		exr.resize(img_h * img_w);
@@ -171,7 +183,6 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, co
 				lux::Vector n_ij = (q_ij + camera->view()).unitvector();
 
 				lux::Color L = marchRays(camera->eye(), n_ij, g, lights);
-				//lux::Color L = marchRays(camera->eye(), n_ij, g1, lights1);
 				exr[(img_h - 1 - j) * img_w + i] = IMF::Rgba(half(L[0]), half(L[1]), half(L[2]), half(L[3]));
 			}
 		}
@@ -195,7 +206,7 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, co
 lux::Color marchRays(lux::Vector pos, lux::Vector dir, const std::shared_ptr<Grid>& g, const std::vector<std::shared_ptr<Light>>& lights)
 {
 	lux::Color L(0.0, 0.0, 0.0, 0.0);
-	lux::Color white(0.4, 0.4, 0.4, 0.4);
+	lux::Color white(0.2, 0.2, 0.2, 0.2);
 
 	double sNear = 0.2, sFar = 6.0;
 	double T = 1;
@@ -211,7 +222,8 @@ lux::Color marchRays(lux::Vector pos, lux::Vector dir, const std::shared_ptr<Gri
 		X += delta_s * dir;
 		double d = g->eval(X);
 		
-		lux::Color c(0.0, 0.0, 0.0, 0.0);
+		// tiny bit of base color so it displays something
+		lux::Color c(0.001, 0.001, 0.001, 0.001);
 		for (auto l : lights)
 			c += white * l->getColor() * exp(-kappa * l->eval(X));
 		//c = white;

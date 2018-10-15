@@ -44,5 +44,7 @@ public:
 				}
 			}
 		}
+
+		std::cout << "Noise Stamped\n";
 	}
 };
