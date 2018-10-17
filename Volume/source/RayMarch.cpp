@@ -119,7 +119,7 @@ double marchRaysDSM(lux::Vector pos, lux::Vector lightPos, const lux::SField& de
 	return exp(-kappa * dsm);
 }
 
-void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, const std::shared_ptr<Grid>& g1, const std::vector<std::shared_ptr<Light>>& lights1)
+void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, std::shared_ptr<Grid>& g, std::vector<std::shared_ptr<Light>>& lights)
 {
 	const int num_frames = 500 / 1;
 	const double delta_rot = 360 / num_frames * M_PI / 180.0;
@@ -129,33 +129,35 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, co
 
 	std::cout << "\t\t  ...\n\t       Keep Calm\n\t\t  and\n\t  Let The Rays March\n\t\t  ...\n\n";
 
-	//
-	FSPN f = FSPN(1.6, 5, 2, 1.6);
-	std::shared_ptr<StampedNoise> gg = std::make_shared<StampedNoise>(lux::Vector(0.0, 0.0, 0.0), 0.8, 1, f,
-		lux::Vector(-1, -1, -1), 200, 200, 200, 0.01);
-	gg->computeNoise();
+	// Noise Wedge
+	//doesn't work; why?
+	/*std::shared_ptr<StampedNoise> NoiseWedge = std::make_shared<StampedNoise>(lux::Vector(0.0, 0.0, 0.0), 0.8, 
+		lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
+	g = NoiseWedge;*/
 
-	std::shared_ptr<Grid> g = gg;
-	//
-
-	//lux::SField sphere = std::make_shared<lux::SFSphere>(lux::Vector(0.0, 0.0, 0.0), 0.5);
-	//std::shared_ptr<Grid> g = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
-	std::shared_ptr<Light> key = std::make_shared<Light>(lux::Vector(-0.0, 0.5, 2.0), lux::Vector(-1, -1, -1), 200, 200, 200, 0.01);
-	key->setColor(lux::Color(0.6, 0.2, 0.4, 0.5));
-	std::shared_ptr<Light> fill = std::make_shared<Light>(lux::Vector(0.0, -2.4, 0.2), lux::Vector(-1, -1, -1), 200, 200, 200, 0.01);
-	fill->setColor(lux::Color(0.1, 0.2, 0.6, 0.2));
-	
-	key->computeDSM(g);
-	fill->computeDSM(g);
+	// Pyroclastic Wedge
+	/*lux::SField sphere = std::make_shared<lux::SFSphere>(lux::Vector(0.0, 0.0, 0.0), 0.5);
+	g = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);*/
 
 	for (int k = 0; k <= num_frames; k++)
 	{
 		start = std::chrono::system_clock::now();
 
-		//g->stampWithDisplacement(sphere);
-		//key->computeDSM(g);
-		//fill->computeDSM(g);
-		std::vector<std::shared_ptr<Light>> lights = { key, fill };
+		/*lux::SField sphere = std::make_shared<lux::SFSphere>(lux::Vector(0.0, 0.0, 0.0), 0.5);
+		g = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
+		g->stampWithDisplacement(sphere);*/
+
+		/*std::shared_ptr<StampedNoise> NoiseWedge = std::make_shared<StampedNoise>(lux::Vector(0.0, 0.0, 0.0), 0.8,
+			lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
+		NoiseWedge->computeNoise();
+		g = NoiseWedge;*/
+
+		auto wisp = std::make_shared<Wisp>(lux::Vector(-1, -1, -1), 200, 200, 200, 0.01, 50000);
+		wisp->stampWisp();
+		g = wisp;
+
+		/*for (auto l : lights)
+			l->computeDSM(g);*/
 		
 		exr.clear();
 		exr.resize(img_h * img_w);
@@ -193,8 +195,8 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, co
 		IMF::RgbaOutputFile file(fileName.c_str(), img_w, img_h, IMF::WRITE_RGBA);
 		file.setFrameBuffer(const_cast<IMF::Rgba*>(exr.data()), 1, img_w);
 		file.writePixels(img_h);
-
 		std::cout << "Frame Written : " << k + 1 << "\n";
+
 		end = std::chrono::system_clock::now();
 		std::chrono::duration<double> elapsed_seconds = end - start;
 		std::cout << "Elapsed time: " << elapsed_seconds.count() << "s\n\t\t    ...\n\n";
@@ -212,7 +214,7 @@ lux::Color marchRays(lux::Vector pos, lux::Vector dir, const std::shared_ptr<Gri
 	double T = 1;
 	double delta_s = 0.01;
 	double delta_T;
-	double kappa = 50;
+	double kappa = 30;
 	double s = sNear;
 
 	lux::Vector X = pos + sNear * dir;
@@ -226,7 +228,7 @@ lux::Color marchRays(lux::Vector pos, lux::Vector dir, const std::shared_ptr<Gri
 		lux::Color c(0.001, 0.001, 0.001, 0.001);
 		for (auto l : lights)
 			c += white * l->getColor() * exp(-kappa * l->eval(X));
-		//c = white;
+		c = white;
 
 		if (d > 0)
 		{

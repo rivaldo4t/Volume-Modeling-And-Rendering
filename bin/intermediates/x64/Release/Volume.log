@@ -1,26 +1,26 @@
-﻿  RayMarch.cpp
+﻿  Main.cpp
 c:\users\tushar\source\repos\volume\volume\header\PerlinNoise.hpp(55): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
 c:\users\tushar\source\repos\volume\volume\header\PerlinNoise.hpp(64): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
-c:\users\tushar\source\repos\volume\volume\header\FractalSummedPerlinNoise.hpp(34): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(75): warning C4018: '<': signed/unsigned mismatch
-c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(77): warning C4018: '<': signed/unsigned mismatch
-c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(79): warning C4018: '<': signed/unsigned mismatch
-c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(82): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(116): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(116): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(117): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(118): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\tushar\source\repos\volume\volume\header\FractalSummedPerlinNoise.hpp(35): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(57): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(59): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(61): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(64): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(83): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(83): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(84): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(85): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(114): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(116): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(118): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(122): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(136): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(138): warning C4018: '<': signed/unsigned mismatch
 c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(140): warning C4018: '<': signed/unsigned mismatch
-c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(142): warning C4018: '<': signed/unsigned mismatch
-c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(144): warning C4018: '<': signed/unsigned mismatch
-c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(148): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(162): warning C4018: '<': signed/unsigned mismatch
-c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(164): warning C4018: '<': signed/unsigned mismatch
-c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(166): warning C4018: '<': signed/unsigned mismatch
-c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(191): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(209): warning C4244: 'initializing': conversion from 'double' to 'unsigned int', possible loss of data
-c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(210): warning C4244: 'initializing': conversion from 'double' to 'unsigned int', possible loss of data
-c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(211): warning C4244: 'initializing': conversion from 'double' to 'unsigned int', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(165): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(183): warning C4244: 'initializing': conversion from 'double' to 'unsigned int', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(184): warning C4244: 'initializing': conversion from 'double' to 'unsigned int', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(185): warning C4244: 'initializing': conversion from 'double' to 'unsigned int', possible loss of data
 c:\users\tushar\source\repos\volume\volume\header\Light.hpp(30): warning C4018: '<': signed/unsigned mismatch
 c:\users\tushar\source\repos\volume\volume\header\Light.hpp(32): warning C4018: '<': signed/unsigned mismatch
 c:\users\tushar\source\repos\volume\volume\header\Light.hpp(34): warning C4018: '<': signed/unsigned mismatch
@@ -29,30 +29,78 @@ c:\users\tushar\source\repos\volume\volume\header\Light.hpp(63): warning C4018: 
 c:\users\tushar\source\repos\volume\volume\header\Light.hpp(65): warning C4018: '<': signed/unsigned mismatch
 c:\users\tushar\source\repos\volume\volume\header\Light.hpp(67): warning C4018: '<': signed/unsigned mismatch
 c:\users\tushar\source\repos\volume\volume\header\Light.hpp(83): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
-c:\users\tushar\source\repos\volume\volume\header\StampedNoise.hpp(22): warning C4018: '<': signed/unsigned mismatch
-c:\users\tushar\source\repos\volume\volume\header\StampedNoise.hpp(24): warning C4018: '<': signed/unsigned mismatch
-c:\users\tushar\source\repos\volume\volume\header\StampedNoise.hpp(26): warning C4018: '<': signed/unsigned mismatch
-c:\users\tushar\source\repos\volume\volume\header\StampedNoise.hpp(30): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\StampedNoise.hpp(27): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\StampedNoise.hpp(28): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\StampedNoise.hpp(55): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\StampedNoise.hpp(57): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\StampedNoise.hpp(59): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\StampedNoise.hpp(63): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Wisps.hpp(23): warning C4305: '=': truncation from 'double' to 'float'
+c:\users\tushar\source\repos\volume\volume\header\Wisps.hpp(68): warning C4244: 'initializing': conversion from 'double' to 'unsigned int', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Wisps.hpp(69): warning C4244: 'initializing': conversion from 'double' to 'unsigned int', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Wisps.hpp(70): warning C4244: 'initializing': conversion from 'double' to 'unsigned int', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Wisps.hpp(76): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Wisps.hpp(77): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Wisps.hpp(78): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Wisps.hpp(79): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Wisps.hpp(80): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Wisps.hpp(81): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Wisps.hpp(82): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Wisps.hpp(83): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+  RayMarch.cpp
+c:\users\tushar\source\repos\volume\volume\header\PerlinNoise.hpp(55): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\PerlinNoise.hpp(64): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\FractalSummedPerlinNoise.hpp(35): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(57): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(59): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(61): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(64): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(83): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(83): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(84): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(85): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(114): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(116): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(118): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(122): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(136): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(138): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(140): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(165): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(183): warning C4244: 'initializing': conversion from 'double' to 'unsigned int', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(184): warning C4244: 'initializing': conversion from 'double' to 'unsigned int', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(185): warning C4244: 'initializing': conversion from 'double' to 'unsigned int', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Light.hpp(30): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\Light.hpp(32): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\Light.hpp(34): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\Light.hpp(49): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Light.hpp(63): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\Light.hpp(65): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\Light.hpp(67): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\Light.hpp(83): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\StampedNoise.hpp(27): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\StampedNoise.hpp(28): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\StampedNoise.hpp(55): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\StampedNoise.hpp(57): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\StampedNoise.hpp(59): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\StampedNoise.hpp(63): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Wisps.hpp(23): warning C4305: '=': truncation from 'double' to 'float'
+c:\users\tushar\source\repos\volume\volume\header\Wisps.hpp(68): warning C4244: 'initializing': conversion from 'double' to 'unsigned int', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Wisps.hpp(69): warning C4244: 'initializing': conversion from 'double' to 'unsigned int', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Wisps.hpp(70): warning C4244: 'initializing': conversion from 'double' to 'unsigned int', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Wisps.hpp(76): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Wisps.hpp(77): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Wisps.hpp(78): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Wisps.hpp(79): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Wisps.hpp(80): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Wisps.hpp(81): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Wisps.hpp(82): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Wisps.hpp(83): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
 source\RayMarch.cpp(44): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-source\RayMarch.cpp(133): warning C4305: 'argument': truncation from 'double' to 'float'
-source\RayMarch.cpp(133): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-source\RayMarch.cpp(186): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\include\memory(1712): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\include\memory(1778): note: see reference to function template instantiation 'std::_Ref_count_obj<_Ty>::_Ref_count_obj<lux::Vector,double,int,FSPN&,lux::Vector,int,int,int,double>(lux::Vector &&,double &&,int &&,FSPN &,lux::Vector &&,int &&,int &&,int &&,double &&)' being compiled
-          with
-          [
-              _Ty=StampedNoise
-          ]
-  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\include\memory(1778): note: see reference to function template instantiation 'std::_Ref_count_obj<_Ty>::_Ref_count_obj<lux::Vector,double,int,FSPN&,lux::Vector,int,int,int,double>(lux::Vector &&,double &&,int &&,FSPN &,lux::Vector &&,int &&,int &&,int &&,double &&)' being compiled
-          with
-          [
-              _Ty=StampedNoise
-          ]
-  source\RayMarch.cpp(135): note: see reference to function template instantiation 'std::shared_ptr<StampedNoise> std::make_shared<StampedNoise,lux::Vector,double,int,FSPN&,lux::Vector,int,int,int,double>(lux::Vector &&,double &&,int &&,FSPN &,lux::Vector &&,int &&,int &&,int &&,double &&)' being compiled
-C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\include\memory(1712): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+source\RayMarch.cpp(188): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
   Generating code
-  37 of 1068 functions ( 3.5%) were compiled, the rest were copied from previous compilation.
-    3 functions were new in current compilation
-    125 functions had inline decision re-evaluated but remain unchanged
+  177 of 1066 functions (16.6%) were compiled, the rest were copied from previous compilation.
+    1 functions were new in current compilation
+    22 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   Volume.vcxproj -> C:\Users\TUSHAR\source\repos\Volume\bin\x64\Release\Volume.exe

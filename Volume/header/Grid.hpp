@@ -9,24 +9,6 @@
 #include "Triangle.hpp"
 #include "FractalSummedPerlinNoise.hpp"
 
-//
-#include <random>
-#include <iterator>
-template<typename Iter, typename RandomGenerator>
-Iter select_randomly(Iter start, Iter end, RandomGenerator& g) {
-	std::uniform_int_distribution<> dis(0, std::distance(start, end) - 1);
-	std::advance(start, dis(g));
-	return start;
-}
-
-template<typename Iter>
-Iter select_randomly(Iter start, Iter end) {
-	static std::random_device rd;
-	static std::mt19937 gen(rd());
-	return select_randomly(start, end, gen);
-}
-//
-
 class Grid
 {
  protected:
@@ -92,33 +74,25 @@ class Grid
 		gridData.resize(Nx * Ny * Nz, 0);
 		
 		static int _oct, _gam, _freq, _fjump, _rough;
-		std::vector<double> oct = { 1, 1.6, 2, 2.4, 3, 4 };
+		std::vector<double> oct = { 1, 2, 3, 5, 6 };
 		std::vector<double> gam = { 0.33, 1, 1.6, 2 };
-		std::vector<double> freq = { 1, 5, 10 };
+		std::vector<double> freq = { 1, 5, 10, 50 };
 		std::vector<double> fjump = { 1.2, 2 };
-		std::vector<double> rough = { 0.1, 0.4, 1.0, 1.6 };
-		
-		/*FSPN fspn(	float(*select_randomly(oct.begin(), oct.end())),
-					float(*select_randomly(freq.begin(), freq.end())),
-					float(*select_randomly(fjump.begin(), fjump.end())),
-					float(*select_randomly(rough.begin(), rough.end()))		);
-		float gamma = *select_randomly(gam.begin(), gam.end());
-		float scalingFact = 0.6;*/
-
-		std::cout << "----------\n";
-		std::cout << "octaves: " << oct[_oct] << std::endl;
-		std::cout << "gamma: " << gam[_gam] << std::endl;
-		std::cout << "freq: " << freq[_freq] << std::endl;
-		std::cout << "fjump: " << fjump[_fjump] << std::endl;
-		std::cout << "roughness: " << rough[_rough] << std::endl;
-		std::cout << "----------\n";
+		std::vector<double> rough = { 0.5, 1.0, 2.5, 4 };
 
 		FSPN fspn = FSPN(oct[_oct], freq[_freq], fjump[_fjump], rough[_rough]);
 		float gamma = gam[_gam];
 		float scalingFact = 0.6;
-
 		/*fspn = FSPN(1.6, 5, 2, 1.6);
 		gamma = 1.6;*/
+
+		std::cout << "--------------------\n";
+		std::cout << "octaves:\t" << fspn.octaves << std::endl;
+		std::cout << "freq:\t\t" << fspn.freq << std::endl;
+		std::cout << "fjump:\t\t" << fspn.fJump << std::endl;
+		std::cout << "roughness:\t" << fspn.roughness << std::endl;
+		std::cout << "gamma:\t\t" << gamma << std::endl;
+		std::cout << "--------------------\n";
 
 		_rough++;
 		if (_rough == rough.size())

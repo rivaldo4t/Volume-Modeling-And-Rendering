@@ -3,14 +3,15 @@
 
 class FSPN
 {
-private:
+//private:
+public:
 	lux::PerlinNoise PN;
 	lux::Vector translate;
 	int octaves;
 	float freq;
 	float fJump;
 	float roughness;
-public:
+//public:
 	FSPN()
 	{ 
 		PN = lux::PerlinNoise();

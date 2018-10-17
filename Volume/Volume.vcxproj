@@ -49,6 +49,7 @@
     <ClInclude Include="header\Volume.hpp" />
     <ClInclude Include="header\ScalarField.hpp" />
     <ClInclude Include="header\RayMarch.hpp" />
+    <ClInclude Include="header\Wisps.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

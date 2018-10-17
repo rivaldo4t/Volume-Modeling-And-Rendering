@@ -11,6 +11,7 @@
 #include "Triangle.hpp"
 #include "Grid.hpp"
 #include "StampedNoise.hpp"
+//#include "Wisps.hpp"
 
 #include "OBJ_Loader.h"
 #define TINYOBJLOADER_IMPLEMENTATION
@@ -105,6 +106,7 @@ std::pair<lux::SField, lux::CField> getHumanoid()
 	return std::make_pair(humanoid, colorField);
 }
 
+// obj loader
 lux::SField loadObjField(std::string fileName, Triangles& triangles)
 {
 	objl::Loader Loader;
@@ -148,6 +150,7 @@ lux::SField loadObjField(std::string fileName, Triangles& triangles)
 	return obj;
 }
 
+// tiny obj
 bool loadObj(std::string fileName, Triangles& triangles)
 {
 	std::cout << "Loading " << fileName << std::endl;
