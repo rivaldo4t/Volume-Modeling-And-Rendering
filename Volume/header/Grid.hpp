@@ -104,11 +104,11 @@ class Grid
 		if (_gam == gam.size())
 			_oct++;
 
-		_rough = _rough % rough.size();
-		_fjump = _fjump % fjump.size();
-		_freq = _freq % freq.size();
-		_gam = _gam % gam.size();
-		_oct = _oct % oct.size();
+		_rough %= rough.size();
+		_fjump %= fjump.size();
+		_freq %= freq.size();
+		_gam %= gam.size();
+		_oct %= oct.size();
 
 #pragma omp parallel for
 		for (int i = 0; i < Nx; ++i)

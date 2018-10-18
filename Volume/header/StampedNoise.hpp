@@ -46,10 +46,10 @@ public:
 		if (_freq == freq.size())
 			_oct++;
 
-		_fade = _fade % fad.size();
-		_fjump = _fjump % fjump.size();
-		_freq = _freq % freq.size();
-		_oct = _oct % oct.size();
+		_fade %= fad.size();
+		_fjump %= fjump.size();
+		_freq %= freq.size();
+		_oct %= oct.size();
 
 #pragma omp parallel for
 		for (int i = 0; i < Nx; ++i)

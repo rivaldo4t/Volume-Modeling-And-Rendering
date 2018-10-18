@@ -6,6 +6,10 @@
 #include <ImfRgbaFile.h>
 namespace IMF = OPENEXR_IMF_NAMESPACE;
 
+// #define WEDGE_PYROCLASTIC
+// #define WEDGE_STAMPEDNOISE
+#define WEDGE_WISP
+
 void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, const lux::SField& sfield, const lux::CField& cfield)
 {
 	const int num_frames = 120 / 1;
@@ -129,44 +133,41 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, st
 
 	std::cout << "\t\t  ...\n\t       Keep Calm\n\t\t  and\n\t  Let The Rays March\n\t\t  ...\n\n";
 
-	// Noise Wedge
-	//doesn't work; why?
-	/*std::shared_ptr<StampedNoise> NoiseWedge = std::make_shared<StampedNoise>(lux::Vector(0.0, 0.0, 0.0), 0.8, 
-		lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
-	g = NoiseWedge;*/
-
-	// Pyroclastic Wedge
-	/*lux::SField sphere = std::make_shared<lux::SFSphere>(lux::Vector(0.0, 0.0, 0.0), 0.5);
-	g = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);*/
-
 	for (int k = 0; k <= num_frames; k++)
 	{
 		start = std::chrono::system_clock::now();
 
-		/*lux::SField sphere = std::make_shared<lux::SFSphere>(lux::Vector(0.0, 0.0, 0.0), 0.5);
+#ifdef WEDGE_PYROCLASTIC
+		lux::SField sphere = std::make_shared<lux::SFSphere>(lux::Vector(0.0, 0.0, 0.0), 0.5);
 		g = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
-		g->stampWithDisplacement(sphere);*/
+		g->stampWithDisplacement(sphere);
+#endif
 
-		/*std::shared_ptr<StampedNoise> NoiseWedge = std::make_shared<StampedNoise>(lux::Vector(0.0, 0.0, 0.0), 0.8,
+#ifdef WEDGE_STAMPEDNOISE
+		std::shared_ptr<StampedNoise> NoiseWedge = std::make_shared<StampedNoise>(lux::Vector(0.0, 0.0, 0.0), 0.8,
 			lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
 		NoiseWedge->computeNoise();
-		g = NoiseWedge;*/
+		g = NoiseWedge;
+#endif 
 
-		auto wisp = std::make_shared<Wisp>(lux::Vector(-1, -1, -1), 200, 200, 200, 0.01, 50000);
+#ifdef WEDGE_WISP
+		std::shared_ptr<Wisp> wisp = std::make_shared<Wisp>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004, 5000000);
 		wisp->stampWisp();
 		g = wisp;
+#endif
 
-		/*for (auto l : lights)
-			l->computeDSM(g);*/
+		for (auto l : lights)
+			l->computeDSM(g);
 		
 		exr.clear();
 		exr.resize(img_h * img_w);
 		
-		//round table camera movement
-		//eye = lux::Vector(0, 0, 2) * cos(k * delta_rot) + lux::Vector(2, 0, 0) * sin(k * delta_rot);
-		//view = lux::Vector(0, 0, 0) - eye;
-		//up = lux::Vector(0, 1, 0);
-		//camera->setEyeViewUp(eye, view, up);
+		// move to a separate func
+		// round table camera movement
+		// eye = lux::Vector(0, 0, 2) * cos(k * delta_rot) + lux::Vector(2, 0, 0) * sin(k * delta_rot);
+		// view = lux::Vector(0, 0, 0) - eye;
+		// up = lux::Vector(0, 1, 0);
+		// camera->setEyeViewUp(eye, view, up);
 
 		std::cout << "|0%|==|==|==|==|==|==|==|==|==|==|100%|\n|0%|";
 
@@ -214,7 +215,7 @@ lux::Color marchRays(lux::Vector pos, lux::Vector dir, const std::shared_ptr<Gri
 	double T = 1;
 	double delta_s = 0.01;
 	double delta_T;
-	double kappa = 30;
+	double kappa = 0.1;
 	double s = sNear;
 
 	lux::Vector X = pos + sNear * dir;
@@ -224,11 +225,11 @@ lux::Color marchRays(lux::Vector pos, lux::Vector dir, const std::shared_ptr<Gri
 		X += delta_s * dir;
 		double d = g->eval(X);
 		
-		// tiny bit of base color so it displays something
-		lux::Color c(0.001, 0.001, 0.001, 0.001);
+		// tiny bit of base color so it displays something for noise and pyroclastic wedge
+		lux::Color c; // (0.001, 0.001, 0.001, 0.001);
 		for (auto l : lights)
 			c += white * l->getColor() * exp(-kappa * l->eval(X));
-		c = white;
+		//c = white;
 
 		if (d > 0)
 		{
