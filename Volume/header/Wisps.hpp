@@ -27,10 +27,8 @@ public:
 		dScale = 2;
 		density = 10;
 	}
-
 	lux::Vector getPos() { return generatedPosition; }
 	float getDensity() { return density; }
-
 	void generateDot();
 };
 
@@ -42,8 +40,6 @@ public:
 	Wisp() {}
 	Wisp(lux::Vector l, int nx, unsigned int ny, unsigned int nz, double d, int n) :
 		Grid(l, nx, ny, nz, d), numberOfDots(n) {}
-
 	void stampWispDot(const lux::Vector& p, const float& d);
-
 	void stampWisp();
 };

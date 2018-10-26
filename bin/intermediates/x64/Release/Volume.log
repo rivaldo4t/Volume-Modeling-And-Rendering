@@ -1,11 +1,15 @@
-﻿  RayMarch.cpp
+﻿  Main.cpp
+c:\users\tushar\source\repos\volume\volume\header\PerlinNoise.hpp(55): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\PerlinNoise.hpp(64): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+  RayMarch.cpp
 c:\users\tushar\source\repos\volume\volume\header\PerlinNoise.hpp(55): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
 c:\users\tushar\source\repos\volume\volume\header\PerlinNoise.hpp(64): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
 source\RayMarch.cpp(48): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
 source\RayMarch.cpp(190): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+source\RayMarch.cpp(232): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
   Generating code
-  37 of 1197 functions ( 3.1%) were compiled, the rest were copied from previous compilation.
+  48 of 1194 functions ( 4.0%) were compiled, the rest were copied from previous compilation.
     3 functions were new in current compilation
-    4 functions had inline decision re-evaluated but remain unchanged
+    30 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   Volume.vcxproj -> C:\Users\TUSHAR\source\repos\Volume\bin\x64\Release\Volume.exe

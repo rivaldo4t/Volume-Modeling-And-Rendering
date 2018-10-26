@@ -6,7 +6,7 @@
 #include <ImfRgbaFile.h>
 namespace IMF = OPENEXR_IMF_NAMESPACE;
 
-// #define WEDGE_PYROCLASTIC
+#define WEDGE_PYROCLASTIC
 // #define WEDGE_STAMPEDNOISE
 // #define WEDGE_WISP
 
@@ -150,7 +150,7 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, st
 
 #ifdef WEDGE_PYROCLASTIC
 		lux::SField sphere = std::make_shared<lux::SFSphere>(lux::Vector(0.0, 0.0, 0.0), 0.5);
-		g = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 50, 50, 50, 0.04);
+		g = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
 		g->stampWithDisplacement(sphere);
 #endif
 
@@ -167,8 +167,8 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, st
 		g = wisp;
 #endif
 
-		for (auto l : lights)
-			l->computeDSM(g);
+		/*for (auto l : lights)
+			l->computeDSM(g);*/
 
 		std::cout << "|0%|==|==|==|==|==|==|==|==|==|==|100%|\n|0%|";
 
@@ -216,7 +216,7 @@ lux::Color marchRays(lux::Vector pos, lux::Vector dir, const std::shared_ptr<Gri
 	double T = 1;
 	double delta_s = 0.01;
 	double delta_T;
-	double kappa = 100;
+	double kappa = 50;
 	double s = sNear;
 
 	lux::Vector X = pos + sNear * dir;
@@ -226,10 +226,13 @@ lux::Color marchRays(lux::Vector pos, lux::Vector dir, const std::shared_ptr<Gri
 		X += delta_s * dir;
 		double d = g->eval(X);
 		
-		// tiny bit of base color so it displays something for noise and pyroclastic wedge
-		lux::Color c; // (0.001, 0.001, 0.001, 0.001);
+		lux::Color c;
 		for (auto l : lights)
-			c += white * l->getColor() * exp(-kappa * l->eval(X));
+		{
+			float dsm = marchToLight(X, l->getPosition(), g);
+			//float dsm = l->eval(X);
+			c += white * l->getColor() * exp(-kappa * dsm);
+		}
 		//c = white;
 
 		if (d > 0)
@@ -242,4 +245,28 @@ lux::Color marchRays(lux::Vector pos, lux::Vector dir, const std::shared_ptr<Gri
 	}
 
 	return L;
+}
+
+double marchToLight(lux::Vector pos, lux::Vector lightPos, const std::shared_ptr<Grid>& g)
+{
+	lux::Vector nL = lightPos - pos;
+	double sFar = nL.magnitude(), sNear = 0, s = 0;
+	nL.normalize();
+	lux::Vector X = pos + sNear * nL;
+	double delta_s = 0.01;
+	double kappa = 50;
+	double dsm = 0.0;
+
+	if (g->eval(X) > 0)
+	{
+		while (s <= sFar)
+		{
+			X += delta_s * nL;
+			double d = g->eval(X);
+			if (d > 0)
+				dsm += d * delta_s;
+			s += delta_s;
+		}
+	}
+	return dsm;
 }

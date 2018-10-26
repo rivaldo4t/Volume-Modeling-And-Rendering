@@ -54,8 +54,6 @@ void Grid::stampWithDisplacement(lux::SField s)
 	FSPN fspn = FSPN(oct[_oct], freq[_freq], fjump[_fjump], rough[_rough]);
 	float gamma = gam[_gam];
 	float scalingFact = 0.6;
-	/*fspn = FSPN(1.6, 5, 2, 1.6);
-	gamma = 1.6;*/
 
 	std::cout << "--------------------\n";
 	std::cout << "octaves:\t" << fspn.octaves << std::endl;

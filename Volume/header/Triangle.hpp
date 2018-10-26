@@ -24,12 +24,8 @@ public:
 	}
 
 	void closestPointOnPlane(lux::Vector x, lux::Vector& p);
-
 	void closestPointOnEdges(lux::Vector x, lux::Vector& p, double prevDist);
-
 	void closestVertex(lux::Vector x, lux::Vector& p, double prevDist);
-
 	lux::Vector closestPoint(lux::Vector x);
 };
-
 typedef std::vector<std::shared_ptr<Triangle>> Triangles;
