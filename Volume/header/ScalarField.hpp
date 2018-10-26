@@ -3,6 +3,7 @@
 #include "Color.hpp"
 #include <iostream>
 #include <algorithm>
+#include <memory>
 
 namespace lux 
 {

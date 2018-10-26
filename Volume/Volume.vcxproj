@@ -19,6 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\Fspn.cpp" />
+    <ClCompile Include="source\Grid.cpp" />
+    <ClCompile Include="source\Light.cpp" />
     <ClCompile Include="source\RayMarch.cpp" />
     <ClCompile Include="source\Camera.cpp" />
     <ClCompile Include="source\Image.cpp" />
@@ -26,9 +29,12 @@
     <ClCompile Include="source\Main.cpp" />
     <ClCompile Include="source\Matrix.cpp" />
     <ClCompile Include="source\PerlinNoise.cpp" />
+    <ClCompile Include="source\StampedNoise.cpp" />
+    <ClCompile Include="source\Triangle.cpp" />
+    <ClCompile Include="source\Wisps.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="header\FractalSummedPerlinNoise.hpp" />
+    <ClInclude Include="header\Fspn.hpp" />
     <ClInclude Include="header\Grid.hpp" />
     <ClInclude Include="header\Camera.hpp" />
     <ClInclude Include="header\Color.hpp" />

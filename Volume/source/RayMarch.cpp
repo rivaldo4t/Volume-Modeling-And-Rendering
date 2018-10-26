@@ -8,7 +8,7 @@ namespace IMF = OPENEXR_IMF_NAMESPACE;
 
 // #define WEDGE_PYROCLASTIC
 // #define WEDGE_STAMPEDNOISE
-#define WEDGE_WISP
+// #define WEDGE_WISP
 
 void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, const lux::SField& sfield, const lux::CField& cfield)
 {
@@ -123,6 +123,13 @@ double marchRaysDSM(lux::Vector pos, lux::Vector lightPos, const lux::SField& de
 	return exp(-kappa * dsm);
 }
 
+void roundTable(lux::Vector& eye, lux::Vector& view, lux::Vector& up, double stepDegrees)
+{
+	eye = lux::Vector(0, 0, 2) * cos(stepDegrees) + lux::Vector(2, 0, 0) * sin(stepDegrees);
+	view = lux::Vector(0, 0, 0) - eye;
+	up = lux::Vector(0, 1, 0);
+}
+
 void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, std::shared_ptr<Grid>& g, std::vector<std::shared_ptr<Light>>& lights)
 {
 	const int num_frames = 500 / 1;
@@ -136,10 +143,14 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, st
 	for (int k = 0; k <= num_frames; k++)
 	{
 		start = std::chrono::system_clock::now();
+		exr.clear();
+		exr.resize(img_h * img_w);
+		// roundTable(eye, view, up, k * delta_rot);
+		// camera->setEyeViewUp(eye, view, up);
 
 #ifdef WEDGE_PYROCLASTIC
 		lux::SField sphere = std::make_shared<lux::SFSphere>(lux::Vector(0.0, 0.0, 0.0), 0.5);
-		g = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
+		g = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 50, 50, 50, 0.04);
 		g->stampWithDisplacement(sphere);
 #endif
 
@@ -158,16 +169,6 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, st
 
 		for (auto l : lights)
 			l->computeDSM(g);
-		
-		exr.clear();
-		exr.resize(img_h * img_w);
-		
-		// move to a separate func
-		// round table camera movement
-		// eye = lux::Vector(0, 0, 2) * cos(k * delta_rot) + lux::Vector(2, 0, 0) * sin(k * delta_rot);
-		// view = lux::Vector(0, 0, 0) - eye;
-		// up = lux::Vector(0, 1, 0);
-		// camera->setEyeViewUp(eye, view, up);
 
 		std::cout << "|0%|==|==|==|==|==|==|==|==|==|==|100%|\n|0%|";
 
@@ -215,7 +216,7 @@ lux::Color marchRays(lux::Vector pos, lux::Vector dir, const std::shared_ptr<Gri
 	double T = 1;
 	double delta_s = 0.01;
 	double delta_T;
-	double kappa = 0.1;
+	double kappa = 100;
 	double s = sNear;
 
 	lux::Vector X = pos + sNear * dir;
