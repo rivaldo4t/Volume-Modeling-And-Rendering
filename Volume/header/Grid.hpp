@@ -32,7 +32,7 @@ class Grid
 	unsigned int getIndex(unsigned int i, unsigned int j, unsigned int k) const;
 	bool withinGrid(lux::Vector p) const;
 	void stamp(lux::SField s);
-	void stampWithDisplacement(lux::SField s);
+	void stampWithDisplacement(lux::SField s, NoiseParams& param);
 	void levelSet(Triangles& triangles);
 	virtual double eval(lux::Vector p) const;
 	void writeGrid(std::string fileName);

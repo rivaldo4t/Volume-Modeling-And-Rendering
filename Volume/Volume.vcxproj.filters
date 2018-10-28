@@ -122,6 +122,9 @@
     <ClInclude Include="header\Fspn.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="header\PyroclasticField.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

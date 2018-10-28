@@ -34,6 +34,7 @@
     <ClCompile Include="source\Wisps.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="header\PyroclasticField.hpp" />
     <ClInclude Include="header\Fspn.hpp" />
     <ClInclude Include="header\Grid.hpp" />
     <ClInclude Include="header\Camera.hpp" />

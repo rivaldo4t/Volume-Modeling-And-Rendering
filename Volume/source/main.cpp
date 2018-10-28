@@ -209,13 +209,18 @@ int main()
 	
 	std::shared_ptr<Grid> g;
 
-	std::shared_ptr<Light> key = std::make_shared<Light>(lux::Vector(0.0, 0.1, 1.0), lux::Vector(-1, -1, -1), 250, 250, 250, 0.008);
+	std::shared_ptr<Light> key = std::make_shared<Light>(lux::Vector(0.0, 0.1, 1.0), lux::Vector(-1, -1, -1), 200, 200, 200, 0.01);
 	key->setColor(lux::Color(0.6, 0.2, 0.4, 0.5));
-	std::shared_ptr<Light> fill = std::make_shared<Light>(lux::Vector(0.0, -1.0, 0.2), lux::Vector(-1, -1, -1), 250, 250, 250, 0.008);
+	std::shared_ptr<Light> fill = std::make_shared<Light>(lux::Vector(0.0, -1.0, 0.2), lux::Vector(-1, -1, -1), 200, 200, 200, 0.01);
 	fill->setColor(lux::Color(0.1, 0.2, 0.6, 0.2));
 
 	std::vector<std::shared_ptr<Light>> lights = { key, fill };
 	render(img_w, img_h, camera, g, lights);
+	
+	/*lux::SField sphere = std::make_shared<lux::SFSphere>(lux::Vector(0.0, 0.1, 0.0), 0.5);
+	lux::SField pyroSphere = std::make_shared<lux::pyroclasticField>(sphere);
+	lux::CField colorField = std::make_shared<lux::ColorField>(sphere, sphere, sphere);
+	render(img_w, img_h, camera, pyroSphere, colorField);*/
 
 	int t;
 	std::cin >> t;

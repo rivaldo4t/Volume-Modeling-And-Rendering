@@ -1,42 +1,12 @@
 #include "StampedNoise.hpp"
 
-void StampedNoise::computeNoise()
+void StampedNoise::computeNoise(NoiseParams& param)
 {
 	gridData.resize(Nx * Ny * Nz, 0);
 
-	static int _oct, _freq, _fjump, _fade;
-	std::vector<int> oct = { 1, 2, 3, 4, 5 };
-	std::vector<double> freq = { 0.5, 1, 2.5, 3, 4.3, 5.6, 10 };
-	std::vector<double> fjump = { 1, 1.5, 2 };
-	std::vector<double> fad = { 0.5, 1, 1.5, 2, 3 };
-
-	fspn = FSPN(oct[_oct], freq[_freq], fjump[_fjump], 2.0);
-	fade = fad[_fade];
-	//fspn = FSPN(1, 10, 5, 5, lux::Vector(0, 0.5, 0.3).unitvector());
-	//fspn = FSPN(5, 2, 2, 2);
-	//fade = 1;
-
-	std::cout << "-------------------\n";
-	std::cout << "octaves:\t" << fspn.octaves << std::endl;
-	std::cout << "freq:\t\t" << fspn.freq << std::endl;
-	std::cout << "fjump:\t\t" << fspn.fJump << std::endl;
-	std::cout << "roughness:\t" << fspn.roughness << std::endl;
-	std::cout << "fade:\t\t" << fade << std::endl;
-	std::cout << "-------------------\n";
-
-	_fade++;
-	if (_fade == fad.size())
-		_fjump++;
-	if (_fjump == fjump.size())
-		_freq++;
-	if (_freq == freq.size())
-		_oct++;
-
-	_fade %= fad.size();
-	_fjump %= fjump.size();
-	_freq %= freq.size();
-	_oct %= oct.size();
-
+	fspn = FSPN(param.octaves, param.freq, param.fJump, 2);
+	fade = param.wedgeSpecific;
+	
 #pragma omp parallel for
 	for (int i = 0; i < Nx; ++i)
 	{

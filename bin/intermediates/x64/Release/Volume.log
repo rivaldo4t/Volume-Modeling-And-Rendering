@@ -1,15 +1,14 @@
-﻿  Main.cpp
+﻿  RayMarch.cpp
 c:\users\tushar\source\repos\volume\volume\header\PerlinNoise.hpp(55): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
 c:\users\tushar\source\repos\volume\volume\header\PerlinNoise.hpp(64): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
-  RayMarch.cpp
-c:\users\tushar\source\repos\volume\volume\header\PerlinNoise.hpp(55): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-c:\users\tushar\source\repos\volume\volume\header\PerlinNoise.hpp(64): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
-source\RayMarch.cpp(48): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-source\RayMarch.cpp(190): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-source\RayMarch.cpp(232): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Fspn.hpp(33): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Fspn.hpp(34): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Fspn.hpp(35): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+source\RayMarch.cpp(49): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+source\RayMarch.cpp(208): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
   Generating code
-  48 of 1194 functions ( 4.0%) were compiled, the rest were copied from previous compilation.
+  37 of 1226 functions ( 3.0%) were compiled, the rest were copied from previous compilation.
     3 functions were new in current compilation
-    30 functions had inline decision re-evaluated but remain unchanged
+    14 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   Volume.vcxproj -> C:\Users\TUSHAR\source\repos\Volume\bin\x64\Release\Volume.exe

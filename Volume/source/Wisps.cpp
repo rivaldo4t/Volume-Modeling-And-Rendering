@@ -28,44 +28,23 @@ void Wisp::stampWispDot(const lux::Vector& p, const float& d)
 	gridData[getIndex(i + 1, j + 1, k + 1)] += d * (wi) * (wj) * (wk);
 }
 
-void Wisp::stampWisp()
+void Wisp::stampWisp(NoiseParams& param)
 {
 	gridData.resize(Nx * Ny * Nz, 0);
 
-	static int _oct, _freq, _fjump, _clump;
-	std::vector<int> oct = { 1, 2, 3, 4, 5 };
-	std::vector<double> freq = { 0.5, 1, 2.5, 3, 4.3, 5.6, 10 };
-	std::vector<double> fjump = { 1, 1.5, 2 };
-	std::vector<double> clu = { 0.5, 1, 1.5, 2, 3 };
-
-	FSPN f1 = FSPN(oct[_oct], freq[_freq], fjump[_fjump], 2.0);
-	FSPN f2 = FSPN(oct[oct.size() - 1 - _oct], freq[freq.size() - 1 - _freq], fjump[fjump.size() - 1 - _fjump], 2.0);
-	float clum = clu[_clump];
+	FSPN f1 = FSPN(param.octaves, param.freq, param.fJump, 2);
+	FSPN f2 = FSPN(param.octaves_values[param.octaves_values.size() - 1 - param.o],
+		param.freq_values[param.freq_values.size() - 1 - param.fr],
+		param.fJump_values[param.fJump_values.size() - 1 - param.fj],
+		2);
+	float clum = param.wedgeSpecific;
 
 	std::cout << "-------------------\n";
-	std::cout << "f1 octaves:\t" << f1.octaves << std::endl;
-	std::cout << "f1 freq:\t" << f1.freq << std::endl;
-	std::cout << "f1 fjump:\t" << f1.fJump << std::endl;
-	std::cout << "f1 roughness:\t" << f1.roughness << std::endl;
 	std::cout << "f2 octaves:\t" << f2.octaves << std::endl;
 	std::cout << "f2 freq:\t" << f2.freq << std::endl;
 	std::cout << "f2 fjump:\t" << f2.fJump << std::endl;
 	std::cout << "f2 roughness:\t" << f2.roughness << std::endl;
-	std::cout << "clump:\t\t" << clum << std::endl;
 	std::cout << "-------------------\n";
-
-	_clump++;
-	if (_clump == clu.size())
-		_fjump++;
-	if (_fjump == fjump.size())
-		_freq++;
-	if (_freq == freq.size())
-		_oct++;
-
-	_clump %= clu.size();
-	_fjump %= fjump.size();
-	_freq %= freq.size();
-	_oct %= oct.size();
 
 	WispDot dot(lux::Vector(), f1, f2, clum);
 	for (int i = 0; i < numberOfDots; ++i)

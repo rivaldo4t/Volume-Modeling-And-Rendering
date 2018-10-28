@@ -40,44 +40,13 @@ void Grid::stamp(lux::SField s)
 	std::cout << "Field stamped\n";
 }
 
-void Grid::stampWithDisplacement(lux::SField s)
+void Grid::stampWithDisplacement(lux::SField s, NoiseParams& param)
 {
 	gridData.resize(Nx * Ny * Nz, 0);
 
-	static int _oct, _gam, _freq, _fjump, _rough;
-	std::vector<double> oct = { 1, 2, 3, 5, 6 };
-	std::vector<double> gam = { 0.33, 1, 1.6, 2 };
-	std::vector<double> freq = { 1, 5, 10, 50 };
-	std::vector<double> fjump = { 1.2, 2 };
-	std::vector<double> rough = { 0.5, 1.0, 2.5, 4 };
-
-	FSPN fspn = FSPN(oct[_oct], freq[_freq], fjump[_fjump], rough[_rough]);
-	float gamma = gam[_gam];
+	FSPN fspn = FSPN(param.octaves, param.freq, param.fJump, 2);
+	float gamma = param.wedgeSpecific;
 	float scalingFact = 0.6;
-
-	std::cout << "--------------------\n";
-	std::cout << "octaves:\t" << fspn.octaves << std::endl;
-	std::cout << "freq:\t\t" << fspn.freq << std::endl;
-	std::cout << "fjump:\t\t" << fspn.fJump << std::endl;
-	std::cout << "roughness:\t" << fspn.roughness << std::endl;
-	std::cout << "gamma:\t\t" << gamma << std::endl;
-	std::cout << "--------------------\n";
-
-	_rough++;
-	if (_rough == rough.size())
-		_fjump++;
-	if (_fjump == fjump.size())
-		_freq++;
-	if (_freq == freq.size())
-		_gam++;
-	if (_gam == gam.size())
-		_oct++;
-
-	_rough %= rough.size();
-	_fjump %= fjump.size();
-	_freq %= freq.size();
-	_gam %= gam.size();
-	_oct %= oct.size();
 
 #pragma omp parallel for
 	for (int i = 0; i < Nx; ++i)

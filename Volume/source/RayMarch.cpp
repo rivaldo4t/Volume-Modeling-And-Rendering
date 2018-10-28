@@ -8,11 +8,12 @@ namespace IMF = OPENEXR_IMF_NAMESPACE;
 
 #define WEDGE_PYROCLASTIC
 // #define WEDGE_STAMPEDNOISE
-// #define WEDGE_WISP
+//#define WEDGE_WISP
+#define DSM_GRID
 
 void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, const lux::SField& sfield, const lux::CField& cfield)
 {
-	const int num_frames = 120 / 1;
+	const int num_frames = 120 / 121;
 	const double delta_rot = 360 / num_frames * M_PI / 180.0;
 	std::chrono::time_point<std::chrono::system_clock> start, end;
 	std::vector<IMF::Rgba> exr;
@@ -60,6 +61,8 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, co
 		std::chrono::duration<double> elapsed_seconds = end - start;
 		std::cout << "Elapsed time: " << elapsed_seconds.count() << "s\n\t\t    ...\n\n";
 	}
+
+	std::cout << "Exit Render Loop\n";
 }
 
 lux::Color marchRays(lux::Vector pos, lux::Vector dir, const lux::SField& density, const lux::CField& color)
@@ -72,7 +75,7 @@ lux::Color marchRays(lux::Vector pos, lux::Vector dir, const lux::SField& densit
 	double T = 1;
 	double delta_s = 0.01;
 	double delta_T;
-	double kappa = 10;
+	double kappa = 50;
 	double s = sNear;
 
 	lux::Vector X = pos + sNear * dir;
@@ -82,9 +85,9 @@ lux::Color marchRays(lux::Vector pos, lux::Vector dir, const lux::SField& densit
 	{
 		X += delta_s * dir;
 		double d = density->eval(X);
-		lux::Color c = color->eval(X);
-		c = c.isZero() ? white : c;
-		//c *= marchRaysDSM(X, lightPos, density);
+		lux::Color c = white;// color->eval(X);
+		//c = c.isZero() ? white : c;
+		c *= marchRaysDSM(X, lightPos, density);
 
 		// explicit color to objects
 		if (d > 0)
@@ -107,7 +110,7 @@ double marchRaysDSM(lux::Vector pos, lux::Vector lightPos, const lux::SField& de
 	lux::Vector X = pos + sNear * nL;
 	double delta_s = 0.01;
 	double dsm = 0.0;
-	double kappa = 10;
+	double kappa = 50;
 
 	if (density->eval(X) > 0)
 	{
@@ -139,7 +142,7 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, st
 	lux::Vector eye, view, up;
 
 	std::cout << "\t\t  ...\n\t       Keep Calm\n\t\t  and\n\t  Let The Rays March\n\t\t  ...\n\n";
-
+	NoiseParams param;
 	for (int k = 0; k <= num_frames; k++)
 	{
 		start = std::chrono::system_clock::now();
@@ -147,28 +150,31 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, st
 		exr.resize(img_h * img_w);
 		// roundTable(eye, view, up, k * delta_rot);
 		// camera->setEyeViewUp(eye, view, up);
+		param.updateParams();
 
 #ifdef WEDGE_PYROCLASTIC
 		lux::SField sphere = std::make_shared<lux::SFSphere>(lux::Vector(0.0, 0.0, 0.0), 0.5);
 		g = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
-		g->stampWithDisplacement(sphere);
+		g->stampWithDisplacement(sphere, param);
 #endif
 
 #ifdef WEDGE_STAMPEDNOISE
 		std::shared_ptr<StampedNoise> NoiseWedge = std::make_shared<StampedNoise>(lux::Vector(0.0, 0.0, 0.0), 0.8,
 			lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
-		NoiseWedge->computeNoise();
+		NoiseWedge->computeNoise(param);
 		g = NoiseWedge;
 #endif 
 
 #ifdef WEDGE_WISP
 		std::shared_ptr<Wisp> wisp = std::make_shared<Wisp>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004, 5000000);
-		wisp->stampWisp();
+		wisp->stampWisp(param);
 		g = wisp;
 #endif
 
-		/*for (auto l : lights)
-			l->computeDSM(g);*/
+#ifdef DSM_GRID
+		for (auto l : lights)
+			l->computeDSM(g);
+#endif
 
 		std::cout << "|0%|==|==|==|==|==|==|==|==|==|==|100%|\n|0%|";
 
@@ -216,7 +222,7 @@ lux::Color marchRays(lux::Vector pos, lux::Vector dir, const std::shared_ptr<Gri
 	double T = 1;
 	double delta_s = 0.01;
 	double delta_T;
-	double kappa = 50;
+	double kappa = 50; //0.1 for wisp
 	double s = sNear;
 
 	lux::Vector X = pos + sNear * dir;
@@ -229,8 +235,12 @@ lux::Color marchRays(lux::Vector pos, lux::Vector dir, const std::shared_ptr<Gri
 		lux::Color c;
 		for (auto l : lights)
 		{
-			float dsm = marchToLight(X, l->getPosition(), g);
-			//float dsm = l->eval(X);
+			double dsm;
+#ifdef DSM_GRID
+			dsm = l->eval(X);
+#else
+			dsm = marchToLight(X, l->getPosition(), g);
+#endif
 			c += white * l->getColor() * exp(-kappa * dsm);
 		}
 		//c = white;

@@ -11,6 +11,8 @@
 #include "Triangle.hpp"
 #include "Grid.hpp"
 #include "StampedNoise.hpp"
+#include "Wisps.hpp"
+#include "PyroclasticField.hpp"
 
 #include "OBJ_Loader.h"
 #define TINYOBJLOADER_IMPLEMENTATION
