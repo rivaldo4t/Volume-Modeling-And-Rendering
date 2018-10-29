@@ -6,7 +6,7 @@
 #include <ImfRgbaFile.h>
 namespace IMF = OPENEXR_IMF_NAMESPACE;
 
-#define WEDGE_PYROCLASTIC
+// #define WEDGE_PYROCLASTIC
 // #define WEDGE_STAMPEDNOISE
 //#define WEDGE_WISP
 #define DSM_GRID
@@ -135,7 +135,7 @@ void roundTable(lux::Vector& eye, lux::Vector& view, lux::Vector& up, double ste
 
 void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, std::shared_ptr<Grid>& g, std::vector<std::shared_ptr<Light>>& lights)
 {
-	const int num_frames = 500 / 1;
+	const int num_frames = 500 / 501;
 	const double delta_rot = 360 / num_frames * M_PI / 180.0;
 	std::chrono::time_point<std::chrono::system_clock> start, end;
 	std::vector<IMF::Rgba> exr;
@@ -151,6 +151,20 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, st
 		// roundTable(eye, view, up, k * delta_rot);
 		// camera->setEyeViewUp(eye, view, up);
 		param.updateParams();
+
+		//
+		param.octaves = 2;
+		param.freq = 2;
+		param.fJump = 2;
+		param.wedgeSpecific = 0.5;
+		lux::SField torus = std::make_shared<lux::SFTorus>(0.6, 0.1, lux::Vector(0.0, 0.0, 0.0), lux::Vector(0.0, 0.0, 1.0));
+		g = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
+		//g->stampWithDisplacement(torus, param);
+		torus = std::make_shared<lux::PyroclasticField>(torus, param);
+		lux::SField plane = std::make_shared<lux::SFPlane>(lux::Vector(), lux::Vector(0.0, 1.0, 0.0));
+		plane = std::make_shared<lux::SFIntersect>(torus, plane);
+		g->stamp(plane);
+		//
 
 #ifdef WEDGE_PYROCLASTIC
 		lux::SField sphere = std::make_shared<lux::SFSphere>(lux::Vector(0.0, 0.0, 0.0), 0.5);
@@ -199,7 +213,7 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, st
 
 		std::cout << "100%|\n";
 
-		std::string fileName = "output/Render_2/frame_" + std::to_string(k + 1) + ".exr";
+		std::string fileName = "output/Render_3/frame_" + std::to_string(k + 1) + ".exr";
 		IMF::RgbaOutputFile file(fileName.c_str(), img_w, img_h, IMF::WRITE_RGBA);
 		file.setFrameBuffer(const_cast<IMF::Rgba*>(exr.data()), 1, img_w);
 		file.writePixels(img_h);

@@ -11,7 +11,7 @@ void NoiseParams::updateParams()
 	std::cout << "octaves:\t" << octaves << std::endl;
 	std::cout << "freq:\t\t" << freq << std::endl;
 	std::cout << "fjump:\t\t" << fJump << std::endl;
-	std::cout << "wedgeSpecific:\t\t" << wedgeSpecific << std::endl;
+	std::cout << "wedgeSpecific:\t" << wedgeSpecific << std::endl;
 	std::cout << "--------------------\n";
 
 	w++;
