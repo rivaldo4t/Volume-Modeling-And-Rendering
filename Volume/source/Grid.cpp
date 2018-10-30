@@ -40,14 +40,13 @@ void Grid::stamp(lux::SField s)
 	std::cout << "Field stamped\n";
 }
 
-// deprecate
 void Grid::stampWithDisplacement(lux::SField s, NoiseParams& param)
 {
 	gridData.resize(Nx * Ny * Nz, 0);
 
 	FSPN fspn = FSPN(param.octaves, param.freq, param.fJump, 2);
 	float gamma = param.wedgeSpecific;
-	float scalingFact = 0.1;
+	float scalingFact = 0.1f;
 
 #pragma omp parallel for
 	for (int i = 0; i < Nx; ++i)
@@ -63,7 +62,7 @@ void Grid::stampWithDisplacement(lux::SField s, NoiseParams& param)
 		}
 	}
 
-	std::cout << "Field stamped\n";
+	std::cout << "Field stamped with displacement\n";
 }
 
 void Grid::levelSet(Triangles& triangles)

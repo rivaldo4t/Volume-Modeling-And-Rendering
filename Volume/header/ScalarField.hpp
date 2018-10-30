@@ -52,9 +52,7 @@ namespace lux
 		}
 		Vector grad(const Vector& p) const
 		{
-			Vector g = -(p - center);
-			g.normalize();
-			return g;
+			return -(p - center) / (p-center).magnitude();
 		}
 	};
 
@@ -75,7 +73,7 @@ namespace lux
 		}
 		Vector grad(const Vector& p) const
 		{
-			return Vector();
+			return eval(p) > 0 ? -normal : normal;
 		}
 	};
 

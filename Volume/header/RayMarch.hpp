@@ -10,6 +10,8 @@
 #include "StampedNoise.hpp"
 #include "Wisps.hpp"
 #include "PyroclasticField.hpp"
+#include "TerrainNoise.hpp"
+#include "WarpField.hpp"
 
 // for scalar fields
 void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, const lux::SField& sfield, const lux::CField& cfield);

@@ -60,7 +60,7 @@ void Wisp::stampWisp(NoiseParams& param)
 
 void WispDot::generateDot()
 {
-	float correlationFact = 0.7;
+	float correlationFact = 0.7f;
 
 	lux::Vector r0(2 * distrib(gen) - 1, 2 * distrib(gen) - 1, 2 * distrib(gen) - 1);
 	r0 = correlationFact * guidePos + (1 - correlationFact) * r0;

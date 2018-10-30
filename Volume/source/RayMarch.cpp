@@ -6,9 +6,6 @@
 #include <ImfRgbaFile.h>
 namespace IMF = OPENEXR_IMF_NAMESPACE;
 
-// #define WEDGE_PYROCLASTIC
-// #define WEDGE_STAMPEDNOISE
-//#define WEDGE_WISP
 #define DSM_GRID
 
 void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, const lux::SField& sfield, const lux::CField& cfield)
@@ -140,9 +137,9 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, st
 	std::chrono::time_point<std::chrono::system_clock> start, end;
 	std::vector<IMF::Rgba> exr;
 	lux::Vector eye, view, up;
+	NoiseParams param;
 
 	std::cout << "\t\t  ...\n\t       Keep Calm\n\t\t  and\n\t  Let The Rays March\n\t\t  ...\n\n";
-	NoiseParams param;
 	for (int k = 0; k <= num_frames; k++)
 	{
 		start = std::chrono::system_clock::now();
@@ -151,38 +148,49 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, st
 		// roundTable(eye, view, up, k * delta_rot);
 		// camera->setEyeViewUp(eye, view, up);
 		param.updateParams();
+#if 1
+		param.octaves = 4;
+		param.freq = 0.8f;
+		param.fJump = 2.0f;
+		param.wedgeSpecific = 0.5f;
+		
+		//lux::SField torus = std::make_shared<lux::SFTorus>(0.6, 0.1, lux::Vector(0.0, 0.0, 0.0), lux::Vector(0.0, 0.0, 1.0));
+		////g->stampWithDisplacement(torus, param);
+		//torus = std::make_shared<lux::PyroclasticField>(torus, param);
+		//lux::SField plane = std::make_shared<lux::SFPlane>(lux::Vector(), lux::Vector(0.0, 1.0, 0.0));
+		//plane = std::make_shared<lux::SFIntersect>(torus, plane);
+		//g->stamp(plane);
 
-		//
-		param.octaves = 2;
-		param.freq = 2;
-		param.fJump = 2;
-		param.wedgeSpecific = 0.5;
-		lux::SField torus = std::make_shared<lux::SFTorus>(0.6, 0.1, lux::Vector(0.0, 0.0, 0.0), lux::Vector(0.0, 0.0, 1.0));
+		/*g = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
+		lux::SField sp = std::make_shared<lux::SFSphere>(lux::Vector(), 0.5);
+		lux::SField s = std::make_shared<lux::PyroclasticField>(sp, param);
+		g->stamp(s);*/
+
+		/*auto wisp1 = std::make_shared<Wisp>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004, 50000);
+		wisp1->stampWisp(param);
+		auto g1 = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
+		g1 = wisp1;
+		g1 = std::make_shared<GridTranslate>(g1, lux::Vector(-0.5, 0.0, 0.0));
+		
+		auto wisp2 = std::make_shared<Wisp>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004, 50000);
+		wisp2->stampWisp(param);
+		auto g2 = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
+		g2 = wisp1;
+		g2 = std::make_shared<GridTranslate>(g2, lux::Vector(0.5, 0.0, 0.0));
+
+		std::shared_ptr<Grid> g3 = std::make_shared<GridUnion>(g1, g2);
+		g = g3;*/
+
+		lux::VField tn = std::make_shared<lux::TerrainNoise>(param, lux::Vector(0.0, 1.0, 0.0), lux::Vector(0.0, 0.5, 0.0));
+		lux::SField pl = std::make_shared<lux::SFPlane>(lux::Vector(0.0, -0.3, 0.0), lux::Vector(0.0, 1.0, 0.0));
+		lux::SField pl2 = std::make_shared<lux::SFPlane>(lux::Vector(0.0, -0.1, 0.0), lux::Vector(0.0, -1.0, 0.0));
+		pl = std::make_shared<lux::SFIntersect>(pl, pl2);
+		//lux::VField cpt = std::make_shared<lux::CPT>(pl);
+		//lux::SField wf = std::make_shared<lux::WarpField>(pl, tn);
+		lux::SField pyro = std::make_shared<lux::PyroclasticField>(pl, param);
 		g = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
-		//g->stampWithDisplacement(torus, param);
-		torus = std::make_shared<lux::PyroclasticField>(torus, param);
-		lux::SField plane = std::make_shared<lux::SFPlane>(lux::Vector(), lux::Vector(0.0, 1.0, 0.0));
-		plane = std::make_shared<lux::SFIntersect>(torus, plane);
-		g->stamp(plane);
-		//
+		g->stamp(pyro);
 
-#ifdef WEDGE_PYROCLASTIC
-		lux::SField sphere = std::make_shared<lux::SFSphere>(lux::Vector(0.0, 0.0, 0.0), 0.5);
-		g = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
-		g->stampWithDisplacement(sphere, param);
-#endif
-
-#ifdef WEDGE_STAMPEDNOISE
-		std::shared_ptr<StampedNoise> NoiseWedge = std::make_shared<StampedNoise>(lux::Vector(0.0, 0.0, 0.0), 0.8,
-			lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
-		NoiseWedge->computeNoise(param);
-		g = NoiseWedge;
-#endif 
-
-#ifdef WEDGE_WISP
-		std::shared_ptr<Wisp> wisp = std::make_shared<Wisp>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004, 5000000);
-		wisp->stampWisp(param);
-		g = wisp;
 #endif
 
 #ifdef DSM_GRID
@@ -236,7 +244,7 @@ lux::Color marchRays(lux::Vector pos, lux::Vector dir, const std::shared_ptr<Gri
 	double T = 1;
 	double delta_s = 0.01;
 	double delta_T;
-	double kappa = 50; //0.1 for wisp
+	double kappa = 30; //0.1 for wisp
 	double s = sNear;
 
 	lux::Vector X = pos + sNear * dir;
@@ -257,7 +265,7 @@ lux::Color marchRays(lux::Vector pos, lux::Vector dir, const std::shared_ptr<Gri
 #endif
 			c += white * l->getColor() * exp(-kappa * dsm);
 		}
-		//c = white;
+		c = white;
 
 		if (d > 0)
 		{

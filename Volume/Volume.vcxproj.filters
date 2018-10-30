@@ -125,6 +125,18 @@
     <ClInclude Include="header\PyroclasticField.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="header\ClosestPointTransform.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\WarpField.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\NearPointTransform.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\TerrainNoise.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
