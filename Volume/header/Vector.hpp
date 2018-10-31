@@ -142,6 +142,13 @@ namespace lux
 	   const bool operator||         (const Vector& v) const
 		   { return (  fabs((*this)*v) == v.magnitude()*((*this).magnitude()) ); }
    
+	   Vector rodriguesRotation(const lux::Vector& axis, float angle)
+	   {
+		   float theta = angle;// *3.14f / 180;
+		   auto v = *this;
+		   return v * cos(theta) + (axis ^ v) * sin(theta) + axis * (axis * v) * (1 - cos(theta));
+	   }
+
 	  private:
 	  double xyz[3];
 	};

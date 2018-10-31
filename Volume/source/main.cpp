@@ -207,21 +207,33 @@ int main()
 {
 	std::shared_ptr<Camera> camera = std::make_shared<Camera>();
 
-	const int img_w = 1920 / 2;
-	const int img_h = 1080 / 2;
+	const int img_w = 1920 / 1;
+	const int img_h = 1080 / 1;
 	
-	std::shared_ptr<Light> key = std::make_shared<Light>(lux::Vector(0.0, 0.1, 1.0), lux::Vector(-1, -1, -1), 200, 200, 200, 0.01);
-	key->setColor(lux::Color(0.6, 0.2, 0.4, 0.5));
-	std::shared_ptr<Light> fill = std::make_shared<Light>(lux::Vector(0.0, -1.0, 0.2), lux::Vector(-1, -1, -1), 200, 200, 200, 0.01);
-	fill->setColor(lux::Color(0.1, 0.2, 0.6, 0.2));
-	std::vector<std::shared_ptr<Light>> lights;// = { key, fill };
-
 	std::shared_ptr<Grid> g;
-	/*Triangles triangles;
-	loadObj("models/cleanbunny.obj", triangles);
-	g = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 50, 50, 50, 0.04);
-	g->levelSet(triangles);*/
+	std::vector<std::shared_ptr<Light>> lights;
 
+#if 0
+	NoiseParams param;
+	param.octaves = 4;
+	param.freq = 0.8f;
+	param.fJump = 2.0f;
+	param.wedgeSpecific = 1.f;
+	lux::SField tn = std::make_shared<lux::TerrainNoise>(param, 2.f, 0.5f, 1.2f, 1.0f);
+	lux::SField pl = std::make_shared<lux::SFPlane>(lux::Vector(0.0, 0.0, 0.0), lux::Vector(0.0, -1.0, 0.0));
+	lux::SField wf = std::make_shared<lux::WarpField>(pl, tn);
+	/*lux::SField pl2 = std::make_shared<lux::SFPlane>(lux::Vector(0.8, 0.0, 0.0), lux::Vector(-1.0, 0.0, 0.0));
+	lux::SField pl3 = std::make_shared<lux::SFPlane>(lux::Vector(-0.8, 0.0, 0.0), lux::Vector(1.0, 0.0, 0.0));
+	lux::SField pl4 = std::make_shared<lux::SFPlane>(lux::Vector(0.0, 0.0, 0.8), lux::Vector(0.0, 0.0, -1.0));
+	lux::SField pl5 = std::make_shared<lux::SFPlane>(lux::Vector(0.8, 0.0, -0.8), lux::Vector(0.0, 0.0, 1.0));
+	pl = std::make_shared<lux::SFIntersect>(pl, pl2);
+	pl = std::make_shared<lux::SFIntersect>(pl, pl3);
+	pl = std::make_shared<lux::SFIntersect>(pl, pl4);
+	pl = std::make_shared<lux::SFIntersect>(pl, pl5);*/
+	lux::SField box = std::make_shared<lux::SFBox>(0.1);
+	wf = std::make_shared<lux::SFIntersect>(wf, box);
+	render(img_w, img_h, camera, wf, lux::CField());
+#endif
 	render(img_w, img_h, camera, g, lights);
 
 	int t;

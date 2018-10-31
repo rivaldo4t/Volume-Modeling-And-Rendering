@@ -4,26 +4,26 @@
 
 namespace lux
 {
-	class TerrainNoise : public VectorField
+	class TerrainNoise : public ScalarField
 	{
 	private:
 		FSPN fspn;
-		Vector up, down;
+		float up, down;
 		float gammaUp, gammaDown;
 	public:
 		TerrainNoise() {}
-		TerrainNoise(FSPN f = FSPN(), Vector u = Vector(), Vector d = Vector(), float gU = 1.f, float gD = 1.f) : 
+		TerrainNoise(FSPN f = FSPN(), float u = 1.f, float d = 1.f, float gU = 1.f, float gD = 1.f) : 
 		fspn(f), up(u), down(d), gammaUp(gU), gammaDown(gD) {}
-		TerrainNoise(const NoiseParams& param, Vector u = Vector(), Vector d = Vector(), float gU = 1.f, float gD = 1.f) :
+		TerrainNoise(const NoiseParams& param, float u = 1.f, float d = 1.f, float gU = 1.f, float gD = 1.f) :
 		up(u), down(d), gammaUp(gU), gammaDown(gD)
 		{
-			fspn = FSPN(param.octaves, param.freq, param.fJump, 2);
+			fspn = FSPN(param.octaves, param.freq, param.fJump, param.wedgeSpecific);
 		}
-		virtual std::unique_ptr<VectorField> clone() const override
+		virtual std::unique_ptr<ScalarField> clone() const override
 		{
 			return std::make_unique<TerrainNoise>(*this);
 		}
-		Vector eval(const Vector& p) const
+		double eval(const Vector& p) const
 		{
 			float n = fspn.eval(p);
 			if (n >= 0)
@@ -31,9 +31,9 @@ namespace lux
 			else
 				return -down * pow(-n, gammaDown);
 		}
-		Matrix grad(const Vector& p) const
+		Vector grad(const Vector& p) const
 		{
-			return Matrix();
+			return Vector();
 		}
 	};
 }
