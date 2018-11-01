@@ -28,6 +28,14 @@ void NoiseParams::updateParams()
 	o %= octaves_values.size();
 }
 
+void NoiseParams::setParams(int o, float fr, float fj, float ws)
+{
+	octaves = o;
+	freq = fr;
+	fJump = fj;
+	wedgeSpecific = ws;
+}
+
 float FSPN::eval(lux::Vector x) const
 {
 	float coeff = roughness == 1.0 ? (1.0 / float(octaves)) : (1 - roughness) / (1 - pow(roughness, octaves));

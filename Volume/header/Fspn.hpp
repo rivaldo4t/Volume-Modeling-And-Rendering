@@ -13,10 +13,10 @@ public:
 	float wedgeSpecific; // fade, gamma, clump
 	int o, fr, fj, w;
 	bool randomVal;
-	std::vector<int> octaves_values = { 1, 2, 3, 4, 5 };
-	std::vector<double> freq_values = { 0.5, 1, 2.5, 3, 4.3, 5.6, 10 };
-	std::vector<double> fJump_values = { 1, 1.5, 2 };
-	std::vector<double> wedgeSpecific_values = { 0.5, 1, 1.5, 2, 3 };
+	std::vector<int> octaves_values = { /*1, 2, 3,*/ 4, 5 };
+	std::vector<double> freq_values = { /*0.5, 1,*/ 2.5, 3, 4.3, 5.6, 10 };
+	std::vector<double> fJump_values = { /*1,*/ 1.5, 2 };
+	std::vector<double> wedgeSpecific_values = { /*0.5, 1,*/ 1.5, 2, 3 };
 //public:
 	NoiseParams() { o = fr = fj = w = 0; }
 	NoiseParams(bool randomInit)  : randomVal(randomInit)
@@ -28,6 +28,7 @@ public:
 		o = r % octaves_values.size();
 	}
 	void updateParams();
+	void setParams(int o, float fr, float fj, float ws);
 };
 
 class FSPN

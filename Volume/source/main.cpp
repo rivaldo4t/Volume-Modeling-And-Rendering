@@ -212,6 +212,7 @@ int main()
 	
 	std::shared_ptr<Grid> g;
 	std::vector<std::shared_ptr<Light>> lights;
+	render(img_w, img_h, camera, g, lights);
 
 #if 0
 	NoiseParams param;
@@ -234,7 +235,6 @@ int main()
 	wf = std::make_shared<lux::SFIntersect>(wf, box);
 	render(img_w, img_h, camera, wf, lux::CField());
 #endif
-	render(img_w, img_h, camera, g, lights);
 
 	int t;
 	std::cin >> t;

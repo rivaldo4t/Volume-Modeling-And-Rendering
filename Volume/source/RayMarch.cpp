@@ -13,6 +13,7 @@ void roundTable(lux::Vector& eye, lux::Vector& view, lux::Vector& up, double ste
 	//eye = lux::Vector(0, 0, 2) *cos(stepDegrees) + lux::Vector(2, 0, 0) * sin(stepDegrees);
 	float a = 0.5, b = 1.4;
 	//a = 0.2; b = 0.7;
+	//a = 0.5; b = 2.0;
 	
 	if (stepDegrees == 0.0)
 	{
@@ -165,8 +166,9 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, st
 	lux::Vector eye, view, up;
 	NoiseParams param;
 
+// mountains, valleys, cave, cauldron
 #if 0
-	// mountains and valleys
+	std::shared_ptr<Grid> gTerrain;
 	param.octaves = 5;
 	param.freq = 1.0f;
 	param.fJump = 1.6f;
@@ -175,7 +177,6 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, st
 	lux::SField tn = std::make_shared<lux::TerrainNoise>(param, 2.2f, 0.4f, 1.2f, 1.2f);
 	lux::SField pl = std::make_shared<lux::SFPlane>(lux::Vector(0.0, 0.0, 0.0), lux::Vector(0.0, -1.0, 0.0));
 	lux::SField wf = std::make_shared<lux::WarpField>(pl, tn);
-
 	lux::SField box = std::make_shared<lux::SFBox>(0.6);
 	wf = std::make_shared<lux::SFIntersect>(wf, box);
 	
@@ -184,6 +185,7 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, st
 	param.freq = 1.8f;
 	param.fJump = 1.1f;
 	param.wedgeSpecific = 1.5f;
+
 	lux::SField cauldron = std::make_shared<lux::SFSphere>(lux::Vector(), 0.5);
 	cauldron = std::make_shared<lux::SFScale>(cauldron, 0.2);
 	cauldron = std::make_shared<lux::PyroclasticField>(cauldron, param);
@@ -202,6 +204,7 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, st
 	param.freq = 1.0f;
 	param.fJump = 1.8f;
 	param.wedgeSpecific = 1.5f;
+
 	lux::SField torus = std::make_shared<lux::SFTorus>(0.8, 0.17, lux::Vector(0.0, 0.0, 0.0), lux::Vector(0.0, 0.0, 1.0));
 	torus = std::make_shared<lux::PyroclasticField>(torus, param);
 	lux::SField plane = std::make_shared<lux::SFPlane>(lux::Vector(), lux::Vector(0.0, 1.0, 0.0));
@@ -212,24 +215,107 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, st
 	landBridge = std::make_shared<lux::SFTranslate>(landBridge, lux::Vector(0.1, -0.1, 0.4));
 	wf = std::make_shared<lux::SFUnion>(wf, landBridge);
 
-	//g = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 50, 50, 50, 0.04);
-	g = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
-	g->stamp(wf);
-	g->writeGrid("D:/temp/vol/exceptSmokeAndMonument.bin");
+	//gTerrain = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 50, 50, 50, 0.04);
+	gTerrain = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
+	gTerrain->stamp(wf);
+	gTerrain->writeGrid("D:/temp/vol/mountainView.dat");
+	g = gTerrain;
+#endif
+#if 0
+	std::shared_ptr<Grid> gTerrain;
+	gTerrain = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
+	gTerrain->readGrid("D:/temp/vol/mountainView.dat");
+	g = gTerrain;
+#endif
 
+// smoke
+#if 0
+	std::shared_ptr<Grid> gSmoke;
+	param.updateParams();
+	auto noise = std::make_shared<StampedNoise>(lux::Vector(0, 0, 0), 0.1f, lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
+	noise->computeNoise(param);
+	gSmoke = noise;
+
+	lux::Vector guideVector(1.0, 1.0, -1.0);
+	guideVector.normalize();
+	int numStampedNoiseBlobs = 50;
+	float deltaSize = 0.1;
+	for (int noiseNum = 0; noiseNum < numStampedNoiseBlobs; ++noiseNum)
+	{
+		std::cout << noiseNum << std::endl;
+		param.updateParams();
+
+		float factor = float(noiseNum) / numStampedNoiseBlobs;
+		lux::Vector randomJitter(2.0 * distrib(gen) - 1.0, 2.0 * distrib(gen) - 1.0, 2.0 * distrib(gen) - 1.0);
+		lux::Vector noisePos = factor * (guideVector + 0.5 * factor * randomJitter);
+
+		std::shared_ptr<StampedNoise> noiseTemp = std::make_shared<StampedNoise>(noisePos, deltaSize * (1.0f + factor), 
+			lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
+		noiseTemp->computeNoise(param);
+
+		std::shared_ptr<Grid> gTemp = noiseTemp;
+		gSmoke = std::make_shared<GridUnion>(gSmoke, gTemp);
+	}
+	gSmoke->writeGrid("D:/temp/vol/smoke.dat");
+	g = gSmoke;
+#endif
+#if 0
+	std::shared_ptr<Grid> gSmoke = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
+	gSmoke->readGrid("D:/temp/vol/smoke.dat");
+	gSmoke = std::make_shared<GridScale>(gSmoke, 0.2);
+	gSmoke = std::make_shared<GridTranslate>(gSmoke, lux::Vector(-0.2, 0.25, 0.7));
+	g = std::make_shared<GridUnion>(g, gSmoke);
+#endif
+
+// bunny instancing
+#if 0
+	std::shared_ptr<Grid> bunnies = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
+	bunnies->readGrid("D:/temp/vol/level_cleanbunny.dat");
+	bunnies = std::make_shared<GridScale>(bunnies, 0.07);
+
+	int numObject = 6;
+	float spread = 0.8;
+	for (int obj = 0; obj < numObject; ++obj)
+	{
+		std::cout << obj << std::endl;
+
+		std::shared_ptr<Grid> gTemp = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
+		gTemp->readGrid("D:/temp/vol/level_cleanbunny.dat");
+		gTemp = std::make_shared<GridScale>(gTemp, 0.07);
+
+		float factor = float(obj) / numObject;
+		lux::Vector randomJitter(2.0 * distrib(gen) - 1.0, 0.0, 2.0 * distrib(gen) - 1.0);
+		lux::Vector translateVector = spread * factor * randomJitter;
+		gTemp = std::make_shared<GridTranslate>(gTemp, translateVector);
+		
+		bunnies = std::make_shared<GridUnion>(bunnies, gTemp);
+	}
+	bunnies->writeGrid("D:/temp/vol/bunnies.dat");
+	g = bunnies;
+#endif
+#if 0
+	std::shared_ptr<Grid> bunnies = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
+	bunnies->readGrid("D:/temp/vol/bunnies.dat");
+	bunnies = std::make_shared<GridTranslate>(bunnies, lux::Vector());
+	g = std::make_shared<GridUnion>(g, bunnies);
+#endif
+
+	//g->writeGrid("D:/temp/vol/terrain.dat");
+	//g = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
+	//g->readGrid("D:/temp/vol/terrain.dat");
+
+	//Light
 	std::shared_ptr<Light> key = std::make_shared<Light>(lux::Vector(0.0, 1.0, 0.0),
-	//	lux::Vector(-1, -1, -1), 25, 25, 25, 0.08);
-	lux::Vector(-1, -1, -1), 250, 250, 250, 0.008);
+		//	lux::Vector(-1, -1, -1), 25, 25, 25, 0.08);
+		lux::Vector(-1, -1, -1), 250, 250, 250, 0.008);
 	//lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
 	key->setColor(lux::Color(0.5, 0.5, 0.5, 1.0));
 	lights = { key };
-#endif
 
 #ifdef DSM_GRID
 	for (auto l : lights)
 		l->computeDSM(g);
 #endif
-	//
 
 	std::cout << "\t\t  ...\n\t       Keep Calm\n\t\t  and\n\t  Let The Rays March\n\t\t  ...\n\n";
 	for (int k = 0; k < num_frames; k++)
@@ -239,81 +325,6 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, st
 		exr.resize(img_h * img_w);
 		roundTable(eye, view, up, k * delta_rot);
 		camera->setEyeViewUp(eye, view, up);
-		//param.updateParams();
-#if 1
-		/*param.octaves = 4;
-		param.freq = 0.8f; // 1.2
-		param.fJump = 1.5f; // 1.6
-		param.wedgeSpecific = 1.5f;*/
-
-		/*g = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
-		lux::SField sp = std::make_shared<lux::SFSphere>(lux::Vector(), 0.5);
-		lux::SField s = std::make_shared<lux::PyroclasticField>(sp, param);
-		g->stamp(s);*/
-
-		/*auto wisp1 = std::make_shared<Wisp>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004, 50000);
-		wisp1->stampWisp(param);
-		auto g1 = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
-		g1 = wisp1;
-		g1 = std::make_shared<GridTranslate>(g1, lux::Vector(-0.5, 0.0, 0.0));
-		
-		auto wisp2 = std::make_shared<Wisp>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004, 50000);
-		wisp2->stampWisp(param);
-		auto g2 = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
-		g2 = wisp1;
-		g2 = std::make_shared<GridTranslate>(g2, lux::Vector(0.5, 0.0, 0.0));
-
-		std::shared_ptr<Grid> g3 = std::make_shared<GridUnion>(g1, g2);
-		g = g3;*/
-
-#if 0
-		param.updateParams();
-		auto noise = std::make_shared<StampedNoise>(lux::Vector(0, 0, 0), 0.1f, lux::Vector(-1, -1, -1), 100, 100, 100, 0.02);
-		noise->computeNoise(param);
-		g = noise;
-
-		param.updateParams();
-		auto noise2 = std::make_shared<StampedNoise>(lux::Vector(-0.1, 0.1, -0.1), 0.1f, lux::Vector(-1, -1, -1), 100, 100, 100, 0.02);
-		noise2->computeNoise(param);
-		std::shared_ptr<Grid> g2 = noise2;
-		g = std::make_shared<GridUnion>(g, g2);
-
-		param.updateParams();
-		auto noise3 = std::make_shared<StampedNoise>(lux::Vector(0, 0.1, -0.1), 0.1f, lux::Vector(-1, -1, -1), 100, 100, 100, 0.02);
-		noise3->computeNoise(param);
-		g2 = noise3;
-		g = std::make_shared<GridUnion>(g, g2);
-
-		param.updateParams();
-		auto noise4 = std::make_shared<StampedNoise>(lux::Vector(-0.1, 0.1, 0), 0.1f, lux::Vector(-1, -1, -1), 100, 100, 100, 0.02);
-		noise4->computeNoise(param);
-		g2 = noise4;
-		g = std::make_shared<GridUnion>(g, g2);
-
-		param.updateParams();
-		auto noise5 = std::make_shared<StampedNoise>(lux::Vector(-0.2, 0.2, -0.2), 0.1f, lux::Vector(-1, -1, -1), 100, 100, 100, 0.02);
-		noise5->computeNoise(param);
-		g2 = noise5;
-		g = std::make_shared<GridUnion>(g, g2);
-
-		param.updateParams();
-		auto noise6 = std::make_shared<StampedNoise>(lux::Vector(0.1, 0.2, -0.2), 0.1f, lux::Vector(-1, -1, -1), 100, 100, 100, 0.02);
-		noise6->computeNoise(param);
-		g2 = noise6;
-		g = std::make_shared<GridUnion>(g, g2);
-
-		param.updateParams();
-		auto noise7 = std::make_shared<StampedNoise>(lux::Vector(-.2, 0.2, 0.1), 0.1f, lux::Vector(-1, -1, -1), 100, 100, 100, 0.02);
-		noise7->computeNoise(param);
-		g2 = noise7;
-		g = std::make_shared<GridUnion>(g, g2);
-#endif
-#endif
-
-//#ifdef DSM_GRID
-//		for (auto l : lights)
-//			l->computeDSM(g);
-//#endif
 
 		std::cout << "|0%|==|==|==|==|==|==|==|==|==|==|100%|\n|0%|";
 
@@ -404,7 +415,6 @@ double marchToLight(lux::Vector pos, lux::Vector lightPos, const std::shared_ptr
 	nL.normalize();
 	lux::Vector X = pos + sNear * nL;
 	double delta_s = 0.01;
-	double kappa = 50;
 	double dsm = 0.0;
 
 	if (g->eval(X) > 0)
