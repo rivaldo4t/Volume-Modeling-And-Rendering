@@ -8,39 +8,41 @@ namespace IMF = OPENEXR_IMF_NAMESPACE;
 
 #define DSM_GRID
 
+// TODO: generalize
 void roundTable(lux::Vector& eye, lux::Vector& view, lux::Vector& up, double stepDegrees)
 {
 	//eye = lux::Vector(0, 0, 2) *cos(stepDegrees) + lux::Vector(2, 0, 0) * sin(stepDegrees);
 	float a = 0.5, b = 1.4;
 	//a = 0.2; b = 0.7;
 	//a = 0.5; b = 2.0;
+	float theta = -atan(a / b);
 	
 	if (stepDegrees == 0.0)
 	{
 		eye = lux::Vector(0, a, b);
 		view = lux::Vector(0, 0, 0) - eye;
-		up = lux::Vector(0, 1, 0).rodriguesRotation(lux::Vector(1.0, 0.0, 0.0), atan(a / b));
+		up = lux::Vector(0, 1, 0).rodriguesRotation(lux::Vector(1.0, 0.0, 0.0), theta);
 	}
 	
 	else if (stepDegrees == 90.0)
 	{
 		eye = lux::Vector(b, a, 0);
 		view = lux::Vector(0, 0, 0) - eye;
-		up = lux::Vector(0, 1, 0).rodriguesRotation(lux::Vector(0.0, 0.0, -1.0), atan(a / b));
+		up = lux::Vector(0, 1, 0).rodriguesRotation(lux::Vector(0.0, 0.0, -1.0), theta);
 	}
 
 	else if (stepDegrees == 180.0)
 	{
 		eye = lux::Vector(0, a, -b);
 		view = lux::Vector(0, 0, 0) - eye;
-		up = lux::Vector(0, 1, 0).rodriguesRotation(lux::Vector(-1.0, 0.0, 0.0), atan(a / b));
+		up = lux::Vector(0, 1, 0).rodriguesRotation(lux::Vector(-1.0, 0.0, 0.0), theta);
 	}
 
 	else if (stepDegrees == 270.0)
 	{
 		eye = lux::Vector(-b, a, 0);
 		view = lux::Vector(0, 0, 0) - eye;
-		up = lux::Vector(0, 1, 0).rodriguesRotation(lux::Vector(0.0, 0.0, 1.0), atan(a / b));
+		up = lux::Vector(0, 1, 0).rodriguesRotation(lux::Vector(0.0, 0.0, 1.0), theta);
 	}
 }
 
@@ -166,7 +168,7 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, st
 	lux::Vector eye, view, up;
 	NoiseParams param;
 
-// mountains, valleys, cave, cauldron
+// mountains, valleys, cave, cauldron, plains
 #if 0
 	std::shared_ptr<Grid> gTerrain;
 	param.octaves = 5;
@@ -215,6 +217,12 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, st
 	landBridge = std::make_shared<lux::SFTranslate>(landBridge, lux::Vector(0.1, -0.1, 0.4));
 	wf = std::make_shared<lux::SFUnion>(wf, landBridge);
 
+	//plains
+	lux::SField box2 = std::make_shared<lux::SFBox>(0.6);
+	box2 = std::make_shared<lux::SFScale>(box2, 0.5);
+	box2 = std::make_shared<lux::SFTranslate>(box2, lux::Vector(0.0, 0.415, -0.32));
+	wf = std::make_shared<lux::SFCutout>(wf, box2);
+
 	//gTerrain = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 50, 50, 50, 0.04);
 	gTerrain = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
 	gTerrain->stamp(wf);
@@ -262,8 +270,8 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, st
 #if 0
 	std::shared_ptr<Grid> gSmoke = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
 	gSmoke->readGrid("D:/temp/vol/smoke.dat");
-	gSmoke = std::make_shared<GridScale>(gSmoke, 0.2);
-	gSmoke = std::make_shared<GridTranslate>(gSmoke, lux::Vector(-0.2, 0.25, 0.7));
+	gSmoke = std::make_shared<GridScale>(gSmoke, 0.3);
+	gSmoke = std::make_shared<GridTranslate>(gSmoke, lux::Vector(-0.2, 0.25, 0.7)); // translate to cauldron
 	g = std::make_shared<GridUnion>(g, gSmoke);
 #endif
 
@@ -296,19 +304,34 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, st
 #if 0
 	std::shared_ptr<Grid> bunnies = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
 	bunnies->readGrid("D:/temp/vol/bunnies.dat");
-	bunnies = std::make_shared<GridTranslate>(bunnies, lux::Vector());
+	bunnies = std::make_shared<GridScale>(bunnies, 0.8);
+	bunnies = std::make_shared<GridTranslate>(bunnies, lux::Vector(0.0, 0.0, -0.32)); // translate to plains
 	g = std::make_shared<GridUnion>(g, bunnies);
 #endif
 
+#if 1
 	//g->writeGrid("D:/temp/vol/terrain.dat");
-	//g = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
-	//g->readGrid("D:/temp/vol/terrain.dat");
+	g = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
+	g->readGrid("D:/temp/vol/terrain.dat");
+#endif
 
-	//Light
-	std::shared_ptr<Light> key = std::make_shared<Light>(lux::Vector(0.0, 1.0, 0.0),
-		//	lux::Vector(-1, -1, -1), 25, 25, 25, 0.08);
-		lux::Vector(-1, -1, -1), 250, 250, 250, 0.008);
-	//lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
+// monument
+#if 1
+	std::shared_ptr<Grid> mon = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
+	mon->readGrid("D:/temp/vol/iron_man.dat");
+	mon = std::make_shared<GridScale>(mon, 0.3);
+	mon = std::make_shared<GridRotate>(mon, 90.0, lux::Vector(0.0, 1.0, 0.0).unitvector());
+	mon = std::make_shared<GridRotate>(mon, 45.0, lux::Vector(0.0, 0.0, 1.0).unitvector());
+	mon = std::make_shared<GridTranslate>(mon, lux::Vector(0.2, 0.04, -0.6)); // translate to plains
+	//g = mon;
+	g = std::make_shared<GridUnion>(g, mon);
+#endif
+
+// Light
+	std::shared_ptr<Light> key = std::make_shared<Light>(lux::Vector(0.0, 3.0, 0.0),
+			//lux::Vector(-1, -1, -1), 25, 25, 25, 0.08);
+		//lux::Vector(-1, -1, -1), 250, 250, 250, 0.008);
+	lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
 	key->setColor(lux::Color(0.5, 0.5, 0.5, 1.0));
 	lights = { key };
 

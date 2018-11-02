@@ -407,9 +407,9 @@ namespace lux
 		double eval(const Vector& p) const
 		{
 			double A = cos(angle);
-			double B = (axis * p) * (1 - A);
+			double BB = (axis * p) * (1 - A);
 			double C = sin(angle);
-			Vector rotated_p = (A * p) + (B * axis) + (C * (p ^ axis));
+			Vector rotated_p = (A * p) + (BB * axis) + (C * (p ^ axis));
 			return _f->eval(rotated_p);
 		}
 		Vector grad(const Vector& p) const

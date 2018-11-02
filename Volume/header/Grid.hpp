@@ -139,3 +139,40 @@ public:
 	}
 #endif
 };
+
+class GridRotate : public Grid
+{
+	//std::shared_ptr<Grid> f, g;
+public:
+	GridRotate(std::shared_ptr<Grid> _f, double angle, lux::Vector axis) : Grid(*_f.get())//, f(_f), g(_g) 
+	{
+#if 1
+		gridData.resize(Nx * Ny * Nz, 0);
+		angle = -angle * M_PI / 180.0;
+#pragma omp parallel for
+		for (int i = 0; i < Nx; ++i)
+		{
+			for (int j = 0; j < Ny; ++j)
+			{
+				for (int k = 0; k < Nz; ++k)
+				{
+					lux::Vector p = llc + lux::Vector(double(i) * delta_grid, double(j) * delta_grid, double(k) * delta_grid);
+					double A = cos(angle);
+					double BB = (axis * p) * (1 - A);
+					double C = sin(angle);
+					lux::Vector rotated_p = (A * p) + (BB * axis) + (C * (p ^ axis));
+					gridData[getIndex(i, j, k)] = _f->eval(rotated_p);
+				}
+			}
+		}
+		//g.reset();
+#endif
+	}
+
+#if 0
+	double eval(lux::Vector p) const
+	{
+		return std::max(f->eval(p), g->eval(p));
+	}
+#endif
+};

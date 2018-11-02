@@ -88,6 +88,7 @@ std::pair<lux::SField, lux::CField> getHumanoid()
 	return std::make_pair(humanoid, colorField);
 }
 
+// TODO: separate obj
 // obj loader
 lux::SField loadObjField(std::string fileName, Triangles& triangles)
 {
@@ -190,7 +191,7 @@ bool loadObj(std::string fileName, Triangles& triangles)
 			attrib.normals[3 * idx.normal_index + 1],
 			attrib.normals[3 * idx.normal_index + 2] };*/
 
-			Triangle t(p0 / 1, p1 / 1, p2 / 1);
+			Triangle t(p0 / 2, p1 / 2, p2 / 2);
 			//t.n = (n0 + n1 + n2) / 3;
 			triangles.push_back(std::make_shared<Triangle>(t));
 
@@ -211,6 +212,13 @@ int main()
 	const int img_h = 1080 / 1;
 	
 	std::shared_ptr<Grid> g;
+	//
+	/*g = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 100, 100, 100, 0.02);
+	Triangles tri;
+	loadObj("models/iron_man.obj", tri);
+	g->levelSet(tri);
+	g->writeGrid("D:/temp/vol/tree.dat");*/
+	//
 	std::vector<std::shared_ptr<Light>> lights;
 	render(img_w, img_h, camera, g, lights);
 
