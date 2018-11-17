@@ -159,41 +159,32 @@ double marchRaysDSM(lux::Vector pos, lux::Vector lightPos, const lux::SField& de
 	return exp(-kappa * dsm);
 }
 
+lux::VField vf = std::make_shared<lux::VFRandom>();
 void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, std::shared_ptr<Grid>& g, std::vector<std::shared_ptr<Light>>& lights)
 {
-	const int num_frames = 10;
+	const int num_frames = 1;
 	const double delta_rot = 360.f / num_frames;// *M_PI / 180.f;
 	std::chrono::time_point<std::chrono::system_clock> start, end;
 	std::vector<IMF::Rgba> exr;
 	lux::Vector eye, view, up;
 	NoiseParams param;
 
-	lux::SField sf = std::make_shared<lux::SFSphere>(lux::Vector(), 0.5);
-	lux::VField vf = std::make_shared<lux::VFRandom>();
-	lux::SField af = std::make_shared<lux::AdvectedField>(sf, vf);
-	//g->stamp(af);
-
 	g = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
+	//g = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 50, 50, 50, 0.04);
 	g->readGrid("D:/temp/vol/level_cleanbunny.dat");
 	param.updateParams();
 
-// Light
 	std::shared_ptr<Light> key = std::make_shared<Light>(lux::Vector(0.0, 3.0, 0.0),
 	//lux::Vector(-1, -1, -1), 25, 25, 25, 0.08);
-	//lux::Vector(-1, -1, -1), 250, 250, 250, 0.008);
-	lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
+	lux::Vector(-1, -1, -1), 250, 250, 250, 0.008);
+	//lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
 	key->setColor(lux::Color(0.5, 0.5, 0.5, 1.0));
 	lights = { key };
 	
-//#ifdef DSM_GRID
-//	for (auto l : lights)
-//		l->computeDSM(g);
-//#endif
-
 	std::cout << "\t\t  ...\n\t       Keep Calm\n\t\t  and\n\t  Let The Rays March\n\t\t  ...\n\n";
 	for (int k = 0; k < num_frames; k++)
 	{
-		g->pyroDisplace(param);
+		//g->pyroDisplace(param);
 #ifdef DSM_GRID
 		for (auto l : lights)
 			l->computeDSM(g);
@@ -260,6 +251,7 @@ lux::Color marchRays(lux::Vector pos, lux::Vector dir, const std::shared_ptr<Gri
 	{
 		X += delta_s * dir;
 		double d = g->eval(X);
+		//double d = g->eval(X - vf->eval(X)*0.05);
 		
 		lux::Color c;
 		for (auto l : lights)

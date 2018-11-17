@@ -1,4 +1,7 @@
-#include "LoadObj.hpp"
+#include "ObjFileLoaders.hpp"
+#include "OBJ_Loader.h"
+#define TINYOBJLOADER_IMPLEMENTATION
+#include "tiny_obj_loader.h"
 
 lux::SField loadObjField(std::string fileName, Triangles& triangles)
 {

@@ -13,7 +13,7 @@
 #include "TerrainNoise.hpp"
 #include "WarpField.hpp"
 #include "AdvectedField.hpp"
-#include "LoadObj.hpp"
+#include "ObjFileLoaders.hpp"
 
 // for scalar fields
 void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, const lux::SField& sfield, const lux::CField& cfield);

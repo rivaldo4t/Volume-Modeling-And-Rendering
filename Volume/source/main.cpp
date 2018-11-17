@@ -13,7 +13,7 @@
 #include "Wisps.hpp"
 #include "PyroclasticField.hpp"
 #include "AdvectedField.hpp"
-#include "LoadObj.hpp"
+#include "ObjFileLoaders.hpp"
 
 std::pair<lux::SField, lux::CField> getHumanoid()
 {

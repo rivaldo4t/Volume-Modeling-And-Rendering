@@ -54,6 +54,9 @@
     <ClCompile Include="source\Light.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="header\ObjFileLoaders.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\Camera.hpp">
@@ -98,9 +101,6 @@
     <ClInclude Include="header\Triangle.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\Main.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="header\VectorField.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -138,6 +138,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="header\AdvectedField.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\ObjFileLoaders.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

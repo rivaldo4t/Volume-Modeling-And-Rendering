@@ -4,13 +4,8 @@
 #include <iostream>
 #include <string>
 
-#include "OBJ_Loader.h"
-
-#define TINYOBJLOADER_IMPLEMENTATION
-#include "tiny_obj_loader.h"
-
-// obj loader
+// OBJ_Loader
 lux::SField loadObjField(std::string fileName, Triangles& triangles);
 
-// tiny obj
+// tiny_obj_loader
 bool loadObj(std::string fileName, Triangles& triangles);
