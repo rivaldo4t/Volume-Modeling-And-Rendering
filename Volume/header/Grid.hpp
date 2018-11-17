@@ -33,6 +33,7 @@ class Grid
 	bool withinGrid(lux::Vector p) const;
 	void stamp(lux::SField s);
 	void stampWithDisplacement(lux::SField s, NoiseParams& param);
+	void pyroDisplace(NoiseParams& param);
 	void levelSet(Triangles& triangles);
 	virtual double eval(lux::Vector p) const;
 	void writeGrid(std::string fileName);

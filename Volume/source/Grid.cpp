@@ -56,13 +56,36 @@ void Grid::stampWithDisplacement(lux::SField s, NoiseParams& param)
 			for (int k = 0; k < Nz; ++k)
 			{
 				lux::Vector p = llc + lux::Vector(double(i) * delta_grid, double(j) * delta_grid, double(k) * delta_grid);
-				gridData[getIndex(i, j, k)] = s->eval(p) +
-					scalingFact * pow(abs(fspn.eval(p.unitvector())), gamma);
+				gridData[getIndex(i, j, k)] = s->eval(p) + scalingFact * pow(abs(fspn.eval(p.unitvector())), gamma);
 			}
 		}
 	}
 
 	std::cout << "Field stamped with displacement\n";
+}
+
+void Grid::pyroDisplace(NoiseParams& param)
+{
+	gridData.resize(Nx * Ny * Nz, 0);
+
+	FSPN fspn = FSPN(param.octaves, param.freq, param.fJump, 2);
+	float gamma = param.wedgeSpecific;
+	float scalingFact = 0.2f;
+
+#pragma omp parallel for
+	for (int i = 0; i < Nx; ++i)
+	{
+		for (int j = 0; j < Ny; ++j)
+		{
+			for (int k = 0; k < Nz; ++k)
+			{
+				lux::Vector p = llc + lux::Vector(double(i) * delta_grid, double(j) * delta_grid, double(k) * delta_grid);
+				gridData[getIndex(i, j, k)] += scalingFact * pow(abs(fspn.eval(p.unitvector())), gamma);
+			}
+		}
+	}
+
+	std::cout << "Field displaced\n";
 }
 
 void Grid::levelSet(Triangles& triangles)

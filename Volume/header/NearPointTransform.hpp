@@ -8,11 +8,11 @@ namespace lux
 	class NPT : public VectorField
 	{
 	private:
-		IdentityVectorField I;
+		VFIdentity I;
 		SField f;
 	public:
 		NPT() {}
-		NPT(IdentityVectorField _I, SField _f) : I(_I), f(_f) {}
+		NPT(VFIdentity _I, SField _f) : I(_I), f(_f) {}
 		virtual std::unique_ptr<VectorField> clone() const override
 		{
 			return std::make_unique<NPT>(*this);

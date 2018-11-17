@@ -9,10 +9,10 @@ namespace lux
 	{
 	private:
 		SField f;
-		IdentityVectorField I;
+		VFIdentity I;
 	public:
 		CPT() {}
-		CPT(SField _f, IdentityVectorField _I = IdentityVectorField()) : I(_I), f(_f) {}
+		CPT(SField _f, VFIdentity _I = VFIdentity()) : I(_I), f(_f) {}
 		virtual std::unique_ptr<VectorField> clone() const override
 		{
 			return std::make_unique<CPT>(*this);

@@ -1,4 +1,19 @@
-#include "Main.hpp"
+#include <iostream>
+#include <memory>
+#include <vector>
+#include <string>
+#include "ScalarField.hpp"
+#include "ColorField.hpp"
+#include "Camera.hpp"
+#include "RayMarch.hpp"
+#include "Light.hpp"
+#include "Triangle.hpp"
+#include "Grid.hpp"
+#include "StampedNoise.hpp"
+#include "Wisps.hpp"
+#include "PyroclasticField.hpp"
+#include "AdvectedField.hpp"
+#include "LoadObj.hpp"
 
 std::pair<lux::SField, lux::CField> getHumanoid()
 {
@@ -88,161 +103,16 @@ std::pair<lux::SField, lux::CField> getHumanoid()
 	return std::make_pair(humanoid, colorField);
 }
 
-// TODO: separate obj
-// obj loader
-lux::SField loadObjField(std::string fileName, Triangles& triangles)
-{
-	objl::Loader Loader;
-	bool loadout = Loader.LoadFile(fileName);
-	if (loadout)
-	{
-		for (unsigned int i = 0; i < Loader.LoadedMeshes.size(); i++)
-		{
-			objl::Mesh curMesh = Loader.LoadedMeshes[i];
-			for (unsigned int j = 0; j < curMesh.Indices.size(); j += 3)
-			{
-				lux::Vector p0 = { curMesh.Vertices[curMesh.Indices[j + 0]].Position.X,
-					curMesh.Vertices[curMesh.Indices[j + 0]].Position.Y,
-					curMesh.Vertices[curMesh.Indices[j + 0]].Position.Z };
-				lux::Vector p1 = { curMesh.Vertices[curMesh.Indices[j + 1]].Position.X,
-					curMesh.Vertices[curMesh.Indices[j + 1]].Position.Y,
-					curMesh.Vertices[curMesh.Indices[j + 1]].Position.Z };
-				lux::Vector p2 = { curMesh.Vertices[curMesh.Indices[j + 2]].Position.X,
-					curMesh.Vertices[curMesh.Indices[j + 2]].Position.Y,
-					curMesh.Vertices[curMesh.Indices[j + 2]].Position.Z };
-
-				//triangles.push_back(std::make_shared<Triangle>(p0 / 20.0, p1 / 20.0, p2 / 20.0));
-				triangles.push_back(std::make_shared<Triangle>(p0, p1, p2));
-			}
-		}
-	}
-	std::cout << "Number of triangles loaded: " << triangles.size() << std::endl;
-
-	int i = 0;
-	// negative normal
-	//lux::SField obj = std::make_shared<lux::SFPlane>(triangles[i]->p0, -(triangles[i]->n).unitvector());
-	/*for (i = 1; i < triangles.size(); ++i)
-	{
-	lux::SField p = std::make_shared<lux::SFPlane>(triangles[i]->p0, -(triangles[i]->n).unitvector());
-	obj = std::make_shared<lux::SFIntersect>(obj, p);
-	}
-	obj = std::make_shared<lux::SFScale>(obj, 0.5);
-	obj = std::make_shared<lux::SFRotate>(obj, lux::Vector(1.0, 1.0, 0.0), 30);*/
-
-	lux::SField obj;
-	return obj;
-}
-
-// tiny obj
-bool loadObj(std::string fileName, Triangles& triangles)
-{
-	std::cout << "Loading " << fileName << std::endl;
-
-	tinyobj::attrib_t attrib;
-	std::vector<tinyobj::shape_t> shapes;
-	std::vector<tinyobj::material_t> materials;
-
-	std::string err;
-	bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &err, fileName.c_str(), "models/", true);
-	if (!ret)
-	{
-		printf("Failed to load/parse .obj.\n");
-		if (!err.empty())
-			std::cerr << err << std::endl;
-		return false;
-	}
-
-	// For each shape
-	for (size_t i = 0; i < shapes.size(); i++)
-	{
-		size_t index_offset = 0;
-
-		// For each face
-		for (size_t f = 0; f < shapes[i].mesh.num_face_vertices.size(); f++)
-		{
-			size_t fnum = shapes[i].mesh.num_face_vertices[f];
-			assert(fnum == 3); // triangulate = true
-
-			lux::Vector p0, p1, p2;
-			//lux::Vector n0, n1, n2;
-			tinyobj::index_t idx;
-
-			idx = shapes[i].mesh.indices[index_offset + 0];
-			p0 = { attrib.vertices[3 * idx.vertex_index + 0],
-				attrib.vertices[3 * idx.vertex_index + 1],
-				attrib.vertices[3 * idx.vertex_index + 2] };
-			/*n0 = { attrib.normals[3 * idx.normal_index + 0],
-			attrib.normals[3 * idx.normal_index + 1],
-			attrib.normals[3 * idx.normal_index + 2] };*/
-
-			idx = shapes[i].mesh.indices[index_offset + 1];
-			p1 = { attrib.vertices[3 * idx.vertex_index + 0],
-				attrib.vertices[3 * idx.vertex_index + 1],
-				attrib.vertices[3 * idx.vertex_index + 2] };
-			/*n1 = { attrib.normals[3 * idx.normal_index + 0],
-			attrib.normals[3 * idx.normal_index + 1],
-			attrib.normals[3 * idx.normal_index + 2] };*/
-
-			idx = shapes[i].mesh.indices[index_offset + 2];
-			p2 = { attrib.vertices[3 * idx.vertex_index + 0],
-				attrib.vertices[3 * idx.vertex_index + 1],
-				attrib.vertices[3 * idx.vertex_index + 2] };
-			/*n2 = { attrib.normals[3 * idx.normal_index + 0],
-			attrib.normals[3 * idx.normal_index + 1],
-			attrib.normals[3 * idx.normal_index + 2] };*/
-
-			Triangle t(p0 / 2, p1 / 2, p2 / 2);
-			//t.n = (n0 + n1 + n2) / 3;
-			triangles.push_back(std::make_shared<Triangle>(t));
-
-			index_offset += fnum;
-		}
-	}
-
-	std::cout << "Load successful\n";
-
-	return true;
-}
-
 int main()
 {
 	std::shared_ptr<Camera> camera = std::make_shared<Camera>();
 
-	const int img_w = 1920 / 1;
-	const int img_h = 1080 / 1;
+	const int img_w = 1920 / 4;
+	const int img_h = 1080 / 4;
 	
 	std::shared_ptr<Grid> g;
-	//
-	/*g = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 100, 100, 100, 0.02);
-	Triangles tri;
-	loadObj("models/iron_man.obj", tri);
-	g->levelSet(tri);
-	g->writeGrid("D:/temp/vol/tree.dat");*/
-	//
 	std::vector<std::shared_ptr<Light>> lights;
 	render(img_w, img_h, camera, g, lights);
-
-#if 0
-	NoiseParams param;
-	param.octaves = 4;
-	param.freq = 0.8f;
-	param.fJump = 2.0f;
-	param.wedgeSpecific = 1.f;
-	lux::SField tn = std::make_shared<lux::TerrainNoise>(param, 2.f, 0.5f, 1.2f, 1.0f);
-	lux::SField pl = std::make_shared<lux::SFPlane>(lux::Vector(0.0, 0.0, 0.0), lux::Vector(0.0, -1.0, 0.0));
-	lux::SField wf = std::make_shared<lux::WarpField>(pl, tn);
-	/*lux::SField pl2 = std::make_shared<lux::SFPlane>(lux::Vector(0.8, 0.0, 0.0), lux::Vector(-1.0, 0.0, 0.0));
-	lux::SField pl3 = std::make_shared<lux::SFPlane>(lux::Vector(-0.8, 0.0, 0.0), lux::Vector(1.0, 0.0, 0.0));
-	lux::SField pl4 = std::make_shared<lux::SFPlane>(lux::Vector(0.0, 0.0, 0.8), lux::Vector(0.0, 0.0, -1.0));
-	lux::SField pl5 = std::make_shared<lux::SFPlane>(lux::Vector(0.8, 0.0, -0.8), lux::Vector(0.0, 0.0, 1.0));
-	pl = std::make_shared<lux::SFIntersect>(pl, pl2);
-	pl = std::make_shared<lux::SFIntersect>(pl, pl3);
-	pl = std::make_shared<lux::SFIntersect>(pl, pl4);
-	pl = std::make_shared<lux::SFIntersect>(pl, pl5);*/
-	lux::SField box = std::make_shared<lux::SFBox>(0.1);
-	wf = std::make_shared<lux::SFIntersect>(wf, box);
-	render(img_w, img_h, camera, wf, lux::CField());
-#endif
 
 	int t;
 	std::cin >> t;

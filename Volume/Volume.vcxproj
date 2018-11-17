@@ -34,6 +34,7 @@
     <ClCompile Include="source\Wisps.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="header\AdvectedField.hpp" />
     <ClInclude Include="header\ClosestPointTransform.hpp" />
     <ClInclude Include="header\NearPointTransform.hpp" />
     <ClInclude Include="header\PyroclasticField.hpp" />

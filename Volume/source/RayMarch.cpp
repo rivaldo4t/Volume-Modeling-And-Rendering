@@ -84,7 +84,7 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, co
 		}
 		std::cout << "100%|\n";
 
-		std::string fileName = "output/Render_3/frame_" + std::to_string(k + 1) + ".exr";
+		std::string fileName = "output/Render_4/frame_" + std::to_string(k + 1) + ".exr";
 		IMF::RgbaOutputFile file(fileName.c_str(), img_w, img_h, IMF::WRITE_RGBA);
 		file.setFrameBuffer(const_cast<IMF::Rgba*>(exr.data()), 1, img_w);
 		file.writePixels(img_h);
@@ -161,193 +161,49 @@ double marchRaysDSM(lux::Vector pos, lux::Vector lightPos, const lux::SField& de
 
 void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, std::shared_ptr<Grid>& g, std::vector<std::shared_ptr<Light>>& lights)
 {
-	const int num_frames = 4;
+	const int num_frames = 10;
 	const double delta_rot = 360.f / num_frames;// *M_PI / 180.f;
 	std::chrono::time_point<std::chrono::system_clock> start, end;
 	std::vector<IMF::Rgba> exr;
 	lux::Vector eye, view, up;
 	NoiseParams param;
 
-// mountains, valleys, cave, cauldron, plains
-#if 0
-	std::shared_ptr<Grid> gTerrain;
-	param.octaves = 5;
-	param.freq = 1.0f;
-	param.fJump = 1.6f;
-	param.wedgeSpecific = 1.5f;
+	lux::SField sf = std::make_shared<lux::SFSphere>(lux::Vector(), 0.5);
+	lux::VField vf = std::make_shared<lux::VFRandom>();
+	lux::SField af = std::make_shared<lux::AdvectedField>(sf, vf);
+	//g->stamp(af);
 
-	lux::SField tn = std::make_shared<lux::TerrainNoise>(param, 2.2f, 0.4f, 1.2f, 1.2f);
-	lux::SField pl = std::make_shared<lux::SFPlane>(lux::Vector(0.0, 0.0, 0.0), lux::Vector(0.0, -1.0, 0.0));
-	lux::SField wf = std::make_shared<lux::WarpField>(pl, tn);
-	lux::SField box = std::make_shared<lux::SFBox>(0.6);
-	wf = std::make_shared<lux::SFIntersect>(wf, box);
-	
-	//cauldron
-	param.octaves = 4;
-	param.freq = 1.8f;
-	param.fJump = 1.1f;
-	param.wedgeSpecific = 1.5f;
-
-	lux::SField cauldron = std::make_shared<lux::SFSphere>(lux::Vector(), 0.5);
-	cauldron = std::make_shared<lux::SFScale>(cauldron, 0.2);
-	cauldron = std::make_shared<lux::PyroclasticField>(cauldron, param);
-	cauldron = std::make_shared<lux::SFTranslate>(cauldron, lux::Vector(-0.2, 0.25, 0.7));
-	wf = std::make_shared<lux::SFCutout>(wf, cauldron);
-
-	//cave
-	lux::SField cave = std::make_shared<lux::SFSphere>(lux::Vector(), 0.5);
-	cave = std::make_shared<lux::SFScale>(cave, 0.08);
-	cave = std::make_shared<lux::PyroclasticField>(cave, param);
-	cave = std::make_shared<lux::SFTranslate>(cave, lux::Vector(0.48, 0.1, 0.82));
-	wf = std::make_shared<lux::SFCutout>(wf, cave);
-
-	//landbridge
-	param.octaves = 3;
-	param.freq = 1.0f;
-	param.fJump = 1.8f;
-	param.wedgeSpecific = 1.5f;
-
-	lux::SField torus = std::make_shared<lux::SFTorus>(0.8, 0.17, lux::Vector(0.0, 0.0, 0.0), lux::Vector(0.0, 0.0, 1.0));
-	torus = std::make_shared<lux::PyroclasticField>(torus, param);
-	lux::SField plane = std::make_shared<lux::SFPlane>(lux::Vector(), lux::Vector(0.0, 1.0, 0.0));
-	lux::SField landBridge = std::make_shared<lux::SFIntersect>(torus, plane);
-	plane = std::make_shared<lux::SFPlane>(lux::Vector(), lux::Vector(0.3, 1.0, 0.0));
-	landBridge = std::make_shared<lux::SFIntersect>(torus, plane);
-	landBridge = std::make_shared<lux::SFScale>(landBridge, 0.25);
-	landBridge = std::make_shared<lux::SFTranslate>(landBridge, lux::Vector(0.1, -0.1, 0.4));
-	wf = std::make_shared<lux::SFUnion>(wf, landBridge);
-
-	//plains
-	lux::SField box2 = std::make_shared<lux::SFBox>(0.6);
-	box2 = std::make_shared<lux::SFScale>(box2, 0.5);
-	box2 = std::make_shared<lux::SFTranslate>(box2, lux::Vector(0.0, 0.415, -0.32));
-	wf = std::make_shared<lux::SFCutout>(wf, box2);
-
-	//gTerrain = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 50, 50, 50, 0.04);
-	gTerrain = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
-	gTerrain->stamp(wf);
-	gTerrain->writeGrid("D:/temp/vol/mountainView.dat");
-	g = gTerrain;
-#endif
-#if 0
-	std::shared_ptr<Grid> gTerrain;
-	gTerrain = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
-	gTerrain->readGrid("D:/temp/vol/mountainView.dat");
-	g = gTerrain;
-#endif
-
-// smoke
-#if 0
-	std::shared_ptr<Grid> gSmoke;
-	param.updateParams();
-	auto noise = std::make_shared<StampedNoise>(lux::Vector(0, 0, 0), 0.1f, lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
-	noise->computeNoise(param);
-	gSmoke = noise;
-
-	lux::Vector guideVector(1.0, 1.0, -1.0);
-	guideVector.normalize();
-	int numStampedNoiseBlobs = 50;
-	float deltaSize = 0.1;
-	for (int noiseNum = 0; noiseNum < numStampedNoiseBlobs; ++noiseNum)
-	{
-		std::cout << noiseNum << std::endl;
-		param.updateParams();
-
-		float factor = float(noiseNum) / numStampedNoiseBlobs;
-		lux::Vector randomJitter(2.0 * distrib(gen) - 1.0, 2.0 * distrib(gen) - 1.0, 2.0 * distrib(gen) - 1.0);
-		lux::Vector noisePos = factor * (guideVector + 0.5 * factor * randomJitter);
-
-		std::shared_ptr<StampedNoise> noiseTemp = std::make_shared<StampedNoise>(noisePos, deltaSize * (1.0f + factor), 
-			lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
-		noiseTemp->computeNoise(param);
-
-		std::shared_ptr<Grid> gTemp = noiseTemp;
-		gSmoke = std::make_shared<GridUnion>(gSmoke, gTemp);
-	}
-	gSmoke->writeGrid("D:/temp/vol/smoke.dat");
-	g = gSmoke;
-#endif
-#if 0
-	std::shared_ptr<Grid> gSmoke = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
-	gSmoke->readGrid("D:/temp/vol/smoke.dat");
-	gSmoke = std::make_shared<GridScale>(gSmoke, 0.3);
-	gSmoke = std::make_shared<GridTranslate>(gSmoke, lux::Vector(-0.2, 0.25, 0.7)); // translate to cauldron
-	g = std::make_shared<GridUnion>(g, gSmoke);
-#endif
-
-// bunny instancing
-#if 0
-	std::shared_ptr<Grid> bunnies = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
-	bunnies->readGrid("D:/temp/vol/level_cleanbunny.dat");
-	bunnies = std::make_shared<GridScale>(bunnies, 0.07);
-
-	int numObject = 6;
-	float spread = 0.8;
-	for (int obj = 0; obj < numObject; ++obj)
-	{
-		std::cout << obj << std::endl;
-
-		std::shared_ptr<Grid> gTemp = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
-		gTemp->readGrid("D:/temp/vol/level_cleanbunny.dat");
-		gTemp = std::make_shared<GridScale>(gTemp, 0.07);
-
-		float factor = float(obj) / numObject;
-		lux::Vector randomJitter(2.0 * distrib(gen) - 1.0, 0.0, 2.0 * distrib(gen) - 1.0);
-		lux::Vector translateVector = spread * factor * randomJitter;
-		gTemp = std::make_shared<GridTranslate>(gTemp, translateVector);
-		
-		bunnies = std::make_shared<GridUnion>(bunnies, gTemp);
-	}
-	bunnies->writeGrid("D:/temp/vol/bunnies.dat");
-	g = bunnies;
-#endif
-#if 0
-	std::shared_ptr<Grid> bunnies = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
-	bunnies->readGrid("D:/temp/vol/bunnies.dat");
-	bunnies = std::make_shared<GridScale>(bunnies, 0.8);
-	bunnies = std::make_shared<GridTranslate>(bunnies, lux::Vector(0.0, 0.0, -0.32)); // translate to plains
-	g = std::make_shared<GridUnion>(g, bunnies);
-#endif
-
-#if 1
-	//g->writeGrid("D:/temp/vol/terrain.dat");
 	g = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
-	g->readGrid("D:/temp/vol/terrain.dat");
-#endif
-
-// monument
-#if 1
-	std::shared_ptr<Grid> mon = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
-	mon->readGrid("D:/temp/vol/iron_man.dat");
-	mon = std::make_shared<GridScale>(mon, 0.3);
-	mon = std::make_shared<GridRotate>(mon, 90.0, lux::Vector(0.0, 1.0, 0.0).unitvector());
-	mon = std::make_shared<GridRotate>(mon, 45.0, lux::Vector(0.0, 0.0, 1.0).unitvector());
-	mon = std::make_shared<GridTranslate>(mon, lux::Vector(0.2, 0.04, -0.6)); // translate to plains
-	//g = mon;
-	g = std::make_shared<GridUnion>(g, mon);
-#endif
+	g->readGrid("D:/temp/vol/level_cleanbunny.dat");
+	param.updateParams();
 
 // Light
 	std::shared_ptr<Light> key = std::make_shared<Light>(lux::Vector(0.0, 3.0, 0.0),
-			//lux::Vector(-1, -1, -1), 25, 25, 25, 0.08);
-		//lux::Vector(-1, -1, -1), 250, 250, 250, 0.008);
+	//lux::Vector(-1, -1, -1), 25, 25, 25, 0.08);
+	//lux::Vector(-1, -1, -1), 250, 250, 250, 0.008);
 	lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
 	key->setColor(lux::Color(0.5, 0.5, 0.5, 1.0));
 	lights = { key };
-
-#ifdef DSM_GRID
-	for (auto l : lights)
-		l->computeDSM(g);
-#endif
+	
+//#ifdef DSM_GRID
+//	for (auto l : lights)
+//		l->computeDSM(g);
+//#endif
 
 	std::cout << "\t\t  ...\n\t       Keep Calm\n\t\t  and\n\t  Let The Rays March\n\t\t  ...\n\n";
 	for (int k = 0; k < num_frames; k++)
 	{
+		g->pyroDisplace(param);
+#ifdef DSM_GRID
+		for (auto l : lights)
+			l->computeDSM(g);
+#endif
+
 		start = std::chrono::system_clock::now();
 		exr.clear();
 		exr.resize(img_h * img_w);
-		roundTable(eye, view, up, k * delta_rot);
-		camera->setEyeViewUp(eye, view, up);
+		//roundTable(eye, view, up, k * delta_rot);
+		//camera->setEyeViewUp(eye, view, up);
 
 		std::cout << "|0%|==|==|==|==|==|==|==|==|==|==|100%|\n|0%|";
 
@@ -372,7 +228,7 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, st
 
 		std::cout << "100%|\n";
 
-		std::string fileName = "output/Render_3/frame_" + std::to_string(k + 1) + ".exr";
+		std::string fileName = "output/Render_4/frame_" + std::to_string(k + 1) + ".exr";
 		IMF::RgbaOutputFile file(fileName.c_str(), img_w, img_h, IMF::WRITE_RGBA);
 		file.setFrameBuffer(const_cast<IMF::Rgba*>(exr.data()), 1, img_w);
 		file.writePixels(img_h);
