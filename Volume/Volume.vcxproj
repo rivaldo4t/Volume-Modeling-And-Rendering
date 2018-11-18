@@ -37,6 +37,7 @@
   <ItemGroup>
     <ClInclude Include="header\AdvectedField.hpp" />
     <ClInclude Include="header\ClosestPointTransform.hpp" />
+    <ClInclude Include="header\Field.hpp" />
     <ClInclude Include="header\ObjFileLoaders.hpp" />
     <ClInclude Include="header\NearPointTransform.hpp" />
     <ClInclude Include="header\PyroclasticField.hpp" />
