@@ -3,6 +3,7 @@ using namespace lux;
 
 void Light::computeDSM(lux::SField density)
 {
+	std::cout << "Computing Deep Shadow Map\n";
 	gridData.resize(Nx * Ny * Nz, 0);
 
 #pragma omp parallel for
@@ -32,10 +33,13 @@ void Light::computeDSM(lux::SField density)
 			}
 		}
 	}
+	
+	std::cout << "Done\n";
 }
 
 void Light::computeDSM(const std::shared_ptr<ScalarGrid>& g)
 {
+	std::cout << "Computing Deep Shadow Map\n";
 	gridData.resize(Nx * Ny * Nz, 0);
 
 #pragma omp parallel for
@@ -67,7 +71,7 @@ void Light::computeDSM(const std::shared_ptr<ScalarGrid>& g)
 		}
 	}
 
-	std::cout << "Deep Shadow Map computed\n";
+	std::cout << "Done\n";
 }
 
 void Light::writeDSM(std::string fileName)

@@ -65,9 +65,6 @@
     <ClInclude Include="header\Color.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\Image.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="header\LinearAlgebra.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>

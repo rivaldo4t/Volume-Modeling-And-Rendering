@@ -5,7 +5,7 @@
 
 namespace lux
 {
-	class NPT : public VectorField
+	class NPT : public Field<Vector>
 	{
 	private:
 		VFIdentity I;
@@ -13,18 +13,10 @@ namespace lux
 	public:
 		NPT() {}
 		NPT(VFIdentity _I, SField _f) : I(_I), f(_f) {}
-		virtual std::unique_ptr<VectorField> clone() const override
-		{
-			return std::make_unique<NPT>(*this);
-		}
-		Vector eval(const Vector& p) const
+		const FieldDataType eval(const Vector& p) const
 		{
 			Vector gradF = f->grad(p);
 			return I.eval(p) - f->eval(p) * gradF / gradF.magnitudeSquared();
-		}
-		Matrix grad(const Vector& p) const
-		{
-			return Matrix();
 		}
 		Vector convergeEval(const Vector& p) const
 		{

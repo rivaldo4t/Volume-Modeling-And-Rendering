@@ -8,13 +8,17 @@ namespace IMF = OPENEXR_IMF_NAMESPACE;
 
 #define DSM_GRID
 
-// TODO: generalize
-void roundTable(lux::Vector& eye, lux::Vector& view, lux::Vector& up, double stepDegrees)
+void roundTable(std::shared_ptr<Camera> camera, float stepDegrees)
 {
-	//eye = lux::Vector(0, 0, 2) *cos(stepDegrees) + lux::Vector(2, 0, 0) * sin(stepDegrees);
+	lux::Vector eye, view, up;
+#if 1
+	// circle around origin
+	eye = lux::Vector(0, 0, 2) * cos(stepDegrees * M_PI / 180.f) + lux::Vector(2, 0, 0) * sin(stepDegrees * M_PI / 180.f);
+	view = lux::Vector(0, 0, 0) - eye;
+	up = lux::Vector(0, 1, 0);
+#else
+	// views at degrees steps
 	float a = 0.5, b = 1.4;
-	//a = 0.2; b = 0.7;
-	//a = 0.5; b = 2.0;
 	float theta = -atan(a / b);
 	
 	if (stepDegrees == 0.0)
@@ -44,6 +48,9 @@ void roundTable(lux::Vector& eye, lux::Vector& view, lux::Vector& up, double ste
 		view = lux::Vector(0, 0, 0) - eye;
 		up = lux::Vector(0, 1, 0).rodriguesRotation(lux::Vector(0.0, 0.0, 1.0), theta);
 	}
+#endif
+
+	camera->setEyeViewUp(eye, view, up);
 }
 
 void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, const lux::SField& sfield, const lux::CField& cfield)
@@ -60,8 +67,7 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, co
 		start = std::chrono::system_clock::now();
 		exr.clear();
 		exr.resize(img_h * img_w);
-		roundTable(eye, view, up, k * delta_rot);
-		camera->setEyeViewUp(eye, view, up);
+		roundTable(camera, k * delta_rot);
 
 		std::cout << "|0%|==|==|==|==|==|==|==|==|==|==|==|100%|\n|0%|";
 #pragma omp parallel for
@@ -159,44 +165,48 @@ double marchRaysDSM(lux::Vector pos, lux::Vector lightPos, const lux::SField& de
 	return exp(-kappa * dsm);
 }
 
-void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, std::shared_ptr<lux::ScalarGrid>& g, std::vector<std::shared_ptr<lux::Light>>& lights)
+void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, lux::SField& g, std::vector<std::shared_ptr<lux::Light>>& lights)
 {
+	std::cout << "\t\t  ...\n\t       Keep Calm\n\t\t  and\n\t  Let The Rays March\n\t\t  ...\n\n";
+
 	const int num_frames = 1;
-	const double delta_rot = 360.f / num_frames;// *M_PI / 180.f;
+	const float stepDegrees = 360.f / num_frames;
 	std::chrono::time_point<std::chrono::system_clock> start, end;
 	std::vector<IMF::Rgba> exr;
-	lux::Vector eye, view, up;
 	NoiseParams param;
 
-	//g = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
-	g = std::make_shared<lux::ScalarGrid>(lux::Vector(-1, -1, -1), 50, 50, 50, 0.04);
-	//g->readGrid("D:/temp/vol/level_cleanbunny.dat");
-	lux::SField sp = std::make_shared<lux::SFSphere>(lux::Vector(), 0.5);
-	g->stamp(sp);
+	auto g1 = std::make_shared<lux::ScalarGrid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
+	g1->readGrid("D:/temp/vol/level_cleanbunny.dat");
+	g = g1;
+	lux::VField vf = std::make_shared<lux::VFRandom>();
+	for (int i = 0 ; i < 3; ++i)
+		g = std::make_shared<lux::AdvectedField>(g, vf);
 	param.updateParams();
 
-	std::shared_ptr<lux::Light> key = std::make_shared<lux::Light>(lux::Vector(0.0, 3.0, 0.0),
+	std::shared_ptr<lux::Light> key = std::make_shared<lux::Light>(lux::Vector(0.0, 2.0, 0.0),
 	lux::Vector(-1, -1, -1), 25, 25, 25, 0.08);
 	//lux::Vector(-1, -1, -1), 250, 250, 250, 0.008);
 	//lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
-	key->setColor(lux::Color(0.5, 0.5, 0.5, 1.0));
+	key->setColor(lux::Color(0.9, 0.2, 0.2, 1.0));
+	std::shared_ptr<lux::Light> fill = std::make_shared<lux::Light>(lux::Vector(0.0, 2.0, 2.0),
+		lux::Vector(-1, -1, -1), 25, 25, 25, 0.08);
+	//lux::Vector(-1, -1, -1), 250, 250, 250, 0.008);
+	//lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
+	fill->setColor(lux::Color(0.2, 0.2, 0.9, 1.0));
 	lights = { key };
 	
-	std::cout << "\t\t  ...\n\t       Keep Calm\n\t\t  and\n\t  Let The Rays March\n\t\t  ...\n\n";
 	for (int k = 0; k < num_frames; k++)
 	{
-		//g->pyroDisplace(param);
+		start = std::chrono::system_clock::now();
+		exr.clear();
+		exr.resize(img_h * img_w);
+		roundTable(camera, k * stepDegrees);
+
 #ifdef DSM_GRID
 		for (auto l : lights)
 			l->computeDSM(g);
 #endif
-
-		start = std::chrono::system_clock::now();
-		exr.clear();
-		exr.resize(img_h * img_w);
-		//roundTable(eye, view, up, k * delta_rot);
-		//camera->setEyeViewUp(eye, view, up);
-
+		
 		std::cout << "|0%|==|==|==|==|==|==|==|==|==|==|100%|\n|0%|";
 
 #pragma omp parallel for
@@ -234,7 +244,7 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, st
 	std::cout << "Exit Render Loop\n";
 }
 
-lux::Color marchRays(lux::Vector pos, lux::Vector dir, const std::shared_ptr<lux::ScalarGrid>& g, const std::vector<std::shared_ptr<lux::Light>>& lights)
+lux::Color marchRays(lux::Vector pos, lux::Vector dir, const lux::SField& g, const std::vector<std::shared_ptr<lux::Light>>& lights)
 {
 	lux::Color L(0.0, 0.0, 0.0, 0.0);
 	lux::Color white(1.0, 1.0, 1.0, 1.0);
@@ -279,7 +289,7 @@ lux::Color marchRays(lux::Vector pos, lux::Vector dir, const std::shared_ptr<lux
 	return L;
 }
 
-double marchToLight(lux::Vector pos, lux::Vector lightPos, const std::shared_ptr<lux::ScalarGrid>& g)
+double marchToLight(lux::Vector pos, lux::Vector lightPos, const lux::SField& g)
 {
 	lux::Vector nL = lightPos - pos;
 	double sFar = nL.magnitude(), sNear = 0, s = 0;

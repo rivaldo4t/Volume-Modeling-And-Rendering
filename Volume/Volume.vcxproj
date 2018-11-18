@@ -45,7 +45,6 @@
     <ClInclude Include="header\Camera.hpp" />
     <ClInclude Include="header\Color.hpp" />
     <ClInclude Include="header\ColorField.hpp" />
-    <ClInclude Include="header\Image.hpp" />
     <ClInclude Include="header\Light.hpp" />
     <ClInclude Include="header\LinearAlgebra.hpp" />
     <ClInclude Include="header\Matrix.hpp" />

@@ -110,7 +110,7 @@ int main()
 	const int img_w = 1920 / 4;
 	const int img_h = 1080 / 4;
 	
-	std::shared_ptr<ScalarGrid> g;
+	lux::SField g;
 	std::vector<std::shared_ptr<Light>> lights;
 	render(img_w, img_h, camera, g, lights);
 
