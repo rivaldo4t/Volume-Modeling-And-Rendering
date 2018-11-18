@@ -1,4 +1,5 @@
 #include "Light.hpp"
+using namespace lux;
 
 void Light::computeDSM(lux::SField density)
 {
@@ -33,7 +34,7 @@ void Light::computeDSM(lux::SField density)
 	}
 }
 
-void Light::computeDSM(const std::shared_ptr<Grid>& g)
+void Light::computeDSM(const std::shared_ptr<ScalarGrid>& g)
 {
 	gridData.resize(Nx * Ny * Nz, 0);
 

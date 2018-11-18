@@ -159,7 +159,7 @@ double marchRaysDSM(lux::Vector pos, lux::Vector lightPos, const lux::SField& de
 	return exp(-kappa * dsm);
 }
 
-void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, std::shared_ptr<Grid>& g, std::vector<std::shared_ptr<Light>>& lights)
+void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, std::shared_ptr<lux::ScalarGrid>& g, std::vector<std::shared_ptr<lux::Light>>& lights)
 {
 	const int num_frames = 1;
 	const double delta_rot = 360.f / num_frames;// *M_PI / 180.f;
@@ -169,13 +169,13 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, st
 	NoiseParams param;
 
 	//g = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
-	g = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 50, 50, 50, 0.04);
+	g = std::make_shared<lux::ScalarGrid>(lux::Vector(-1, -1, -1), 50, 50, 50, 0.04);
 	//g->readGrid("D:/temp/vol/level_cleanbunny.dat");
 	lux::SField sp = std::make_shared<lux::SFSphere>(lux::Vector(), 0.5);
 	g->stamp(sp);
 	param.updateParams();
 
-	std::shared_ptr<Light> key = std::make_shared<Light>(lux::Vector(0.0, 3.0, 0.0),
+	std::shared_ptr<lux::Light> key = std::make_shared<lux::Light>(lux::Vector(0.0, 3.0, 0.0),
 	lux::Vector(-1, -1, -1), 25, 25, 25, 0.08);
 	//lux::Vector(-1, -1, -1), 250, 250, 250, 0.008);
 	//lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
@@ -234,7 +234,7 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, st
 	std::cout << "Exit Render Loop\n";
 }
 
-lux::Color marchRays(lux::Vector pos, lux::Vector dir, const std::shared_ptr<Grid>& g, const std::vector<std::shared_ptr<Light>>& lights)
+lux::Color marchRays(lux::Vector pos, lux::Vector dir, const std::shared_ptr<lux::ScalarGrid>& g, const std::vector<std::shared_ptr<lux::Light>>& lights)
 {
 	lux::Color L(0.0, 0.0, 0.0, 0.0);
 	lux::Color white(1.0, 1.0, 1.0, 1.0);
@@ -279,7 +279,7 @@ lux::Color marchRays(lux::Vector pos, lux::Vector dir, const std::shared_ptr<Gri
 	return L;
 }
 
-double marchToLight(lux::Vector pos, lux::Vector lightPos, const std::shared_ptr<Grid>& g)
+double marchToLight(lux::Vector pos, lux::Vector lightPos, const std::shared_ptr<lux::ScalarGrid>& g)
 {
 	lux::Vector nL = lightPos - pos;
 	double sFar = nL.magnitude(), sNear = 0, s = 0;

@@ -5,7 +5,7 @@
 #include "Camera.hpp"
 #include "ScalarField.hpp"
 #include "ColorField.hpp"
-#include "Grid.hpp"
+#include "ScalarGrid.hpp"
 #include "Light.hpp"
 #include "StampedNoise.hpp"
 #include "Wisps.hpp"
@@ -22,6 +22,6 @@ double marchRaysDSM(lux::Vector pos, lux::Vector lightPos, const lux::SField& de
 
 // for grids
 // removed const - fix it!
-void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, std::shared_ptr<Grid>& g, std::vector<std::shared_ptr<Light>>& lights);
-lux::Color marchRays(lux::Vector pos, lux::Vector dir, const std::shared_ptr<Grid>& g, const std::vector<std::shared_ptr<Light>>& lights);
-double marchToLight(lux::Vector pos, lux::Vector lightPos, const std::shared_ptr<Grid>& g);
+void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, std::shared_ptr<lux::ScalarGrid>& g, std::vector<std::shared_ptr<lux::Light>>& lights);
+lux::Color marchRays(lux::Vector pos, lux::Vector dir, const std::shared_ptr<lux::ScalarGrid>& g, const std::vector<std::shared_ptr<lux::Light>>& lights);
+double marchToLight(lux::Vector pos, lux::Vector lightPos, const std::shared_ptr<lux::ScalarGrid>& g);

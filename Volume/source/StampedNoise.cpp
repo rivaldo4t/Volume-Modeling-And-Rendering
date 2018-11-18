@@ -1,4 +1,5 @@
 #include "StampedNoise.hpp"
+using namespace lux;
 
 void StampedNoise::computeNoise(NoiseParams& param)
 {

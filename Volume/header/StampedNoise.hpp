@@ -1,17 +1,20 @@
 #pragma once
-#include "Grid.hpp"
+#include "ScalarGrid.hpp"
 #include "Fspn.hpp"
 
-class StampedNoise : public Grid
+namespace lux
 {
-private:
-	lux::Vector p;
-	float pScale;
-	float fade;
-	FSPN fspn;
-public:
-	StampedNoise() : Grid () {}
-	StampedNoise(lux::Vector _p, float pS, lux::Vector l, unsigned int nx, unsigned int ny, unsigned int nz, double d) :
-		Grid(l, nx, ny, nz, d), p(_p), pScale(pS) {}
-	void computeNoise(NoiseParams& param);
-};
+	class StampedNoise : public ScalarGrid
+	{
+	private:
+		lux::Vector p;
+		float pScale;
+		float fade;
+		FSPN fspn;
+	public:
+		StampedNoise() : ScalarGrid() {}
+		StampedNoise(lux::Vector _p, float pS, lux::Vector l, unsigned int nx, unsigned int ny, unsigned int nz, double d) :
+			ScalarGrid(l, nx, ny, nz, d), p(_p), pScale(pS) {}
+		void computeNoise(NoiseParams& param);
+	};
+}

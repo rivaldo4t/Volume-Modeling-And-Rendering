@@ -21,7 +21,7 @@
   <ItemGroup>
     <ClCompile Include="header\ObjFileLoaders.cpp" />
     <ClCompile Include="source\Fspn.cpp" />
-    <ClCompile Include="source\Grid.cpp" />
+    <ClCompile Include="source\ScalarGrid.cpp" />
     <ClCompile Include="source\Light.cpp" />
     <ClCompile Include="source\RayMarch.cpp" />
     <ClCompile Include="source\Camera.cpp" />
@@ -41,7 +41,7 @@
     <ClInclude Include="header\NearPointTransform.hpp" />
     <ClInclude Include="header\PyroclasticField.hpp" />
     <ClInclude Include="header\Fspn.hpp" />
-    <ClInclude Include="header\Grid.hpp" />
+    <ClInclude Include="header\ScalarGrid.hpp" />
     <ClInclude Include="header\Camera.hpp" />
     <ClInclude Include="header\Color.hpp" />
     <ClInclude Include="header\ColorField.hpp" />

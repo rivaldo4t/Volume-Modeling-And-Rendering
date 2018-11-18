@@ -8,13 +8,13 @@
 #include "RayMarch.hpp"
 #include "Light.hpp"
 #include "Triangle.hpp"
-#include "Grid.hpp"
+#include "ScalarGrid.hpp"
 #include "StampedNoise.hpp"
 #include "Wisps.hpp"
 #include "PyroclasticField.hpp"
 #include "AdvectedField.hpp"
 #include "ObjFileLoaders.hpp"
-
+using namespace lux;
 std::pair<lux::SField, lux::CField> getHumanoid()
 {
 	// stienerpatch
@@ -110,7 +110,7 @@ int main()
 	const int img_w = 1920 / 4;
 	const int img_h = 1080 / 4;
 	
-	std::shared_ptr<Grid> g;
+	std::shared_ptr<ScalarGrid> g;
 	std::vector<std::shared_ptr<Light>> lights;
 	render(img_w, img_h, camera, g, lights);
 

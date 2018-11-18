@@ -1,4 +1,5 @@
 #include "Wisps.hpp"
+using namespace lux;
 
 void Wisp::stampWispDot(const lux::Vector& p, const float& d)
 {

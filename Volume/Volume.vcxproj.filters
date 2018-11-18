@@ -36,9 +36,6 @@
     <ClCompile Include="source\Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\Grid.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\Fspn.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -55,6 +52,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="header\ObjFileLoaders.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ScalarGrid.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -104,9 +104,6 @@
     <ClInclude Include="header\ColorField.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\Grid.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="header\tiny_obj_loader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -141,6 +138,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="header\Field.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\ScalarGrid.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
