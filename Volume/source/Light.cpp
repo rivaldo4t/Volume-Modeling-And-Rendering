@@ -3,7 +3,7 @@ using namespace lux;
 
 void Light::computeDSM(lux::SField density)
 {
-	std::cout << "Computing Deep Shadow Map\n";
+	std::cout << "Computing Deep Shadow Map . . . . ";
 	gridData.resize(Nx * Ny * Nz, 0);
 
 #pragma omp parallel for
@@ -37,45 +37,9 @@ void Light::computeDSM(lux::SField density)
 	std::cout << "Done\n";
 }
 
-void Light::computeDSM(const std::shared_ptr<ScalarGrid>& g)
-{
-	std::cout << "Computing Deep Shadow Map\n";
-	gridData.resize(Nx * Ny * Nz, 0);
-
-#pragma omp parallel for
-	for (int i = 0; i < Nx; ++i)
-	{
-		for (int j = 0; j < Ny; ++j)
-		{
-			for (int k = 0; k < Nz; ++k)
-			{
-				lux::Vector marchStartPos = llc + lux::Vector(double(i) * delta_grid, double(j) * delta_grid, double(k) * delta_grid);
-				lux::Vector nL = pos - marchStartPos;
-				double sFar = nL.magnitude(), sNear = 0, s = 0;
-				nL.normalize();
-				lux::Vector X = marchStartPos + sNear * nL;
-
-				if (g->eval(X) > 0)
-				{
-					int index = getIndex(i, j, k);
-					while (s <= sFar)
-					{
-						X += delta_s * nL;
-						double d = g->eval(X);
-						if (d > 0)
-							gridData[index] += d * delta_s;
-						s += delta_s;
-					}
-				}
-			}
-		}
-	}
-
-	std::cout << "Done\n";
-}
-
 void Light::writeDSM(std::string fileName)
 {
+	std::cout << "Writing File: " << fileName << " . . . . ";
 	if (gridData.size() == 0)
 		throw std::runtime_error("DSM empty");
 
@@ -97,11 +61,12 @@ void Light::writeDSM(std::string fileName)
 	ofs.write(reinterpret_cast<const char*>(&size), sizeof(size));
 	ofs.write(reinterpret_cast<const char*>(&gridData[0]), size * sizeof(gridData[0]));
 	ofs.close();
-	std::cout << "file write: " << fileName << std::endl;
+	std::cout << "Done\n";
 }
 
 void Light::readDSM(std::string fileName)
 {
+	std::cout << "Reading File: " << fileName << " . . . . ";
 	std::ifstream ifs(fileName, std::ios::in | std::ifstream::binary);
 	if (!ifs)
 		throw std::runtime_error("error opening file");
@@ -126,5 +91,5 @@ void Light::readDSM(std::string fileName)
 	gridData.resize(size, 0);
 	ifs.read(reinterpret_cast<char*>(&gridData[0]), size * sizeof(gridData[0]));
 	ifs.close();
-	std::cout << "file read: " << fileName << std::endl;
+	std::cout << "Done\n";
 }

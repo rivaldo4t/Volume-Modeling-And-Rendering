@@ -17,7 +17,7 @@ namespace lux
 	protected:
 		unsigned int Nx, Ny, Nz;
 		double delta_grid = 0.01;
-		double defaultVal = 0.0;
+		float defaultVal = 0.0f;
 		lux::Vector llc, urc;
 		std::vector<float> gridData;
 	public:

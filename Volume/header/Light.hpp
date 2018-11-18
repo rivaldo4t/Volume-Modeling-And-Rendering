@@ -24,7 +24,6 @@ namespace lux
 		lux::Color getColor() const { return color; }
 		void setColor(lux::Color c) { color = c; }
 		void computeDSM(lux::SField density);
-		void computeDSM(const std::shared_ptr<ScalarGrid>& g);
 		void writeDSM(std::string fileName);
 		void readDSM(std::string fileName);
 	};

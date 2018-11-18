@@ -56,7 +56,7 @@ void roundTable(std::shared_ptr<Camera> camera, float stepDegrees)
 void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, const lux::SField& sfield, const lux::CField& cfield)
 {
 	const int num_frames = 1;
-	const double delta_rot = 360 / num_frames * M_PI / 180.0;
+	const float stepDegrees = 360 / num_frames;
 	std::chrono::time_point<std::chrono::system_clock> start, end;
 	std::vector<IMF::Rgba> exr;
 	lux::Vector eye, view, up;
@@ -67,7 +67,7 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, co
 		start = std::chrono::system_clock::now();
 		exr.clear();
 		exr.resize(img_h * img_w);
-		roundTable(camera, k * delta_rot);
+		roundTable(camera, k * stepDegrees);
 
 		std::cout << "|0%|==|==|==|==|==|==|==|==|==|==|==|100%|\n|0%|";
 #pragma omp parallel for
@@ -77,10 +77,10 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, co
 				std::cout << "==|";
 			for (int i = 0; i < img_w; ++i)
 			{
-				double x = double(i) / (img_w - 1);
-				double y = double(j) / (img_h - 1);
-				double u = (-1 + 2 * x) * camera->htanFOV();
-				double v = (-1 + 2 * y) * camera->vtanFOV();
+				float x = float(i) / (img_w - 1);
+				float y = float(j) / (img_h - 1);
+				float u = (-1 + 2 * x) * camera->htanFOV();
+				float v = (-1 + 2 * y) * camera->vtanFOV();
 				lux::Vector q_ij = (u * camera->right()) + (v * camera->up());
 				lux::Vector n_ij = (q_ij + camera->view()).unitvector();
 
@@ -97,7 +97,7 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, co
 		std::cout << "Frame Written : " << k + 1 << "\n";
 
 		end = std::chrono::system_clock::now();
-		std::chrono::duration<double> elapsed_seconds = end - start;
+		std::chrono::duration<float> elapsed_seconds = end - start;
 		std::cout << "Elapsed time: " << elapsed_seconds.count() << "s\n\t\t    ...\n\n";
 	}
 
@@ -110,12 +110,12 @@ lux::Color marchRays(lux::Vector pos, lux::Vector dir, const lux::SField& densit
 	lux::Color white(0.8, 0.8, 0.8, 1.0);
 	lux::Color red(1.0, 0.2, 0.2, 1.0);
 
-	double sNear = 0.5, sFar = 3.0;
-	double T = 1;
-	double delta_s = 0.01;
-	double delta_T;
-	double kappa = 50;
-	double s = sNear;
+	float sNear = 0.5, sFar = 3.0;
+	float T = 1;
+	float delta_s = 0.01;
+	float delta_T;
+	float kappa = 50;
+	float s = sNear;
 
 	lux::Vector X = pos + sNear * dir;
 	lux::Vector lightPos(0.0, 0.8, 0.0);
@@ -123,7 +123,7 @@ lux::Color marchRays(lux::Vector pos, lux::Vector dir, const lux::SField& densit
 	while (s <= sFar)
 	{
 		X += delta_s * dir;
-		double d = density->eval(X);
+		float d = density->eval(X);
 		lux::Color c = white;// color->eval(X);
 		//c = c.isZero() ? white : c;
 		c *= marchRaysDSM(X, lightPos, density);
@@ -141,22 +141,22 @@ lux::Color marchRays(lux::Vector pos, lux::Vector dir, const lux::SField& densit
 	return L;
 }
 
-double marchRaysDSM(lux::Vector pos, lux::Vector lightPos, const lux::SField& density)
+float marchRaysDSM(lux::Vector pos, lux::Vector lightPos, const lux::SField& density)
 {
 	lux::Vector nL = lightPos - pos;
-	double sFar = nL.magnitude(), sNear = 0, s = 0;
+	float sFar = nL.magnitude(), sNear = 0, s = 0;
 	nL.normalize();
 	lux::Vector X = pos + sNear * nL;
-	double delta_s = 0.01;
-	double dsm = 0.0;
-	double kappa = 50;
+	float delta_s = 0.01;
+	float dsm = 0.0;
+	float kappa = 50;
 
 	if (density->eval(X) > 0)
 	{
 		while (s <= sFar)
 		{
 			X += delta_s * nL;
-			double d = density->eval(X);
+			float d = density->eval(X);
 			if (d > 0)
 				dsm += d * delta_s;
 			s += delta_s;
@@ -179,7 +179,8 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, lu
 	g1->readGrid("D:/temp/vol/level_cleanbunny.dat");
 	g = g1;
 	lux::VField vf = std::make_shared<lux::VFRandom>();
-	for (int i = 0 ; i < 3; ++i)
+	int numAdvections = 1;
+	for (int i = 0 ; i < numAdvections; ++i)
 		g = std::make_shared<lux::AdvectedField>(g, vf);
 	param.updateParams();
 
@@ -193,7 +194,7 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, lu
 	//lux::Vector(-1, -1, -1), 250, 250, 250, 0.008);
 	//lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
 	fill->setColor(lux::Color(0.2, 0.2, 0.9, 1.0));
-	lights = { key };
+	lights = { key, fill };
 	
 	for (int k = 0; k < num_frames; k++)
 	{
@@ -207,7 +208,7 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, lu
 			l->computeDSM(g);
 #endif
 		
-		std::cout << "|0%|==|==|==|==|==|==|==|==|==|==|100%|\n|0%|";
+		std::cout << "\n|0%|==|==|==|==|==|==|==|==|==|==|100%|\n|0%|";
 
 #pragma omp parallel for
 		for (int j = 0; j < img_h; ++j)
@@ -216,10 +217,10 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, lu
 				std::cout << "==|";
 			for (int i = 0; i < img_w; ++i)
 			{
-				double x = double(i) / (img_w - 1);
-				double y = double(j) / (img_h - 1);
-				double u = (-1 + 2 * x) * camera->htanFOV();
-				double v = (-1 + 2 * y) * camera->vtanFOV();
+				float x = float(i) / (img_w - 1);
+				float y = float(j) / (img_h - 1);
+				float u = (-1 + 2 * x) * camera->htanFOV();
+				float v = (-1 + 2 * y) * camera->vtanFOV();
 				lux::Vector q_ij = (u * camera->right()) + (v * camera->up());
 				lux::Vector n_ij = (q_ij + camera->view()).unitvector();
 
@@ -237,7 +238,7 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, lu
 		std::cout << "Frame Written : " << k + 1 << "\n";
 
 		end = std::chrono::system_clock::now();
-		std::chrono::duration<double> elapsed_seconds = end - start;
+		std::chrono::duration<float> elapsed_seconds = end - start;
 		std::cout << "Elapsed time: " << elapsed_seconds.count() << "s\n\t\t    ...\n\n";
 	}
 
@@ -249,24 +250,24 @@ lux::Color marchRays(lux::Vector pos, lux::Vector dir, const lux::SField& g, con
 	lux::Color L(0.0, 0.0, 0.0, 0.0);
 	lux::Color white(1.0, 1.0, 1.0, 1.0);
 
-	double sNear = 0.2, sFar = 6.0;
-	double T = 1;
-	double delta_s = 0.01;
-	double delta_T;
-	double kappa = 800; //0.1 for wisp
-	double s = sNear;
+	float sNear = 0.2, sFar = 6.0;
+	float T = 1;
+	float delta_s = 0.01;
+	float delta_T;
+	float kappa = 800; //0.1 for wisp
+	float s = sNear;
 
 	lux::Vector X = pos + sNear * dir;
 
 	while (s <= sFar)
 	{
 		X += delta_s * dir;
-		double d = g->eval(X);
+		float d = g->eval(X);
 		
 		lux::Color c;
 		for (auto l : lights)
 		{
-			double dsm;
+			float dsm;
 #ifdef DSM_GRID
 			dsm = l->eval(X);
 #else
@@ -289,21 +290,21 @@ lux::Color marchRays(lux::Vector pos, lux::Vector dir, const lux::SField& g, con
 	return L;
 }
 
-double marchToLight(lux::Vector pos, lux::Vector lightPos, const lux::SField& g)
+float marchToLight(lux::Vector pos, lux::Vector lightPos, const lux::SField& g)
 {
 	lux::Vector nL = lightPos - pos;
-	double sFar = nL.magnitude(), sNear = 0, s = 0;
+	float sFar = nL.magnitude(), sNear = 0, s = 0;
 	nL.normalize();
 	lux::Vector X = pos + sNear * nL;
-	double delta_s = 0.01;
-	double dsm = 0.0;
+	float delta_s = 0.01;
+	float dsm = 0.0;
 
 	if (g->eval(X) > 0)
 	{
 		while (s <= sFar)
 		{
 			X += delta_s * nL;
-			double d = g->eval(X);
+			float d = g->eval(X);
 			if (d > 0)
 				dsm += d * delta_s;
 			s += delta_s;

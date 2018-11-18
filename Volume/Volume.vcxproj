@@ -25,7 +25,6 @@
     <ClCompile Include="source\Light.cpp" />
     <ClCompile Include="source\RayMarch.cpp" />
     <ClCompile Include="source\Camera.cpp" />
-    <ClCompile Include="source\Image.cpp" />
     <ClCompile Include="source\LinearAlgebra.cpp" />
     <ClCompile Include="source\Main.cpp" />
     <ClCompile Include="source\Matrix.cpp" />

@@ -18,9 +18,6 @@
     <ClCompile Include="source\Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\Image.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\LinearAlgebra.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
