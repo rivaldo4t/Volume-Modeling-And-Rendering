@@ -37,7 +37,6 @@
   <ItemGroup>
     <ClInclude Include="header\AdvectedField.hpp" />
     <ClInclude Include="header\ClosestPointTransform.hpp" />
-    <ClInclude Include="header\Field.hpp" />
     <ClInclude Include="header\ObjFileLoaders.hpp" />
     <ClInclude Include="header\NearPointTransform.hpp" />
     <ClInclude Include="header\PyroclasticField.hpp" />
@@ -59,7 +58,7 @@
     <ClInclude Include="header\Triangle.hpp" />
     <ClInclude Include="header\Vector.hpp" />
     <ClInclude Include="header\VectorField.hpp" />
-    <ClInclude Include="header\Volume.hpp" />
+    <ClInclude Include="header\Field.hpp" />
     <ClInclude Include="header\ScalarField.hpp" />
     <ClInclude Include="header\RayMarch.hpp" />
     <ClInclude Include="header\Wisps.hpp" />

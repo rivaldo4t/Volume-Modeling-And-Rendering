@@ -83,9 +83,6 @@
     <ClInclude Include="header\Vector.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\Volume.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="header\ScalarField.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>

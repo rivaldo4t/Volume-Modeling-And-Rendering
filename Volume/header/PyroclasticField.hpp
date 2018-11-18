@@ -5,7 +5,7 @@
 
 namespace lux
 {
-	class PyroclasticField : public ScalarField
+	class PyroclasticField : public Field<double>
 	{
 	private:
 		SField f;
@@ -21,20 +21,12 @@ namespace lux
 			gamma = param.wedgeSpecific;
 			cpt = CPT(f);
 		}
-		virtual std::unique_ptr<ScalarField> clone() const override
-		{
-			return std::make_unique<PyroclasticField>(*this);
-		}
-		double eval(const Vector& p) const
+		const FieldDataType eval(const Vector& p) const
 		{
 			return f->eval(p) + scalingFact * pow(abs(fspn.eval(p.unitvector())), gamma);
 			
 			// using cpt
 			return f->eval(p) + scalingFact * pow(abs(fspn.eval(cpt.eval(p))), gamma);
-		}
-		Vector grad(const Vector& p) const
-		{
-			return Vector();
 		}
 	};
 }

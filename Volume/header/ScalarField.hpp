@@ -1,83 +1,31 @@
 #pragma once
-#include "Vector.hpp"
-#include "Color.hpp"
-#include <iostream>
-#include <algorithm>
-#include <memory>
+#include "Field.hpp"
 
 namespace lux 
 {
-	class ScalarField 
-	{
-	public:
-		virtual double eval(const Vector& p) const = 0;
-		virtual Vector grad(const Vector& p) const = 0;
-		virtual std::unique_ptr<ScalarField> clone() const = 0;
-	};
-	typedef std::shared_ptr<lux::ScalarField> SField;
-
-	class SFEmpty : public ScalarField
-	{
-	public:
-		SFEmpty() {}
-		virtual std::unique_ptr<ScalarField> clone() const override
-		{
-			return std::make_unique<SFEmpty>(*this);
-		}
-		double eval(const Vector& p) const
-		{
-			// caution
-			return 0.0;
-		}
-		Vector grad(const Vector& p) const
-		{
-			return Vector();
-		}
-	};
-
-	class SFSphere : public ScalarField
+	class SFSphere : public Field<double>
 	{
 		Vector center;
 		double radius;
 	public:
 		SFSphere() {}
 		SFSphere(const Vector c, double r) : center(c), radius(r) {}
-		virtual std::unique_ptr<ScalarField> clone() const override
-		{
-			return std::make_unique<SFSphere>(*this);
-		}
-		double eval(const Vector& p) const
-		{
-			return radius - (p - center).magnitude();
-		}
-		Vector grad(const Vector& p) const
-		{
-			return -(p - center) / (p-center).magnitude();
-		}
+		const FieldDataType eval(const Vector& p) const { return radius - (p - center).magnitude(); }
+		const FieldGradType grad(const Vector& p) const { return -(p - center) / (p-center).magnitude(); }
 	};
 
-	class SFPlane : public ScalarField
+	class SFPlane : public Field<double>
 	{
 		Vector anchor;
 		Vector normal;
 	public:
 		SFPlane() {}
 		SFPlane(Vector a, Vector n) : anchor(a), normal(n.unitvector()) {}
-		virtual std::unique_ptr<ScalarField> clone() const override
-		{
-			return std::make_unique<SFPlane>(*this);
-		}
-		double eval(const Vector& p) const
-		{
-			return (p - anchor)*normal;
-		}
-		Vector grad(const Vector& p) const
-		{
-			return eval(p) > 0 ? -normal : normal;
-		}
+		const FieldDataType eval(const Vector& p) const { return (p - anchor)*normal; }
+		const FieldGradType grad(const Vector& p) const { return eval(p) > 0 ? -normal : normal; }
 	};
 
-	class SFTorus : public ScalarField
+	class SFTorus : public Field<double>
 	{
 		double majorRadius, minorRadius;
 		Vector center;
@@ -85,11 +33,7 @@ namespace lux
 	public:
 		SFTorus() {}
 		SFTorus(double r1, double r2, Vector c, Vector n) : majorRadius(r1), minorRadius(r2), center(c), normal(n.unitvector()) {}
-		virtual std::unique_ptr<ScalarField> clone() const override
-		{
-			return std::make_unique<SFTorus>(*this);
-		}
-		double eval(const Vector& p) const
+		const FieldDataType eval(const Vector& p) const
 		{
 			Vector perp = p - (p*normal)*normal;
 			
@@ -103,13 +47,9 @@ namespace lux
 			
 			return fact1 - fact2;
 		}
-		Vector grad(const Vector& p) const
-		{
-			return Vector();
-		}
 	};
 
-	class SFCone : public ScalarField
+	class SFCone : public Field<double>
 	{
 		Vector center;
 		Vector normal;
@@ -118,11 +58,7 @@ namespace lux
 	public:
 		SFCone() {}
 		SFCone(Vector c, Vector n, double a, double h) : center(c), normal(n.unitvector()), angle(a * M_PI / 180.0), height(h) {}
-		virtual std::unique_ptr<ScalarField> clone() const override
-		{
-			return std::make_unique<SFCone>(*this);
-		}
-		double eval(const Vector& p) const
+		const FieldDataType eval(const Vector& p) const
 		{
 			double temp = (p - center) * normal;
 			if (p == center)
@@ -135,45 +71,29 @@ namespace lux
 				return angle - acos(temp / (p - center).magnitude());
 
 		}
-		Vector grad(const Vector& p) const
-		{
-			return Vector();
-		}
 	};
 
-	class SFBox : public ScalarField
+	class SFBox : public Field<double>
 	{
 		double boxLength;
 	public:
 		SFBox() {}
 		SFBox(double l) : boxLength(l) {}
-		virtual std::unique_ptr<ScalarField> clone() const override
-		{
-			return std::make_unique<SFBox>(*this);
-		}
-		double eval(const Vector& p) const
+		const FieldDataType eval(const Vector& p) const
 		{
 			double x = p[0], y = p[1], z = p[2];
 			double k = 6;
 			return boxLength - pow(x, k) - pow(y, k) - pow(z, k);
 		}
-		Vector grad(const Vector& p) const
-		{
-			return Vector();
-		}
 	};
 
-	class SFIcosahedron : public ScalarField
+	class SFIcosahedron : public Field<double>
 	{
 		Vector center;
 	public:
 		SFIcosahedron() {}
 		SFIcosahedron(Vector c) : center(c) {}
-		virtual std::unique_ptr<ScalarField> clone() const override
-		{
-			return std::make_unique<SFIcosahedron>(*this);
-		}
-		double eval(const Vector& p) const
+		const FieldDataType eval(const Vector& p) const
 		{
 			double fact1 = 1.8 * M_PI;
 			double fact2 = 1.61803399; // golden ration
@@ -185,15 +105,10 @@ namespace lux
 				return	cos(x + fact2 * y) + cos(x - fact2 * y) +
 						cos(y + fact2 * z) + cos(y - fact2 * z) +
 						cos(z + fact2 * x) + cos(z - fact2 * x) - 2.0;
-
-		}
-		Vector grad(const Vector& p) const
-		{
-			return Vector();
 		}
 	};
 
-	class SFEllipse : public ScalarField
+	class SFEllipse : public Field<double>
 	{
 		double majorRadius, minorRadius;
 		Vector center;
@@ -201,11 +116,7 @@ namespace lux
 	public:
 		SFEllipse() {}
 		SFEllipse(double r1, double r2, Vector c, Vector n) : majorRadius(r1), minorRadius(r2), center(c), normal(n.unitvector()) {}
-		virtual std::unique_ptr<ScalarField> clone() const override
-		{
-			return std::make_unique<SFEllipse>(*this);
-		}
-		double eval(const Vector& p) const
+		const FieldDataType eval(const Vector& p) const
 		{
 			double fact1 = p*normal;
 			Vector perp = p - fact1*normal;
@@ -215,32 +126,20 @@ namespace lux
 
 			return 1 - fact1 - fact2;
 		}
-		Vector grad(const Vector& p) const
-		{
-			return Vector();
-		}
 	};
 
-	class SFStienerPatch : public ScalarField
+	class SFStienerPatch : public Field<double>
 	{
 	public:
 		SFStienerPatch() {}
-		virtual std::unique_ptr<ScalarField> clone() const override
-		{
-			return std::make_unique<SFStienerPatch>(*this);
-		}
-		double eval(const Vector& p) const
+		const FieldDataType eval(const Vector& p) const
 		{
 			double x = p[0], y = p[1], z = p[2];
 			return -(x*x*y*y + x*x*z*z + y*y*z*z - x*y*z);
 		}
-		Vector grad(const Vector& p) const
-		{
-			return Vector();
-		}
 	};
 
-	class SFCylinder : public ScalarField
+	class SFCylinder : public Field<double>
 	{
 		Vector center;
 		Vector normal;
@@ -249,150 +148,77 @@ namespace lux
 	public:
 		SFCylinder() {}
 		SFCylinder(Vector c, Vector n, double h, double r) : center(c), normal(n.unitvector()), height(h), radius(r) {}
-		virtual std::unique_ptr<ScalarField> clone() const override
-		{
-			return std::make_unique<SFCylinder>(*this);
-		}
-		double eval(const Vector& p) const
+		double getHeight()
+		{ return height; }
+		const FieldDataType eval(const Vector& p) const
 		{
 			Vector perp = p - (p*normal)*normal;
 			return radius - (perp - center).magnitude();
 		}
-		Vector grad(const Vector& p) const
-		{
-			return Vector();
-		}
-		double getHeight()
-		{
-			return height;
-		}
 	};
 
-	class SFIntersect : public ScalarField
+	class SFIntersect : public Field<double>
 	{
 		SField _f, _g;
 	public:
 		SFIntersect() {}
 		SFIntersect(const SField& f, const SField& g) : _f(f), _g(g){}
-		virtual std::unique_ptr<ScalarField> clone() const override
-		{
-			return std::make_unique<SFIntersect>(*this);
-		}
-		double eval(const Vector& p) const
-		{
-			return std::min(_f->eval(p), _g->eval(p));
-		}
-		Vector grad(const Vector& p) const
-		{
-			return Vector();
-		}
+		const FieldDataType eval(const Vector& p) const { return std::min(_f->eval(p), _g->eval(p)); }
 	};
 
-	class SFUnion : public ScalarField
+	class SFUnion : public Field<double>
 	{
 		SField _f, _g;
 	public:
 		SFUnion() {}
 		SFUnion(const SField& f, const SField& g) : _f(f), _g(g) {}
-		virtual std::unique_ptr<ScalarField> clone() const override
-		{
-			return std::make_unique<SFUnion>(*this);
-		}
-		double eval(const Vector& p) const
-		{
-			return std::max(_f->eval(p), _g->eval(p));
-		}
-		Vector grad(const Vector& p) const
-		{
-			return Vector();
-		}
+		const FieldDataType eval(const Vector& p) const { return std::max(_f->eval(p), _g->eval(p)); }
 	};
 
-	class SFCutout : public ScalarField
+	class SFCutout : public Field<double>
 	{
 		SField _f, _g;
 	public:
 		SFCutout() {}
 		SFCutout(const SField& f, const SField& g) : _f(f), _g(g) {}
-		virtual std::unique_ptr<ScalarField> clone() const override
-		{
-			return std::make_unique<SFCutout>(*this);
-		}
-		double eval(const Vector& p) const
-		{
-			return std::min(_f->eval(p), -(_g->eval(p)));
-		}
-		Vector grad(const Vector& p) const
-		{
-			return Vector();
-		}
+		const FieldDataType eval(const Vector& p) const { return std::min(_f->eval(p), -(_g->eval(p))); }
 	};
 
-	class SFShell : public ScalarField
+	class SFShell : public Field<double>
 	{
 		SField _f;
 		double thickness;
 	public:
 		SFShell() {}
 		SFShell(const SField& f, double t) : _f(f), thickness(t) {}
-		virtual std::unique_ptr<ScalarField> clone() const override
-		{
-			return std::make_unique<SFShell>(*this);
-		}
-		double eval(const Vector& p) const
+		const FieldDataType eval(const Vector& p) const
 		{
 			double eval = _f->eval(p);
 			return std::min(eval + thickness * 0.5, -(eval - thickness * 0.5));
 		}
-		Vector grad(const Vector& p) const
-		{
-			return Vector();
-		}
 	};
 
-	class SFTranslate : public ScalarField
+	class SFTranslate : public Field<double>
 	{
 		SField _f;
 		Vector _x;
 	public:
 		SFTranslate() {}
 		SFTranslate(SField f, Vector x) : _f(f), _x(x) {}
-		virtual std::unique_ptr<ScalarField> clone() const override
-		{
-			return std::make_unique<SFTranslate>(*this);
-		}
-		double eval(const Vector& p) const
-		{
-			return _f->eval(p - _x);
-		}
-		Vector grad(const Vector& p) const
-		{
-			return Vector();
-		}
+		const FieldDataType eval(const Vector& p) const { return _f->eval(p - _x); }
 	};
 
-	class SFScale : public ScalarField
+	class SFScale : public Field<double>
 	{
 		SField _f;
 		double _s;
 	public:
 		SFScale() {}
 		SFScale(SField f, double s) : _f(f), _s(s) {}
-		virtual std::unique_ptr<ScalarField> clone() const override
-		{
-			return std::make_unique<SFScale>(*this);
-		}
-		double eval(const Vector& p) const
-		{
-			return _f->eval(p / _s);
-		}
-		Vector grad(const Vector& p) const
-		{
-			return Vector();
-		}
+		const FieldDataType eval(const Vector& p) const { return _f->eval(p / _s); }
 	};
 
-	class SFRotate : public ScalarField
+	class SFRotate : public Field<double>
 	{
 		SField _f;
 		Vector axis;
@@ -400,11 +226,7 @@ namespace lux
 	public:
 		SFRotate() {}
 		SFRotate(SField f, Vector ax, double an) : _f(f), axis(ax.unitvector()), angle(-an * M_PI / 180.0) {}
-		virtual std::unique_ptr<ScalarField> clone() const override
-		{
-			return std::make_unique<SFRotate>(*this);
-		}
-		double eval(const Vector& p) const
+		const FieldDataType eval(const Vector& p) const
 		{
 			double A = cos(angle);
 			double BB = (axis * p) * (1 - A);
@@ -412,51 +234,28 @@ namespace lux
 			Vector rotated_p = (A * p) + (BB * axis) + (C * (p ^ axis));
 			return _f->eval(rotated_p);
 		}
-		Vector grad(const Vector& p) const
-		{
-			return Vector();
-		}
 	};
 
-	class SFMask : public ScalarField
+	class SFMask : public Field<double>
 	{
 		SField _f;
 	public:
 		SFMask() {}
 		SFMask(SField f) : _f(f) {}
-		virtual std::unique_ptr<ScalarField> clone() const override
-		{
-			return std::make_unique<SFMask>(*this);
-		}
-		double eval(const Vector& p) const
-		{
-			return _f->eval(p) > 0.0 ? 1.0 : 0.0;
-		}
-		Vector grad(const Vector& p) const
-		{
-			return Vector();
-		}
+		const FieldDataType eval(const Vector& p) const { return _f->eval(p) > 0.0 ? 1.0 : 0.0; }
 	};
 
-	class SFClamp : public ScalarField
+	class SFClamp : public Field<double>
 	{
 		SField _f;
 		double low, high;
 	public:
 		SFClamp() {}
 		SFClamp(SField f, double l, double h) : _f(f), low(l), high(h) {}
-		virtual std::unique_ptr<ScalarField> clone() const override
-		{
-			return std::make_unique<SFClamp>(*this);
-		}
-		double eval(const Vector& p) const
+		const FieldDataType eval(const Vector& p) const
 		{
 			double eval = _f->eval(p);
 			return eval < low ? high : eval > high ? high : eval;
-		}
-		Vector grad(const Vector& p) const
-		{
-			return Vector();
 		}
 	};
 }

@@ -170,7 +170,9 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, st
 
 	g = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
 	//g = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 50, 50, 50, 0.04);
-	g->readGrid("D:/temp/vol/level_cleanbunny.dat");
+	//g->readGrid("D:/temp/vol/level_cleanbunny.dat");
+	lux::SField sp = std::make_shared<lux::SFSphere>(lux::Vector(), 0.5);
+	g->stamp(sp);
 	param.updateParams();
 
 	std::shared_ptr<Light> key = std::make_shared<Light>(lux::Vector(0.0, 3.0, 0.0),

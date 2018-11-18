@@ -2,7 +2,7 @@
 #include <memory>
 #include <vector>
 #include <string>
-#include "ScalarField.hpp"
+#include "Field.hpp"
 #include "ColorField.hpp"
 #include "Camera.hpp"
 #include "RayMarch.hpp"
