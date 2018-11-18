@@ -168,16 +168,16 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, st
 	lux::Vector eye, view, up;
 	NoiseParams param;
 
-	g = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
-	//g = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 50, 50, 50, 0.04);
+	//g = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
+	g = std::make_shared<Grid>(lux::Vector(-1, -1, -1), 50, 50, 50, 0.04);
 	//g->readGrid("D:/temp/vol/level_cleanbunny.dat");
 	lux::SField sp = std::make_shared<lux::SFSphere>(lux::Vector(), 0.5);
 	g->stamp(sp);
 	param.updateParams();
 
 	std::shared_ptr<Light> key = std::make_shared<Light>(lux::Vector(0.0, 3.0, 0.0),
-	//lux::Vector(-1, -1, -1), 25, 25, 25, 0.08);
-	lux::Vector(-1, -1, -1), 250, 250, 250, 0.008);
+	lux::Vector(-1, -1, -1), 25, 25, 25, 0.08);
+	//lux::Vector(-1, -1, -1), 250, 250, 250, 0.008);
 	//lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
 	key->setColor(lux::Color(0.5, 0.5, 0.5, 1.0));
 	lights = { key };

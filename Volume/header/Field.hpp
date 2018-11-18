@@ -18,7 +18,7 @@ namespace lux
 	};
 
 	template<>
-	struct GradType<double>
+	struct GradType<float>
 	{
 	   typedef Vector GType;
 	};
@@ -45,7 +45,7 @@ namespace lux
 		virtual const FieldGradType grad(const Vector& P) const { FieldGradType base{}; return base; }
 	};
 
-	typedef std::shared_ptr<lux::Field<double>> SField;
+	typedef std::shared_ptr<lux::Field<float>> SField;
 	typedef std::shared_ptr<lux::Field<Vector>> VField;
 	typedef std::shared_ptr<lux::Field<Matrix>> MField;
 	//typedef std::shared_ptr<lux::Field<Color>> CField;

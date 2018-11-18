@@ -3,7 +3,7 @@
 
 namespace lux 
 {
-	class SFSphere : public Field<double>
+	class SFSphere : public Field<float>
 	{
 		Vector center;
 		double radius;
@@ -14,7 +14,7 @@ namespace lux
 		const FieldGradType grad(const Vector& p) const { return -(p - center) / (p-center).magnitude(); }
 	};
 
-	class SFPlane : public Field<double>
+	class SFPlane : public Field<float>
 	{
 		Vector anchor;
 		Vector normal;
@@ -25,7 +25,7 @@ namespace lux
 		const FieldGradType grad(const Vector& p) const { return eval(p) > 0 ? -normal : normal; }
 	};
 
-	class SFTorus : public Field<double>
+	class SFTorus : public Field<float>
 	{
 		double majorRadius, minorRadius;
 		Vector center;
@@ -49,7 +49,7 @@ namespace lux
 		}
 	};
 
-	class SFCone : public Field<double>
+	class SFCone : public Field<float>
 	{
 		Vector center;
 		Vector normal;
@@ -73,7 +73,7 @@ namespace lux
 		}
 	};
 
-	class SFBox : public Field<double>
+	class SFBox : public Field<float>
 	{
 		double boxLength;
 	public:
@@ -87,7 +87,7 @@ namespace lux
 		}
 	};
 
-	class SFIcosahedron : public Field<double>
+	class SFIcosahedron : public Field<float>
 	{
 		Vector center;
 	public:
@@ -108,7 +108,7 @@ namespace lux
 		}
 	};
 
-	class SFEllipse : public Field<double>
+	class SFEllipse : public Field<float>
 	{
 		double majorRadius, minorRadius;
 		Vector center;
@@ -128,7 +128,7 @@ namespace lux
 		}
 	};
 
-	class SFStienerPatch : public Field<double>
+	class SFStienerPatch : public Field<float>
 	{
 	public:
 		SFStienerPatch() {}
@@ -139,7 +139,7 @@ namespace lux
 		}
 	};
 
-	class SFCylinder : public Field<double>
+	class SFCylinder : public Field<float>
 	{
 		Vector center;
 		Vector normal;
@@ -157,7 +157,7 @@ namespace lux
 		}
 	};
 
-	class SFIntersect : public Field<double>
+	class SFIntersect : public Field<float>
 	{
 		SField _f, _g;
 	public:
@@ -166,7 +166,7 @@ namespace lux
 		const FieldDataType eval(const Vector& p) const { return std::min(_f->eval(p), _g->eval(p)); }
 	};
 
-	class SFUnion : public Field<double>
+	class SFUnion : public Field<float>
 	{
 		SField _f, _g;
 	public:
@@ -175,7 +175,7 @@ namespace lux
 		const FieldDataType eval(const Vector& p) const { return std::max(_f->eval(p), _g->eval(p)); }
 	};
 
-	class SFCutout : public Field<double>
+	class SFCutout : public Field<float>
 	{
 		SField _f, _g;
 	public:
@@ -184,7 +184,7 @@ namespace lux
 		const FieldDataType eval(const Vector& p) const { return std::min(_f->eval(p), -(_g->eval(p))); }
 	};
 
-	class SFShell : public Field<double>
+	class SFShell : public Field<float>
 	{
 		SField _f;
 		double thickness;
@@ -198,7 +198,7 @@ namespace lux
 		}
 	};
 
-	class SFTranslate : public Field<double>
+	class SFTranslate : public Field<float>
 	{
 		SField _f;
 		Vector _x;
@@ -208,7 +208,7 @@ namespace lux
 		const FieldDataType eval(const Vector& p) const { return _f->eval(p - _x); }
 	};
 
-	class SFScale : public Field<double>
+	class SFScale : public Field<float>
 	{
 		SField _f;
 		double _s;
@@ -218,7 +218,7 @@ namespace lux
 		const FieldDataType eval(const Vector& p) const { return _f->eval(p / _s); }
 	};
 
-	class SFRotate : public Field<double>
+	class SFRotate : public Field<float>
 	{
 		SField _f;
 		Vector axis;
@@ -236,7 +236,7 @@ namespace lux
 		}
 	};
 
-	class SFMask : public Field<double>
+	class SFMask : public Field<float>
 	{
 		SField _f;
 	public:
@@ -245,7 +245,7 @@ namespace lux
 		const FieldDataType eval(const Vector& p) const { return _f->eval(p) > 0.0 ? 1.0 : 0.0; }
 	};
 
-	class SFClamp : public Field<double>
+	class SFClamp : public Field<float>
 	{
 		SField _f;
 		double low, high;

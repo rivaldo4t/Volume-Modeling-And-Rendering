@@ -9,6 +9,7 @@
 #include "Triangle.hpp"
 #include "Fspn.hpp"
 
+//template <typename T>
 class Grid
 {
  protected:
