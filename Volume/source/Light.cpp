@@ -4,6 +4,7 @@ using namespace lux;
 void Light::computeDSM(lux::SField density)
 {
 	std::cout << "Computing Deep Shadow Map . . . . ";
+	gridData.clear();
 	gridData.resize(Nx * Ny * Nz, 0);
 
 #pragma omp parallel for

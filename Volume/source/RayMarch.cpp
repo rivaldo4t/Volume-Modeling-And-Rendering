@@ -169,7 +169,7 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, lu
 {
 	std::cout << "\t\t  ...\n\t       Keep Calm\n\t\t  and\n\t  Let The Rays March\n\t\t  ...\n\n";
 
-	const int num_frames = 120;
+	const int num_frames = 60;
 	const float stepDegrees = 360.f / num_frames;
 	std::chrono::time_point<std::chrono::system_clock> start, end;
 	std::vector<IMF::Rgba> exr;
@@ -179,33 +179,40 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, lu
 	auto g1 = std::make_shared<lux::ScalarGrid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
 	g1->readGrid("D:/temp/vol/level_cleanbunny.dat");
 	g1->calculateGridGradient();
-	/*g = std::make_shared<lux::PyroclasticField>(g1, param, 0.5);
-	lux::VField vf = std::make_shared<lux::VFRandom>();
-	int numAdvections = 1;
-	for (int i = 0 ; i < numAdvections; ++i)
-		g = std::make_shared<lux::AdvectedField>(g, vf);*/
+	// pyro displaced for adv
+	lux::SField g2 = std::make_shared<lux::PyroclasticField>(g1, param, 0.59);
 
 	std::shared_ptr<lux::Light> key = std::make_shared<lux::Light>(lux::Vector(0.0, 1.0, 1.0),
-	//lux::Vector(-1, -1, -1), 25, 25, 25, 0.08);
-	lux::Vector(-1, -1, -1), 250, 250, 250, 0.008);
+	lux::Vector(-1, -1, -1), 25, 25, 25, 0.08);
+	//lux::Vector(-1, -1, -1), 250, 250, 250, 0.008);
 	//lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
 	key->setColor(lux::Color(0.2, 0.2, 0.9, 1.0));
 	std::shared_ptr<lux::Light> fill = std::make_shared<lux::Light>(lux::Vector(0.0, 2.0, 2.0),
-	lux::Vector(-1, -1, -1), 25, 25, 25, 0.08);
-	//lux::Vector(-1, -1, -1), 250, 250, 250, 0.008);
+	//lux::Vector(-1, -1, -1), 25, 25, 25, 0.08);
+	lux::Vector(-1, -1, -1), 250, 250, 250, 0.008);
 	//lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
 	fill->setColor(lux::Color(0.2, 0.2, 0.9, 1.0));
 	lights = { key };
 
-	static float ula = 0.0;
-	for (int k = 0; k < num_frames; k++)
+	static float pyroScale = 0.0;
+	for (int k = 60; k < num_frames; k++)
 	{
 		start = std::chrono::system_clock::now();
 		exr.clear();
 		exr.resize(img_h * img_w);
 		//roundTable(camera, k * stepDegrees);
-		g = std::make_shared<lux::PyroclasticField>(g1, param, ula);
-		ula += 0.01;
+		
+		// pyro 1-60
+		//g = std::make_shared<lux::PyroclasticField>(g1, param, pyroScale);
+		//
+		// adv 61-120
+		lux::VField vf = std::make_shared<lux::VFRandom>();
+		int numAdvections = 1;
+		for (int i = 0; i < numAdvections; ++i)
+			g = std::make_shared<lux::AdvectedField>(g2, vf, pyroScale);
+		//
+		pyroScale += 0.01;
+
 #ifdef DSM_GRID
 		for (auto l : lights)
 			l->computeDSM(g);
