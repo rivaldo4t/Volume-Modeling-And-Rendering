@@ -212,3 +212,79 @@ void ScalarGrid::levelSet(Triangles& triangles)
 
 	std::cout << "Levelset generated\n";
 }
+
+//std::vector<float> coeff = { 0.5f };
+//std::vector<float> coeff = { 0.57142857142857151f, -0.071428571428571438f };
+std::vector<float> coeff = { 0.63039399624765435f, -0.15064623723160311f, 0.02101573900354391f, -0.00076349801959558095f };
+static int N = 4;
+static float deltaX = 0.09, deltaY = 0.09, deltaZ = 0.09;
+void lux::ScalarGrid::calculateGridGradient()
+{
+	std::cout << "Computing Gradient of grid . . . . ";
+	gridGradData.resize(Nx * Ny * Nz, Vector());
+
+#pragma omp parallel for
+	for (int i = 0; i < Nx; ++i)
+	{
+		for (int j = 0; j < Ny; ++j)
+		{
+			for (int k = 0; k < Nz; ++k)
+			{
+				lux::Vector p = llc + lux::Vector(float(i) * delta_grid, float(j) * delta_grid, float(k) * delta_grid);
+				int index = getIndex(i, j, k);
+				for (int n = -N; n <= N; ++n)
+				{
+					if (n == 0)
+						continue;
+					float a = coeff[abs(n) - 1];
+					a = n < 0 ? -a : a;
+					gridGradData[index] += a * Vector(	eval(p + n * deltaX * Vector(1, 0, 0)) / deltaX,
+														eval(p + n * deltaY * Vector(0, 1, 0)) / deltaY,
+														eval(p + n * deltaZ * Vector(0, 0, 1)) / deltaZ);
+				}
+			}
+		}
+	}
+
+	std::cout << "Done\n";
+}
+
+const Vector lux::ScalarGrid::grad(const Vector & p) const
+{
+	if (!withinGrid(p))
+		//return Vector(); 
+		return -(p - Vector()) / (p - Vector()).magnitude();
+
+	lux::Vector toPoint = p - llc;
+	float x = toPoint.X();
+	float y = toPoint.Y();
+	float z = toPoint.Z();
+
+	unsigned int i = floor(x / delta_grid);
+	unsigned int j = floor(y / delta_grid);
+	unsigned int k = floor(z / delta_grid);
+
+	float wi = (x - i * delta_grid) / delta_grid;
+	float wj = (y - j * delta_grid) / delta_grid;
+	float wk = (z - k * delta_grid) / delta_grid;
+
+	auto vijk = gridGradData[getIndex(i, j, k)];
+	auto vi_1jk = gridGradData[getIndex(i + 1, j, k)];
+	auto vijk_1 = gridGradData[getIndex(i, j, k + 1)];
+	auto vi_1jk_1 = gridGradData[getIndex(i + 1, j, k + 1)];
+	auto vij_1k = gridGradData[getIndex(i, j + 1, k)];
+	auto vi_1j_1k = gridGradData[getIndex(i + 1, j + 1, k)];
+	auto vij_1k_1 = gridGradData[getIndex(i, j + 1, k + 1)];
+	auto vi_1j_1k_1 = gridGradData[getIndex(i + 1, j + 1, k + 1)];
+
+	auto c00 = vijk * (1 - wi) + vi_1jk * wi;
+	auto c01 = vijk_1 * (1 - wi) + vi_1jk_1 * wi;
+	auto c10 = vij_1k * (1 - wi) + vi_1j_1k * wi;
+	auto c11 = vij_1k_1 * (1 - wi) + vi_1j_1k_1 * wi;
+
+	auto c0 = c00 * (1 - wj) + c10 * wj;
+	auto c1 = c01 * (1 - wj) + c11 * wj;
+
+	auto c = c0 * (1 - wk) + c1 * wk;
+	return c;
+}

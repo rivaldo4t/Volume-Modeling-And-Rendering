@@ -17,9 +17,10 @@ namespace lux
 	protected:
 		unsigned int Nx, Ny, Nz;
 		double delta_grid = 0.01;
-		float defaultVal = 0.0f;
+		float defaultVal = -100.0f;
 		lux::Vector llc, urc;
 		std::vector<float> gridData;
+		std::vector<Vector> gridGradData;
 	public:
 		ScalarGrid() { Nx = 0; Ny = 0; Nz = 0; }
 		ScalarGrid(lux::Vector o, unsigned int x, unsigned int y, unsigned int z, double delta,
@@ -37,11 +38,13 @@ namespace lux
 		void writeGrid(std::string fileName);
 		void readGrid(std::string fileName);
 
-		virtual const float eval(const Vector& p) const override;
+		virtual const FieldDataType eval(const Vector& p) const override;
+		const FieldGradType grad(const Vector& p) const override;
 		void stamp(lux::SField s);
 		void stampWithDisplacement(lux::SField s, NoiseParams& param);
 		void pyroDisplace(NoiseParams& param);
 		void levelSet(Triangles& triangles);
+		void calculateGridGradient();
 	};
 
 	// dirty fixes for grid scale, translate and union of large number of grids

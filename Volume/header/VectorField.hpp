@@ -20,4 +20,14 @@ namespace lux
 		VFRandom() {}
 		const FieldDataType eval(const Vector& p) const { return Vector(f.eval(p), f.eval(p - delta), f.eval(p + delta)); }
 	};
+
+	class VFCharMap : public Field<Vector>
+	{
+	private:
+		VField vf;
+		double deltaT = 0.1;
+	public:
+		VFCharMap(VField v) : vf(v) {}
+		const FieldDataType eval(const Vector& p) const { return p - vf->eval(p) * deltaT; }
+	};
 }

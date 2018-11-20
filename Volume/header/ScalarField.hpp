@@ -9,7 +9,7 @@ namespace lux
 		double radius;
 	public:
 		SFSphere() {}
-		SFSphere(const Vector c, double r) : center(c), radius(r) {}
+		SFSphere(Vector c, double r) : center(c), radius(r) {}
 		const FieldDataType eval(const Vector& p) const { return radius - (p - center).magnitude(); }
 		const FieldGradType grad(const Vector& p) const { return -(p - center) / (p-center).magnitude(); }
 	};

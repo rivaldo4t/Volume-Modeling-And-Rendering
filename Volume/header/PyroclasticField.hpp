@@ -5,17 +5,17 @@
 
 namespace lux
 {
-	class PyroclasticField : public Field<double>
+	class PyroclasticField : public Field<float>
 	{
 	private:
 		SField f;
 		FSPN fspn;
 		float gamma;
-		float scalingFact = 1;
+		float scalingFact = 0.5;
 		CPT cpt;
 	public:
 		PyroclasticField(SField _f, FSPN _fspn = FSPN()) : f(_f), fspn(_fspn) {}
-		PyroclasticField(SField _f, const NoiseParams& param) : f(_f)
+		PyroclasticField(SField _f, const NoiseParams& param, float sc) : f(_f), scalingFact(sc)
 		{ 
 			fspn = FSPN(param.octaves, param.freq, param.fJump, 2);
 			gamma = param.wedgeSpecific;
@@ -23,7 +23,7 @@ namespace lux
 		}
 		const FieldDataType eval(const Vector& p) const
 		{
-			return f->eval(p) + scalingFact * pow(abs(fspn.eval(p.unitvector())), gamma);
+			//return f->eval(p) + scalingFact * pow(abs(fspn.eval(p.unitvector())), gamma);
 			
 			// using cpt
 			return f->eval(p) + scalingFact * pow(abs(fspn.eval(cpt.eval(p))), gamma);
