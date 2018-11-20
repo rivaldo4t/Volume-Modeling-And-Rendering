@@ -11,11 +11,11 @@ namespace lux
 		SField f;
 		FSPN fspn;
 		float gamma;
-		float scalingFact = 0.5;
+		float scalingFact;
 		CPT cpt;
 	public:
 		PyroclasticField(SField _f, FSPN _fspn = FSPN()) : f(_f), fspn(_fspn) {}
-		PyroclasticField(SField _f, const NoiseParams& param, float sc) : f(_f), scalingFact(sc)
+		PyroclasticField(SField _f, const NoiseParams& param, float sc = 0.5) : f(_f), scalingFact(sc)
 		{ 
 			fspn = FSPN(param.octaves, param.freq, param.fJump, 2);
 			gamma = param.wedgeSpecific;

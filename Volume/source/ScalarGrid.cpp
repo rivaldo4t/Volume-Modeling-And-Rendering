@@ -213,13 +213,22 @@ void ScalarGrid::levelSet(Triangles& triangles)
 	std::cout << "Levelset generated\n";
 }
 
-//std::vector<float> coeff = { 0.5f };
-//std::vector<float> coeff = { 0.57142857142857151f, -0.071428571428571438f };
-std::vector<float> coeff = { 0.63039399624765435f, -0.15064623723160311f, 0.02101573900354391f, -0.00076349801959558095f };
-static int N = 4;
-static float deltaX = 0.09, deltaY = 0.09, deltaZ = 0.09;
 void lux::ScalarGrid::calculateGridGradient()
 {
+	static int N = 1;
+	static float deltaX = 0.09, deltaY = 0.09, deltaZ = 0.09;
+	static std::vector<float> coeff = { 0.5f };
+	//static int N = 2;
+	//static std::vector<float> coeff = { 0.57142857142857151f, -0.071428571428571438f };
+	//static float deltaX = 0.09, deltaY = 0.09, deltaZ = 0.09;
+	/*static int N = 4;
+	static float deltaX = 0.09, deltaY = 0.09, deltaZ = 0.09;
+	static std::vector<float> coeff = { 0.63039399624765435f, -0.15064623723160311f, 0.02101573900354391f, -0.00076349801959558095f };*/
+	/*static int N = 7;
+	static float deltaX = 0.08, deltaY = 0.08, deltaZ = 0.05;
+	static std::vector<float> coeff = { 0.66418180822321082f, -0.20286437997462345f, 0.042119156095069443f,
+		-0.0035797086604024858f, 0.00014591197349313843f, -2.8080248121598451e-06f, 2.0367364328490342e-08f };*/
+
 	std::cout << "Computing Gradient of grid . . . . ";
 	gridGradData.resize(Nx * Ny * Nz, Vector());
 

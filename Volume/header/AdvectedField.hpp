@@ -8,9 +8,9 @@ namespace lux
 	{
 		SField sf;
 		VField vf;
-		double deltaT = 0.1;
+		double deltaT;
 	public:
-		AdvectedField(SField s, VField v) : sf(s), vf(v) {}
+		AdvectedField(SField s, VField v, double d = 0.1) : sf(s), vf(v), deltaT(d) {}
 		const FieldDataType eval(const Vector& p) const {
 			/*if (p.Y() < 0.4)
 				return sf->eval(p);
@@ -23,9 +23,9 @@ namespace lux
 	{
 		SField sf;
 		VField cm;
-		double deltaT = 0.1;
+		double deltaT;
 	public:
-		AdvectedFieldCM(SField s, VField v) : sf(s), cm(v) {}
+		AdvectedFieldCM(SField s, VField v, double d = 0.1) : sf(s), cm(v), deltaT(d) {}
 		const FieldDataType eval(const Vector& p) const { return sf->eval(cm->eval(p)); }
 	};
 }
