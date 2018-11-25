@@ -6,7 +6,7 @@
 #include <ImfRgbaFile.h>
 namespace IMF = OPENEXR_IMF_NAMESPACE;
 
-//#define DSM_GRID
+#define DSM_GRID
 
 void roundTable(std::shared_ptr<Camera> camera, float stepDegrees)
 {
@@ -194,15 +194,26 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, lu
 		//roundTable(camera, k * stepDegrees);
 		
 		lux::VField vf = std::make_shared<lux::VFRandom>();
-		lux::VField cm = std::make_shared<lux::VFCharMap>(vf, 0.5);
+		lux::VField cm = std::make_shared<lux::VFIdentity>();
 		int numAdvections = 2;
+#if 1
 		for (int i = 0; i < numAdvections; ++i)
 		{
-			g = std::make_shared<lux::AdvectedFieldCM>(g, cm);
-			auto g2 = std::make_shared<lux::ScalarGrid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
+			cm = std::make_shared<lux::AdvectedVField>(cm, vf, 0.5);
+			//auto g2 = std::make_shared<lux::VectorGrid>(lux::Vector(-1, -1, -1), 50, 50, 50, 0.04);
+			//g2->stamp(cm);
+			//cm = g2;
+		}
+		g = std::make_shared<lux::WarpFieldVF>(g, cm);
+#else
+		for (int i = 0; i < numAdvections; ++i)
+		{
+			g = std::make_shared<lux::AdvectedSField>(g, vf, 0.5);
+			auto g2 = std::make_shared<lux::ScalarGrid>(lux::Vector(-1, -1, -1), 50, 50, 50, 0.04);
 			g2->stamp(g);
 			g = g2;
 		}
+#endif
 		tempt += 0.1;
 
 #ifdef DSM_GRID

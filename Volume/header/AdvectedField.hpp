@@ -4,28 +4,28 @@
 
 namespace lux
 {
-	class AdvectedField : public Field<float>
+	class AdvectedSField : public Field<float>
 	{
 		SField sf;
-		VField vf;
+		VField adv;
 		double deltaT;
 	public:
-		AdvectedField(SField s, VField v, double d = 0.1) : sf(s), vf(v), deltaT(d) {}
+		AdvectedSField(SField s, VField v, double d = 0.1) : sf(s), adv(v), deltaT(d) {}
 		const FieldDataType eval(const Vector& p) const {
 			/*if (p.Y() < 0.4)
 				return sf->eval(p);
 			else*/
-				return sf->eval(p - vf->eval(p) * deltaT);
+				return sf->eval(p - adv->eval(p) * deltaT);
 		}
 	};
 
-	class AdvectedFieldCM : public Field<float>
+	class AdvectedVField : public Field<Vector>
 	{
-		SField sf;
-		VField cm;
+		VField vf;
+		VField adv;
 		double deltaT;
 	public:
-		AdvectedFieldCM(SField s, VField v) : sf(s), cm(v) {}
-		const FieldDataType eval(const Vector& p) const { return sf->eval(cm->eval(p)); }
+		AdvectedVField(VField v1, VField v2, double d = 0.1) : vf(v1), adv(v2), deltaT(d) {}
+		const FieldDataType eval(const Vector& p) const { return vf->eval(p - adv->eval(p) * deltaT); }
 	};
 }

@@ -4,6 +4,7 @@ using namespace lux;
 
 void ScalarGrid::stamp(lux::SField s)
 {
+	std::cout << "Stamping Field . . . . ";
 	gridData.clear();
 	gridData.resize(Nx * Ny * Nz, 0);
 
@@ -20,7 +21,7 @@ void ScalarGrid::stamp(lux::SField s)
 		}
 	}
 
-	std::cout << "Field stamped\n";
+	std::cout << "Done\n";
 }
 
 void ScalarGrid::stampWithDisplacement(lux::SField s, NoiseParams& param)

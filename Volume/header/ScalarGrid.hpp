@@ -1,10 +1,4 @@
 #pragma once
-#include <iostream>
-#include <fstream>
-#include <iterator>
-#include <vector>
-#include <string>
-#include <memory>
 #include "Grid.hpp"
 #include "Triangle.hpp"
 #include "Fspn.hpp"

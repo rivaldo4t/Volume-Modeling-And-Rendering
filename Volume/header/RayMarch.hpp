@@ -6,6 +6,7 @@
 #include "ScalarField.hpp"
 #include "ColorField.hpp"
 #include "ScalarGrid.hpp"
+#include "VectorGrid.hpp"
 #include "Light.hpp"
 #include "StampedNoise.hpp"
 #include "Wisps.hpp"

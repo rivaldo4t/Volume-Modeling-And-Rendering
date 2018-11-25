@@ -1,8 +1,10 @@
 #pragma once
 #include <iostream>
 #include <fstream>
+#include <iterator>
 #include <vector>
 #include <string>
+#include <memory>
 #include "Field.hpp"
 
 namespace lux

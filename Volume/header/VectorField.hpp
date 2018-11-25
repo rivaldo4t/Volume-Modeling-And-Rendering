@@ -15,9 +15,9 @@ namespace lux
 	{
 	private:
 		FSPN f;
-		Vector delta = Vector(0.1, 0.1, 0.1);
+		Vector delta;
 	public:
-		VFRandom() {}
+		VFRandom(FSPN _f = FSPN(), Vector d = Vector(0.1, 0.1, 0.1)) : f(_f), delta(d) {}
 		const FieldDataType eval(const Vector& p) const { return Vector(f.eval(p), f.eval(p - delta), f.eval(p + delta)); }
 	};
 
@@ -25,7 +25,7 @@ namespace lux
 	{
 	private:
 		VField vf;
-		double deltaT = 0.1;
+		double deltaT;
 	public:
 		VFCharMap(VField v, double d = 0.1) : vf(v), deltaT(d) {}
 		const FieldDataType eval(const Vector& p) const { return p - vf->eval(p) * deltaT; }

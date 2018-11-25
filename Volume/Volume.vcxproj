@@ -32,6 +32,7 @@
     <ClCompile Include="source\StampedNoise.cpp" />
     <ClCompile Include="source\Triangle.cpp" />
     <ClCompile Include="source\Wisps.cpp" />
+    <ClCompile Include="source\VectorGrid.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\Grid.hpp" />
@@ -62,6 +63,7 @@
     <ClInclude Include="header\RayMarch.hpp" />
     <ClInclude Include="header\Wisps.hpp" />
     <ClInclude Include="header\WarpField.hpp" />
+    <ClInclude Include="header\VectorGrid.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
