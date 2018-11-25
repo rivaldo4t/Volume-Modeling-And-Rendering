@@ -26,7 +26,7 @@ void ScalarGrid::writeGrid(std::string fileName)
 {
 	std::cout << "Writing File: " << fileName << " . . . . ";
 	if (gridData.size() == 0)
-		throw std::runtime_error("DSM empty");
+		throw std::runtime_error("Grid empty");
 
 	std::ofstream ofs(fileName, std::ios::out | std::ofstream::binary);
 	if (!ofs)
@@ -104,6 +104,7 @@ const float lux::ScalarGrid::eval(const Vector & p) const
 
 void ScalarGrid::stamp(lux::SField s)
 {
+	//gridData.clear();
 	gridData.resize(Nx * Ny * Nz, 0);
 
 #pragma omp parallel for

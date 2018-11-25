@@ -6,7 +6,7 @@
 #include <ImfRgbaFile.h>
 namespace IMF = OPENEXR_IMF_NAMESPACE;
 
-#define DSM_GRID
+//#define DSM_GRID
 
 void roundTable(std::shared_ptr<Camera> camera, float stepDegrees)
 {
@@ -169,49 +169,41 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, lu
 {
 	std::cout << "\t\t  ...\n\t       Keep Calm\n\t\t  and\n\t  Let The Rays March\n\t\t  ...\n\n";
 
-	const int num_frames = 60;
+	const int num_frames = 1;
 	const float stepDegrees = 360.f / num_frames;
 	std::chrono::time_point<std::chrono::system_clock> start, end;
 	std::vector<IMF::Rgba> exr;
 	NoiseParams param;
-	param.updateParams();
+	//param.updateParams();
 
-	auto g1 = std::make_shared<lux::ScalarGrid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
-	g1->readGrid("D:/temp/vol/level_cleanbunny.dat");
-	g1->calculateGridGradient();
-	// pyro displaced for adv
-	lux::SField g2 = std::make_shared<lux::PyroclasticField>(g1, param, 0.59);
+	lux::SField sp = std::make_shared<lux::SFSphere>(lux::Vector(), 0.8);
+	g = sp;
 
 	std::shared_ptr<lux::Light> key = std::make_shared<lux::Light>(lux::Vector(0.0, 1.0, 1.0),
 	lux::Vector(-1, -1, -1), 25, 25, 25, 0.08);
 	//lux::Vector(-1, -1, -1), 250, 250, 250, 0.008);
-	//lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
 	key->setColor(lux::Color(0.2, 0.2, 0.9, 1.0));
-	std::shared_ptr<lux::Light> fill = std::make_shared<lux::Light>(lux::Vector(0.0, 2.0, 2.0),
-	//lux::Vector(-1, -1, -1), 25, 25, 25, 0.08);
-	lux::Vector(-1, -1, -1), 250, 250, 250, 0.008);
-	//lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
-	fill->setColor(lux::Color(0.2, 0.2, 0.9, 1.0));
 	lights = { key };
 
-	static float pyroScale = 0.0;
-	for (int k = 60; k < num_frames; k++)
+	float tempt = 0.1;
+	for (int k = 0; k < num_frames; k++)
 	{
 		start = std::chrono::system_clock::now();
 		exr.clear();
 		exr.resize(img_h * img_w);
 		//roundTable(camera, k * stepDegrees);
 		
-		// pyro 1-60
-		//g = std::make_shared<lux::PyroclasticField>(g1, param, pyroScale);
-		//
-		// adv 61-120
 		lux::VField vf = std::make_shared<lux::VFRandom>();
-		int numAdvections = 1;
+		lux::VField cm = std::make_shared<lux::VFCharMap>(vf, 0.5);
+		int numAdvections = 2;
 		for (int i = 0; i < numAdvections; ++i)
-			g = std::make_shared<lux::AdvectedField>(g2, vf, pyroScale);
-		//
-		pyroScale += 0.01;
+		{
+			g = std::make_shared<lux::AdvectedFieldCM>(g, cm);
+			auto g2 = std::make_shared<lux::ScalarGrid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
+			g2->stamp(g);
+			g = g2;
+		}
+		tempt += 0.1;
 
 #ifdef DSM_GRID
 		for (auto l : lights)
@@ -241,7 +233,7 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, lu
 
 		std::cout << "100%|\n";
 
-		std::string fileName = "output/Render_4/frame_" + std::to_string(k + 1) + ".exr";
+		std::string fileName = "output/Render_5/frame_" + std::to_string(k + 1) + ".exr";
 		IMF::RgbaOutputFile file(fileName.c_str(), img_w, img_h, IMF::WRITE_RGBA);
 		file.setFrameBuffer(const_cast<IMF::Rgba*>(exr.data()), 1, img_w);
 		file.writePixels(img_h);
@@ -273,27 +265,28 @@ lux::Color marchRays(lux::Vector pos, lux::Vector dir, const lux::SField& g, con
 	{
 		X += delta_s * dir;
 		float d = g->eval(X);
-		
-		lux::Color c;
-		for (auto l : lights)
-		{
-			float dsm;
-#ifdef DSM_GRID
-			dsm = l->eval(X);
-#else
-			dsm = marchToLight(X, l->getPosition(), g);
-#endif
-			c += white * l->getColor() * exp(-kappa * dsm);
-		}
-		if (lights.size() == 0)
-			c = white;
 
 		if (d > 0)
 		{
+			lux::Color c;
+			for (auto l : lights)
+			{
+				float dsm;
+#ifdef DSM_GRID
+				dsm = l->eval(X);
+#else
+				dsm = marchToLight(X, l->getPosition(), g);
+#endif
+				c += white * l->getColor() * exp(-kappa * dsm);
+			}
+			if (lights.size() == 0)
+				c = white;
+
 			delta_T = exp(-kappa * delta_s * d);
 			L += c * ((1 - delta_T) * T);
 			T *= delta_T;
 		}
+
 		s += delta_s;
 	}
 

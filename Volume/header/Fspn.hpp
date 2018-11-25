@@ -46,9 +46,10 @@ public:
 	{ 
 		PN = lux::PerlinNoise();
 		octaves = 2;
-		freq = 10;
+		freq = 4;
 		fJump = 2;
 		roughness = 2;
+		translate = lux::Vector();
 	}
 	FSPN(int o, float fq, float fj, float r, lux::Vector t = lux::Vector())
 	{
@@ -57,6 +58,7 @@ public:
 		freq = fq;
 		fJump = fj;
 		roughness = r;
+		translate = t;
 	}
 	float eval(lux::Vector x) const;
 };

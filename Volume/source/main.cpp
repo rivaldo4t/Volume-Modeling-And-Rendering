@@ -107,8 +107,8 @@ int main()
 {
 	std::shared_ptr<Camera> camera = std::make_shared<Camera>();
 
-	const int img_w = 1920 / 1;
-	const int img_h = 1080 / 1;
+	const int img_w = 1920 / 4;
+	const int img_h = 1080 / 4;
 	
 	lux::SField g;
 	std::vector<std::shared_ptr<Light>> lights;

@@ -27,7 +27,7 @@ namespace lux
 		VField vf;
 		double deltaT = 0.1;
 	public:
-		VFCharMap(VField v) : vf(v) {}
+		VFCharMap(VField v, double d = 0.1) : vf(v), deltaT(d) {}
 		const FieldDataType eval(const Vector& p) const { return p - vf->eval(p) * deltaT; }
 	};
 }
