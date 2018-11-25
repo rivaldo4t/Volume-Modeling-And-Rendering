@@ -1,4 +1,4 @@
-﻿  Main.cpp
+﻿  RayMarch.cpp
 c:\users\tushar\source\repos\volume\volume\header\ScalarField.hpp(13): warning C4244: 'return': conversion from 'double' to 'const float', possible loss of data
 c:\users\tushar\source\repos\volume\volume\header\ScalarField.hpp(24): warning C4244: 'return': conversion from 'double' to 'const float', possible loss of data
 c:\users\tushar\source\repos\volume\volume\header\ScalarField.hpp(48): warning C4244: 'return': conversion from 'double' to 'const float', possible loss of data
@@ -16,48 +16,19 @@ c:\users\tushar\source\repos\volume\volume\header\ScalarField.hpp(245): warning 
 c:\users\tushar\source\repos\volume\volume\header\ScalarField.hpp(258): warning C4244: 'return': conversion from 'double' to 'const float', possible loss of data
 c:\users\tushar\source\repos\volume\volume\header\PerlinNoise.hpp(55): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
 c:\users\tushar\source\repos\volume\volume\header\PerlinNoise.hpp(64): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
-c:\users\tushar\source\repos\volume\volume\header\ScalarGrid.hpp(65): warning C4018: '<': signed/unsigned mismatch
-c:\users\tushar\source\repos\volume\volume\header\ScalarGrid.hpp(67): warning C4018: '<': signed/unsigned mismatch
-c:\users\tushar\source\repos\volume\volume\header\ScalarGrid.hpp(69): warning C4018: '<': signed/unsigned mismatch
-c:\users\tushar\source\repos\volume\volume\header\ScalarGrid.hpp(97): warning C4018: '<': signed/unsigned mismatch
-c:\users\tushar\source\repos\volume\volume\header\ScalarGrid.hpp(99): warning C4018: '<': signed/unsigned mismatch
-c:\users\tushar\source\repos\volume\volume\header\ScalarGrid.hpp(101): warning C4018: '<': signed/unsigned mismatch
-c:\users\tushar\source\repos\volume\volume\header\ScalarGrid.hpp(128): warning C4018: '<': signed/unsigned mismatch
-c:\users\tushar\source\repos\volume\volume\header\ScalarGrid.hpp(130): warning C4018: '<': signed/unsigned mismatch
-c:\users\tushar\source\repos\volume\volume\header\ScalarGrid.hpp(132): warning C4018: '<': signed/unsigned mismatch
-c:\users\tushar\source\repos\volume\volume\header\ScalarGrid.hpp(161): warning C4018: '<': signed/unsigned mismatch
-c:\users\tushar\source\repos\volume\volume\header\ScalarGrid.hpp(163): warning C4018: '<': signed/unsigned mismatch
-c:\users\tushar\source\repos\volume\volume\header\ScalarGrid.hpp(165): warning C4018: '<': signed/unsigned mismatch
-  RayMarch.cpp
-c:\users\tushar\source\repos\volume\volume\header\ScalarField.hpp(13): warning C4244: 'return': conversion from 'double' to 'const float', possible loss of data
-c:\users\tushar\source\repos\volume\volume\header\ScalarField.hpp(24): warning C4244: 'return': conversion from 'double' to 'const float', possible loss of data
-c:\users\tushar\source\repos\volume\volume\header\ScalarField.hpp(48): warning C4244: 'return': conversion from 'double' to 'const float', possible loss of data
-c:\users\tushar\source\repos\volume\volume\header\ScalarField.hpp(67): warning C4244: 'return': conversion from 'double' to 'const float', possible loss of data
-c:\users\tushar\source\repos\volume\volume\header\ScalarField.hpp(69): warning C4244: 'return': conversion from 'double' to 'const float', possible loss of data
-c:\users\tushar\source\repos\volume\volume\header\ScalarField.hpp(71): warning C4244: 'return': conversion from 'double' to 'const float', possible loss of data
-c:\users\tushar\source\repos\volume\volume\header\ScalarField.hpp(86): warning C4244: 'return': conversion from 'double' to 'const float', possible loss of data
-c:\users\tushar\source\repos\volume\volume\header\ScalarField.hpp(103): warning C4244: 'return': conversion from 'double' to 'const float', possible loss of data
-c:\users\tushar\source\repos\volume\volume\header\ScalarField.hpp(107): warning C4244: 'return': conversion from 'double' to 'const float', possible loss of data
-c:\users\tushar\source\repos\volume\volume\header\ScalarField.hpp(127): warning C4244: 'return': conversion from 'double' to 'const float', possible loss of data
-c:\users\tushar\source\repos\volume\volume\header\ScalarField.hpp(138): warning C4244: 'return': conversion from 'double' to 'const float', possible loss of data
-c:\users\tushar\source\repos\volume\volume\header\ScalarField.hpp(156): warning C4244: 'return': conversion from 'double' to 'const float', possible loss of data
-c:\users\tushar\source\repos\volume\volume\header\ScalarField.hpp(197): warning C4244: 'return': conversion from 'const double' to 'const float', possible loss of data
-c:\users\tushar\source\repos\volume\volume\header\ScalarField.hpp(245): warning C4244: 'return': conversion from 'double' to 'const float', possible loss of data
-c:\users\tushar\source\repos\volume\volume\header\ScalarField.hpp(258): warning C4244: 'return': conversion from 'double' to 'const float', possible loss of data
-c:\users\tushar\source\repos\volume\volume\header\PerlinNoise.hpp(55): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-c:\users\tushar\source\repos\volume\volume\header\PerlinNoise.hpp(64): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
-c:\users\tushar\source\repos\volume\volume\header\ScalarGrid.hpp(65): warning C4018: '<': signed/unsigned mismatch
-c:\users\tushar\source\repos\volume\volume\header\ScalarGrid.hpp(67): warning C4018: '<': signed/unsigned mismatch
-c:\users\tushar\source\repos\volume\volume\header\ScalarGrid.hpp(69): warning C4018: '<': signed/unsigned mismatch
-c:\users\tushar\source\repos\volume\volume\header\ScalarGrid.hpp(97): warning C4018: '<': signed/unsigned mismatch
-c:\users\tushar\source\repos\volume\volume\header\ScalarGrid.hpp(99): warning C4018: '<': signed/unsigned mismatch
-c:\users\tushar\source\repos\volume\volume\header\ScalarGrid.hpp(101): warning C4018: '<': signed/unsigned mismatch
-c:\users\tushar\source\repos\volume\volume\header\ScalarGrid.hpp(128): warning C4018: '<': signed/unsigned mismatch
-c:\users\tushar\source\repos\volume\volume\header\ScalarGrid.hpp(130): warning C4018: '<': signed/unsigned mismatch
-c:\users\tushar\source\repos\volume\volume\header\ScalarGrid.hpp(132): warning C4018: '<': signed/unsigned mismatch
-c:\users\tushar\source\repos\volume\volume\header\ScalarGrid.hpp(161): warning C4018: '<': signed/unsigned mismatch
-c:\users\tushar\source\repos\volume\volume\header\ScalarGrid.hpp(163): warning C4018: '<': signed/unsigned mismatch
-c:\users\tushar\source\repos\volume\volume\header\ScalarGrid.hpp(165): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\ScalarGrid.hpp(20): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\ScalarGrid.hpp(48): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\ScalarGrid.hpp(50): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\ScalarGrid.hpp(52): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\ScalarGrid.hpp(80): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\ScalarGrid.hpp(82): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\ScalarGrid.hpp(84): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\ScalarGrid.hpp(111): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\ScalarGrid.hpp(113): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\ScalarGrid.hpp(115): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\ScalarGrid.hpp(144): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\ScalarGrid.hpp(146): warning C4018: '<': signed/unsigned mismatch
+c:\users\tushar\source\repos\volume\volume\header\ScalarGrid.hpp(148): warning C4018: '<': signed/unsigned mismatch
 source\RayMarch.cpp(82): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
 source\RayMarch.cpp(83): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
 source\RayMarch.cpp(88): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
@@ -73,9 +44,18 @@ source\RayMarch.cpp(255): warning C4305: 'initializing': truncation from 'double
 source\RayMarch.cpp(257): warning C4305: 'initializing': truncation from 'double' to 'float'
 source\RayMarch.cpp(299): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
 source\RayMarch.cpp(302): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(67): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+  c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(62): note: while compiling class template member function 'const float lux::Grid<float>::eval(const lux::Vector &) const'
+  c:\users\tushar\source\repos\volume\volume\header\ScalarGrid.hpp(55): note: see reference to function template instantiation 'const float lux::Grid<float>::eval(const lux::Vector &) const' being compiled
+  c:\users\tushar\source\repos\volume\volume\header\ScalarGrid.hpp(15): note: see reference to class template instantiation 'lux::Grid<float>' being compiled
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(68): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(69): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(71): warning C4244: 'initializing': conversion from 'float' to 'unsigned int', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(72): warning C4244: 'initializing': conversion from 'float' to 'unsigned int', possible loss of data
+c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(73): warning C4244: 'initializing': conversion from 'float' to 'unsigned int', possible loss of data
   Generating code
-  68 of 1352 functions ( 5.0%) were compiled, the rest were copied from previous compilation.
-    29 functions were new in current compilation
-    6 functions had inline decision re-evaluated but remain unchanged
+  79 of 1357 functions ( 5.8%) were compiled, the rest were copied from previous compilation.
+    26 functions were new in current compilation
+    30 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   Volume.vcxproj -> C:\Users\TUSHAR\source\repos\Volume\bin\x64\Release\Volume.exe
