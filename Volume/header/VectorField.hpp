@@ -30,4 +30,22 @@ namespace lux
 		VFCharMap(VField v, double d = 0.1) : vf(v), deltaT(d) {}
 		const FieldDataType eval(const Vector& p) const { return p - vf->eval(p) * deltaT; }
 	};
+
+	class VFAdd : public Field<Vector>
+	{
+	private:
+		VField v1, v2;
+	public:
+		VFAdd(VField _v1, VField _v2) : v1(_v1), v2(_v2) {}
+		const FieldDataType eval(const Vector& p) const { return v1->eval(p) + v2->eval(p); }
+	};
+
+	class VFSubtract : public Field<Vector>
+	{
+	private:
+		VField v1, v2;
+	public:
+		VFSubtract(VField _v1, VField _v2) : v1(_v1), v2(_v2) {}
+		const FieldDataType eval(const Vector& p) const { return v1->eval(p) + v2->eval(p); }
+	};
 }

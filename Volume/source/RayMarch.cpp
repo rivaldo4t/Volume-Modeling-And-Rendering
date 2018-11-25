@@ -195,14 +195,15 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, lu
 		
 		lux::VField vf = std::make_shared<lux::VFRandom>();
 		lux::VField cm = std::make_shared<lux::VFIdentity>();
-		int numAdvections = 2;
+		lux::VField id = std::make_shared<lux::VFIdentity>();
+		int numAdvections = 1;
 #if 1
 		for (int i = 0; i < numAdvections; ++i)
 		{
 			cm = std::make_shared<lux::AdvectedVField>(cm, vf, 0.5);
-			//auto g2 = std::make_shared<lux::VectorGrid>(lux::Vector(-1, -1, -1), 50, 50, 50, 0.04);
-			//g2->stamp(cm);
-			//cm = g2;
+			/*auto g2 = std::make_shared<lux::VectorGrid>(lux::Vector(-1, -1, -1), 50, 50, 50, 0.04);
+			g2->stamp(std::make_shared<lux::VFSubtract>(cm, id));
+			cm = std::make_shared<lux::VFAdd>(g2, id);*/
 		}
 		g = std::make_shared<lux::WarpFieldVF>(g, cm);
 #else
