@@ -40,23 +40,23 @@ void Wisp::stampWisp(NoiseParams& param)
 		2);
 	float clum = param.wedgeSpecific;
 
-	std::cout << "-------------------\n";
+	std::cout << "\n-------------------\n";
 	std::cout << "f2 octaves:\t" << f2.octaves << std::endl;
 	std::cout << "f2 freq:\t" << f2.freq << std::endl;
 	std::cout << "f2 fjump:\t" << f2.fJump << std::endl;
 	std::cout << "f2 roughness:\t" << f2.roughness << std::endl;
-	std::cout << "-------------------\n";
+	std::cout << "-------------------\n\n";
+
+	std::cout << "Stamping Wisp Dots . . . . ";
 
 	WispDot dot(lux::Vector(), f1, f2, clum);
 	for (int i = 0; i < numberOfDots; ++i)
 	{
 		dot.generateDot();
 		stampWispDot(dot.getPos(), dot.getDensity());
-		if (i % 500000 == 0)
-			std::cout << ".";
 	}
 
-	std::cout << "\nWisp Dots Stamped\n";
+	std::cout << "Done\n";
 }
 
 void WispDot::generateDot()

@@ -46,6 +46,6 @@ namespace lux
 		VField v1, v2;
 	public:
 		VFSubtract(VField _v1, VField _v2) : v1(_v1), v2(_v2) {}
-		const FieldDataType eval(const Vector& p) const { return v1->eval(p) + v2->eval(p); }
+		const FieldDataType eval(const Vector& p) const { return v1->eval(p) - v2->eval(p); }
 	};
 }
