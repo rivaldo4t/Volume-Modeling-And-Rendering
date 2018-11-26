@@ -201,7 +201,7 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, lu
 		for (int i = 0; i < numAdvections; ++i)
 		{
 			cm = std::make_shared<lux::AdvectedVField>(cm, vf, 0.5);
-			auto g2 = std::make_shared<lux::VectorGrid>(lux::Vector(-1, -1, -1), 250, 250, 250, 0.008);
+			auto g2 = std::make_shared<lux::VectorGrid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
 			g2->stamp(std::make_shared<lux::VFSubtract>(cm, id));
 			cm = std::make_shared<lux::VFAdd>(g2, id);
 		}

@@ -48,13 +48,13 @@
     <ClCompile Include="source\Light.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="header\ObjFileLoaders.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\ScalarGrid.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\VectorGrid.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ObjFileLoaders.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

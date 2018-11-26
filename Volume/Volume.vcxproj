@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="header\ObjFileLoaders.cpp" />
+    <ClCompile Include="source\ObjFileLoaders.cpp" />
     <ClCompile Include="source\Fspn.cpp" />
     <ClCompile Include="source\ScalarGrid.cpp" />
     <ClCompile Include="source\Light.cpp" />

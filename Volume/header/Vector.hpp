@@ -29,7 +29,7 @@ namespace lux
 		  xyz[2] = v.xyz[2]; 
 	   }
    
-	   Vector(const double a, const double b, const double c)
+	   Vector(const float a, const float b, const float c)
 	   {
 		  xyz[0] = a;
 		  xyz[1] = b;
@@ -63,18 +63,18 @@ namespace lux
 	   { return Vector(-v.xyz[0],-v.xyz[1],-v.xyz[2]); }
 
 	   //! Multiplication of a constant with a vector
-	   friend const Vector operator* (const double w, const Vector& v)
+	   friend const Vector operator* (const float w, const Vector& v)
 	   { return v*w; }
 	  
 	   //! Multiplication of a vector with a constant
-	   const Vector operator*        (const double v) const
+	   const Vector operator*        (const float v) const
 	   { return Vector(xyz[0]*v, xyz[1]*v, xyz[2]*v); }
 
-	   const Vector operator/        (const double v) const
+	   const Vector operator/        (const float v) const
 	   { return Vector(xyz[0]/v, xyz[1]/v, xyz[2]/v); }
 
 	   //! Inner product
-	   const double operator*        (const Vector& v) const  
+	   const float operator*        (const Vector& v) const  
 	   { return (xyz[0]*v.xyz[0] + xyz[1]*v.xyz[1] + xyz[2]*v.xyz[2]); }
   
 	   //! cross product
@@ -92,31 +92,31 @@ namespace lux
 	   Vector& operator-=      (const Vector& v)
 	   { xyz[0] -= v.xyz[0]; xyz[1] -= v.xyz[1]; xyz[2] -= v.xyz[2]; return *this; }
   
-	   Vector& operator*=      (const double v)
+	   Vector& operator*=      (const float v)
 	   { xyz[0] *= v; xyz[1] *= v; xyz[2] *= v; return *this; }
   
-	   Vector& operator/=      (const double v)
+	   Vector& operator/=      (const float v)
 	   { xyz[0] /= v; xyz[1] /= v; xyz[2] /= v; return *this; }
   
 
-	   const double& operator[] (const int v) const { return xyz[v]; }
-			 double& operator[] (const int v)       { return xyz[v]; }
-	   const double& operator() (const int v) const { return xyz[v]; }
+	   const float& operator[] (const int v) const { return xyz[v]; }
+			 float& operator[] (const int v)       { return xyz[v]; }
+	   const float& operator() (const int v) const { return xyz[v]; }
 
-	   const double X() const { return xyz[0]; }
-	   const double Y() const { return xyz[1]; }
-	   const double Z() const { return xyz[2]; }
+	   const float X() const { return xyz[0]; }
+	   const float Y() const { return xyz[1]; }
+	   const float Z() const { return xyz[2]; }
 
-	   const double magnitude() const 
+	   const float magnitude() const 
 	   { return sqrt( xyz[0]*xyz[0] + xyz[1]*xyz[1] + xyz[2]*xyz[2] ); }
 
-	   const double magnitudeSquared() const
+	   const float magnitudeSquared() const
 	   { return xyz[0] * xyz[0] + xyz[1] * xyz[1] + xyz[2] * xyz[2]; }
    
 	   const Vector unitvector() const { return *this/magnitude(); }
 
 	   void normalize() 
-	   { double mag = magnitude(); xyz[0] /= mag; xyz[1] /= mag; xyz[2] /= mag; }
+	   { float mag = magnitude(); xyz[0] /= mag; xyz[1] /= mag; xyz[2] /= mag; }
 
 	//  Comparisons
 
@@ -150,6 +150,6 @@ namespace lux
 	   }
 
 	  private:
-	  double xyz[3];
+	  float xyz[3];
 	};
 }
