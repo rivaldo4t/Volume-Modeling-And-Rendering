@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\FieldMath.cpp" />
     <ClCompile Include="source\ObjFileLoaders.cpp" />
     <ClCompile Include="source\Fspn.cpp" />
     <ClCompile Include="source\ScalarGrid.cpp" />
@@ -35,6 +36,7 @@
     <ClCompile Include="source\VectorGrid.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="header\FieldMath.hpp" />
     <ClInclude Include="header\Grid.hpp" />
     <ClInclude Include="header\AdvectedField.hpp" />
     <ClInclude Include="header\ClosestPointTransform.hpp" />

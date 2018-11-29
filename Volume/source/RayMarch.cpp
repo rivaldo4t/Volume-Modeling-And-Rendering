@@ -2,11 +2,10 @@
 #include<iostream>
 #include <chrono>
 #include <ctime>
-
 #include <ImfRgbaFile.h>
 namespace IMF = OPENEXR_IMF_NAMESPACE;
 
-//#define DSM_GRID
+#define DSM_GRID
 
 void roundTable(std::shared_ptr<Camera> camera, float stepDegrees)
 {
@@ -169,7 +168,7 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, lu
 {
 	std::cout << "\t\t  ...\n\t       Keep Calm\n\t\t  and\n\t  Let The Rays March\n\t\t  ...\n\n";
 
-	const int num_frames = 1;
+	const int num_frames = 50;
 	const float stepDegrees = 360.f / num_frames;
 	std::chrono::time_point<std::chrono::system_clock> start, end;
 	std::vector<IMF::Rgba> exr;
@@ -185,7 +184,11 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, lu
 	key->setColor(lux::Color(0.2, 0.2, 0.9, 1.0));
 	lights = { key };
 
-	float tempt = 0.1;
+	lux::VField vf = std::make_shared<lux::VFConstant>(lux::Vector(0.0, 0.0, 0.0));
+	lux::VField gravity = std::make_shared<lux::VFConstant>(lux::Vector(0.0, 1.0, 0.0));
+	int numAdvections = 1;
+
+	float tempt = 0.0;
 	for (int k = 0; k < num_frames; k++)
 	{
 		start = std::chrono::system_clock::now();
@@ -193,29 +196,19 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, lu
 		exr.resize(img_h * img_w);
 		//roundTable(camera, k * stepDegrees);
 		
-		lux::VField vf = std::make_shared<lux::VFRandom>();
-		lux::VField cm = std::make_shared<lux::VFIdentity>();
-		lux::VField id = std::make_shared<lux::VFIdentity>();
-		int numAdvections = 2;
-#if 1
-		for (int i = 0; i < numAdvections; ++i)
-		{
-			cm = std::make_shared<lux::AdvectedVField>(cm, vf, 0.5);
-			auto g2 = std::make_shared<lux::VectorGrid>(lux::Vector(-1, -1, -1), 500, 500, 500, 0.004);
-			g2->stamp(std::make_shared<lux::VFSubtract>(cm, id));
-			cm = std::make_shared<lux::VFAdd>(g2, id);
-		}
-		g = std::make_shared<lux::WarpFieldVF>(g, cm);
-#else
-		for (int i = 0; i < numAdvections; ++i)
-		{
-			g = std::make_shared<lux::AdvectedSField>(g, vf, 0.5);
-			//auto g2 = std::make_shared<lux::ScalarGrid>(lux::Vector(-1, -1, -1), 50, 50, 50, 0.04);
-			//g2->stamp(g);
-			//g = g2;
-		}
-#endif
-		tempt += 0.1;
+		//g = std::make_shared<lux::AdvectedSField>(g, vf, tempt);
+		//auto g2 = std::make_shared<lux::ScalarGrid>(lux::Vector(-1, -1, -1), 250, 250, 250, 0.008);
+		//g2->stamp(g);
+		//g = g2;
+
+		//vf = std::make_shared<lux::AdvectedVField>(vf, vf, tempt);
+		//vf = vf + gravity * g;
+
+		auto temp2 = std::make_shared<lux::VFIncompressible>(vf, lux::Vector(-1, -1, -1), 250, 250, 250, 0.008);
+		temp2->gaussSeidelRelaxation();
+		vf = temp2;
+
+		tempt += 1.0;
 
 #ifdef DSM_GRID
 		for (auto l : lights)

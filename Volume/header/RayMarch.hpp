@@ -15,6 +15,7 @@
 #include "WarpField.hpp"
 #include "AdvectedField.hpp"
 #include "ObjFileLoaders.hpp"
+#include "FieldMath.hpp"
 
 void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, const lux::SField& sfield, const lux::CField& cfield);
 lux::Color marchRays(lux::Vector pos, lux::Vector dir, const lux::SField& field, const lux::CField& c);

@@ -30,6 +30,7 @@ namespace lux
 				llc.Z() + (Nz - 1) * delta_grid };
 			defaultVal = dVal;
 		}
+		virtual ~Grid() { gridData.clear(); }
 
 		unsigned int getIndex(unsigned int i, unsigned int j, unsigned int k) const;
 		bool withinGrid(lux::Vector p) const;

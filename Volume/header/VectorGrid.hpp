@@ -9,6 +9,7 @@ namespace lux
 		VectorGrid() : Grid<Vector>() {}
 		VectorGrid(lux::Vector o, unsigned int x, unsigned int y, unsigned int z, double delta, Vector dVal = Vector(),
 			std::vector<Vector>& data = std::vector<Vector>()) : Grid<Vector>(o, x, y, z, delta, dVal, data) {}
+		virtual ~VectorGrid() {}
 
 		void stamp(lux::VField v);
 	};
