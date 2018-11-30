@@ -168,7 +168,7 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, lu
 {
 	std::cout << "\t\t  ...\n\t       Keep Calm\n\t\t  and\n\t  Let The Rays March\n\t\t  ...\n\n";
 
-	const int num_frames = 50;
+	const int num_frames = 5;
 	const float stepDegrees = 360.f / num_frames;
 	std::chrono::time_point<std::chrono::system_clock> start, end;
 	std::vector<IMF::Rgba> exr;
@@ -187,6 +187,7 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, lu
 	lux::VField vf = std::make_shared<lux::VFConstant>(lux::Vector(0.0, 0.0, 0.0));
 	lux::VField gravity = std::make_shared<lux::VFConstant>(lux::Vector(0.0, 1.0, 0.0));
 	int numAdvections = 1;
+	std::shared_ptr<lux::VectorGrid> temp3;
 
 	float tempt = 0.0;
 	for (int k = 0; k < num_frames; k++)
@@ -206,6 +207,9 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, lu
 
 		auto temp2 = std::make_shared<lux::VFIncompressible>(vf, lux::Vector(-1, -1, -1), 250, 250, 250, 0.008);
 		temp2->gaussSeidelRelaxation();
+		//auto temp2 = std::make_shared<lux::VectorGrid>(lux::Vector(-1, -1, -1), 250, 250, 250, 0.008);
+		//temp2->stamp(vf);
+		//temp2->gsr();
 		vf = temp2;
 
 		tempt += 1.0;

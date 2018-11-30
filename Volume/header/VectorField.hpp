@@ -49,7 +49,7 @@ namespace lux
 	public:
 		VFIncompressible(VField v, lux::Vector o, unsigned int x, unsigned int y, unsigned int z, double delta, Vector dVal = Vector(),
 			std::vector<Vector>& data = std::vector<Vector>()) : VectorGrid(o, x, y, z, delta, dVal, data), vf(v) {}
-		~VFIncompressible() {}
+		virtual ~VFIncompressible() { std::cout << "------------VFIncompressible destructor\n"; }
 
 		void gaussSeidelRelaxation()
 		{
