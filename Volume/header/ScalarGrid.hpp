@@ -13,7 +13,7 @@ namespace lux
 		ScalarGrid() : Grid<float>() {}
 		ScalarGrid(lux::Vector o, unsigned int x, unsigned int y, unsigned int z, double delta, float dVal = -100.f,
 			std::vector<float>& data = std::vector<float>()) : Grid<float>(o, x, y, z, delta, dVal, data) {}
-		virtual ~ScalarGrid() { gridGradData.clear(); std::cout << "------------ScalarGrid destructor\n"; }
+		virtual ~ScalarGrid() {}// { gridGradData.clear(); std::cout << "------------ScalarGrid destructor\n"; }
 
 		const FieldGradType grad(const Vector& p) const override;
 		void stamp(lux::SField s);

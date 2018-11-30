@@ -36,7 +36,7 @@ namespace lux
 
 		Field(){}
 
-		virtual ~Field(){}
+		virtual ~Field(){}//{ std::cout << "------------Field destructor\n"; }
 
 		typedef T FieldDataType;
 		typedef typename GradType<T>::GType FieldGradType;

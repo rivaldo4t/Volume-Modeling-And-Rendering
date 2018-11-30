@@ -10,10 +10,10 @@ namespace lux
 		VectorGrid() : Grid<Vector>() {}
 		VectorGrid(lux::Vector o, unsigned int x, unsigned int y, unsigned int z, double delta, Vector dVal = Vector(),
 			std::vector<Vector>& data = std::vector<Vector>()) : Grid<Vector>(o, x, y, z, delta, dVal, data) {}
-		virtual ~VectorGrid() { std::cout << "------------VectorGrid destructor\n"; }
+		virtual ~VectorGrid() {}// { std::cout << "------------VectorGrid destructor\n"; }
 
 		void stamp(lux::VField v);
-		void gsr()
+		void gaussSeidelRelaxation()
 		{
 			std::cout << "Calculating Divergence . . . . ";
 			ScalarGrid divergence(llc, Nx, Ny, Nz, delta_grid, 0.0);
@@ -44,7 +44,7 @@ namespace lux
 			ScalarGrid pressure(llc, Nx, Ny, Nz, delta_grid, 0.0);
 			pressure.gridData.clear();
 			pressure.gridData.resize(Nx * Ny * Nz, 0.0);
-			int numiter = 10;
+			int numiter = 1;
 			while (numiter--)
 			{
 #pragma omp parallel for
@@ -64,7 +64,7 @@ namespace lux
 				}
 			}
 			std::cout << "Done\n";
-			//divergence.gridData.clear();
+			divergence.gridData.clear();
 
 			std::cout << "Updating Velocity . . . . ";
 #pragma omp parallel for
@@ -84,7 +84,7 @@ namespace lux
 				}
 			}
 			std::cout << "Done\n";
-			//pressure.gridData.clear();
+			pressure.gridData.clear();
 		}
 	};
 }

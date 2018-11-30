@@ -168,14 +168,14 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, lu
 {
 	std::cout << "\t\t  ...\n\t       Keep Calm\n\t\t  and\n\t  Let The Rays March\n\t\t  ...\n\n";
 
-	const int num_frames = 5;
+	const int num_frames = 100;
 	const float stepDegrees = 360.f / num_frames;
 	std::chrono::time_point<std::chrono::system_clock> start, end;
 	std::vector<IMF::Rgba> exr;
 	NoiseParams param;
 	//param.updateParams();
 
-	lux::SField sp = std::make_shared<lux::SFSphere>(lux::Vector(), 0.8);
+	lux::SField sp = std::make_shared<lux::SFSphere>(lux::Vector(), 0.6);
 	g = sp;
 
 	std::shared_ptr<lux::Light> key = std::make_shared<lux::Light>(lux::Vector(0.0, 1.0, 1.0),
@@ -186,9 +186,8 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, lu
 
 	lux::VField vf = std::make_shared<lux::VFConstant>(lux::Vector(0.0, 0.0, 0.0));
 	lux::VField gravity = std::make_shared<lux::VFConstant>(lux::Vector(0.0, 1.0, 0.0));
-	int numAdvections = 1;
 
-	float tempt = 0.0;
+	float dt = 0.1;
 	for (int k = 0; k < num_frames; k++)
 	{
 		start = std::chrono::system_clock::now();
@@ -196,25 +195,18 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, lu
 		exr.resize(img_h * img_w);
 		//roundTable(camera, k * stepDegrees);
 		
-		//g = std::make_shared<lux::AdvectedSField>(g, vf, tempt);
+		g = std::make_shared<lux::AdvectedSField>(g, vf, dt);
 		//auto g2 = std::make_shared<lux::ScalarGrid>(lux::Vector(-1, -1, -1), 250, 250, 250, 0.008);
 		//g2->stamp(g);
 		//g = g2;
 
-		//vf = std::make_shared<lux::AdvectedVField>(vf, vf, tempt);
-		//vf = vf + gravity * g;
+		vf = std::make_shared<lux::AdvectedVField>(vf, vf, dt);
+		vf = vf + gravity * g;
 
-		// cyclic dependency issue; still unsolved; temp2 uses previous vf (which has live previous temp2),
-		// thus, memory accumulates
-		std::weak_ptr<lux::VFIncompressible> temp2 = std::make_shared<lux::VFIncompressible>(vf, lux::Vector(-1, -1, -1), 250, 250, 250, 0.008);
-		auto temp3 = temp2.lock();
-		temp3->gaussSeidelRelaxation();
-		//auto temp2 = std::make_shared<lux::VectorGrid>(lux::Vector(-1, -1, -1), 250, 250, 250, 0.008);
-		//temp2->stamp(vf);
-		//temp2->gsr();
-		vf = temp3;
-
-		tempt += 0.4;
+		auto temp2 = std::make_shared<lux::VectorGrid>(lux::Vector(-1, -1, -1), 250, 250, 250, 0.008);
+		temp2->stamp(vf);
+		temp2->gaussSeidelRelaxation();
+		vf = temp2;
 
 #ifdef DSM_GRID
 		for (auto l : lights)
