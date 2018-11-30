@@ -187,7 +187,6 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, lu
 	lux::VField vf = std::make_shared<lux::VFConstant>(lux::Vector(0.0, 0.0, 0.0));
 	lux::VField gravity = std::make_shared<lux::VFConstant>(lux::Vector(0.0, 1.0, 0.0));
 	int numAdvections = 1;
-	std::shared_ptr<lux::VectorGrid> temp3;
 
 	float tempt = 0.0;
 	for (int k = 0; k < num_frames; k++)
@@ -205,14 +204,17 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, lu
 		//vf = std::make_shared<lux::AdvectedVField>(vf, vf, tempt);
 		//vf = vf + gravity * g;
 
-		auto temp2 = std::make_shared<lux::VFIncompressible>(vf, lux::Vector(-1, -1, -1), 250, 250, 250, 0.008);
-		temp2->gaussSeidelRelaxation();
+		// cyclic dependency issue; still unsolved; temp2 uses previous vf (which has live previous temp2),
+		// thus, memory accumulates
+		std::weak_ptr<lux::VFIncompressible> temp2 = std::make_shared<lux::VFIncompressible>(vf, lux::Vector(-1, -1, -1), 250, 250, 250, 0.008);
+		auto temp3 = temp2.lock();
+		temp3->gaussSeidelRelaxation();
 		//auto temp2 = std::make_shared<lux::VectorGrid>(lux::Vector(-1, -1, -1), 250, 250, 250, 0.008);
 		//temp2->stamp(vf);
 		//temp2->gsr();
-		vf = temp2;
+		vf = temp3;
 
-		tempt += 1.0;
+		tempt += 0.4;
 
 #ifdef DSM_GRID
 		for (auto l : lights)
