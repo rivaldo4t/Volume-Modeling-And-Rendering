@@ -175,7 +175,7 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, lu
 	NoiseParams param;
 	param.updateParams();
 
-	lux::SField sp = std::make_shared<lux::SFSphere>(lux::Vector(), 0.005);
+	lux::SField sp = std::make_shared<lux::SFSphere>(lux::Vector(), 0.5);
 	lux::SField sp2 = std::make_shared<lux::SFSphere>(lux::Vector(0.0, 0.5, 0.0), 0.2);
 	lux::SField to1 = std::make_shared<lux::SFTorus>(0.4, 0.04, lux::Vector(), lux::Vector(-1, 1, 1));
 	to1 = std::make_shared<lux::SFTranslate>(to1, lux::Vector(-0.8, -0.3, 0.0));
@@ -184,14 +184,16 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, lu
 	lux::SField pl = std::make_shared<lux::SFPlane>(lux::Vector(), lux::Vector(0.0, -0.2, 0.0));
 	lux::SField bx = std::make_shared<lux::SFBox>(1);
 	lux::SField g2 = std::make_shared<lux::SFUnion>(to1, to2);
-	g = sp;
 
 	float l = 500;
 	float o = 1;
 	std::shared_ptr<lux::Light> key = std::make_shared<lux::Light>(lux::Vector(0.0, 1.0, 1.0),
 		lux::Vector(-o, -o, -o), 3 * l/5, 3 * l/5, 3 * l/5, 2 * o / (3 * l/5));
-	key->setColor(lux::Color(0.9, 0.9, 0.9, 1.0));
-	lights = { key };
+	key->setColor(lux::Color(0.9, 0.35, 0.15, 1.0));
+	std::shared_ptr<lux::Light> fill = std::make_shared<lux::Light>(lux::Vector(0.0, -1.0, 0.5),
+		lux::Vector(-o, -o, -o), 3 * l / 5, 3 * l / 5, 3 * l / 5, 2 * o / (3 * l / 5));
+	fill->setColor(lux::Color(153.0 / 255.0, 50.0 / 255.0, 204.0 / 255.0, 1.0));
+	lights = { key, fill };
 
 	float dt = 0.0;
 	for (int k = 0; k < num_frames; k++)
@@ -201,12 +203,8 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, lu
 		exr.resize(img_h * img_w);
 		//roundTable(camera, k * stepDegrees);
 		
-		auto w = std::make_shared<lux::Wisp>(lux::Vector(-1, -1, -1), l, l, l, 2.0 / l, 500000);
-		w->stampWisp(param, lux::Vector(float(k) / 24.f - 0.5, 0.0, 0.0), 0.2 + float(k + 1) / 24.f, float(24-k)/6.f);
-		auto g2 = std::make_shared<lux::SFUnion>(g, w);
-		auto g3 = std::make_shared<lux::ScalarGrid>(lux::Vector(-1, -1, -1), l, l, l, 2.0 / l);
-		g3->stamp(g2);
-		g = g3;
+		lux::VField rvf = std::make_shared<lux::VFRandom>();
+		g = std::make_shared<lux::AdvectedSField>(sp, rvf, 0.5);
 
 		param.updateParams();
 		dt += 0.0;
@@ -262,7 +260,7 @@ lux::Color marchRays(lux::Vector pos, lux::Vector dir, const lux::SField& g, con
 	float T = 1;
 	float delta_s = 0.01;
 	float delta_T;
-	float kappa = 1; //0.1 for wisp // 800 otherwise
+	float kappa = 800; //0.1 for wisp // 800 otherwise
 	float s = sNear;
 
 	lux::Vector X = pos + sNear * dir;
