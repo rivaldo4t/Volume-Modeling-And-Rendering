@@ -74,12 +74,14 @@ source\RayMarch.cpp(149): warning C4305: 'initializing': truncation from 'double
 source\RayMarch.cpp(181): warning C4305: 'argument': truncation from 'double' to 'const float'
 source\RayMarch.cpp(183): warning C4305: 'argument': truncation from 'double' to 'const float'
 source\RayMarch.cpp(184): warning C4305: 'argument': truncation from 'double' to 'const float'
-source\RayMarch.cpp(224): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-source\RayMarch.cpp(225): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-source\RayMarch.cpp(230): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-source\RayMarch.cpp(255): warning C4305: 'initializing': truncation from 'double' to 'float'
-source\RayMarch.cpp(257): warning C4305: 'initializing': truncation from 'double' to 'float'
-source\RayMarch.cpp(302): warning C4305: 'initializing': truncation from 'double' to 'float'
+source\RayMarch.cpp(205): warning C4244: 'argument': conversion from 'double' to 'const float', possible loss of data
+source\RayMarch.cpp(205): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+source\RayMarch.cpp(230): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+source\RayMarch.cpp(231): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+source\RayMarch.cpp(236): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+source\RayMarch.cpp(261): warning C4305: 'initializing': truncation from 'double' to 'float'
+source\RayMarch.cpp(263): warning C4305: 'initializing': truncation from 'double' to 'float'
+source\RayMarch.cpp(308): warning C4305: 'initializing': truncation from 'double' to 'float'
 c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(74): warning C4244: 'initializing': conversion from 'float' to 'unsigned int', possible loss of data
   c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(65): note: while compiling class template member function 'const float lux::Grid<float>::eval(const lux::Vector &) const'
   c:\users\tushar\source\repos\volume\volume\header\ScalarGrid.hpp(50): note: see reference to function template instantiation 'const float lux::Grid<float>::eval(const lux::Vector &) const' being compiled
@@ -87,21 +89,21 @@ c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(74): warning C4244: '
 c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(75): warning C4244: 'initializing': conversion from 'float' to 'unsigned int', possible loss of data
 c:\users\tushar\source\repos\volume\volume\header\Grid.hpp(76): warning C4244: 'initializing': conversion from 'float' to 'unsigned int', possible loss of data
 C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\include\memory(1712): warning C4244: 'argument': conversion from 'float' to 'unsigned int', possible loss of data
-  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\include\memory(1778): note: see reference to function template instantiation 'std::_Ref_count_obj<_Ty>::_Ref_count_obj<lux::Vector,lux::Vector,float&,float&,float&,float>(lux::Vector &&,lux::Vector &&,float &,float &,float &,float &&)' being compiled
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\include\memory(1778): note: see reference to function template instantiation 'std::_Ref_count_obj<_Ty>::_Ref_count_obj<lux::Vector,lux::Vector,float,float,float,float>(lux::Vector &&,lux::Vector &&,float &&,float &&,float &&,float &&)' being compiled
           with
           [
               _Ty=lux::Light
           ]
-  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\include\memory(1778): note: see reference to function template instantiation 'std::_Ref_count_obj<_Ty>::_Ref_count_obj<lux::Vector,lux::Vector,float&,float&,float&,float>(lux::Vector &&,lux::Vector &&,float &,float &,float &,float &&)' being compiled
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\include\memory(1778): note: see reference to function template instantiation 'std::_Ref_count_obj<_Ty>::_Ref_count_obj<lux::Vector,lux::Vector,float,float,float,float>(lux::Vector &&,lux::Vector &&,float &&,float &&,float &&,float &&)' being compiled
           with
           [
               _Ty=lux::Light
           ]
-  source\RayMarch.cpp(190): note: see reference to function template instantiation 'std::shared_ptr<lux::Light> std::make_shared<lux::Light,lux::Vector,lux::Vector,float&,float&,float&,float>(lux::Vector &&,lux::Vector &&,float &,float &,float &,float &&)' being compiled
+  source\RayMarch.cpp(192): note: see reference to function template instantiation 'std::shared_ptr<lux::Light> std::make_shared<lux::Light,lux::Vector,lux::Vector,float,float,float,float>(lux::Vector &&,lux::Vector &&,float &&,float &&,float &&,float &&)' being compiled
 C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\include\memory(1712): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
   Generating code
-  40 of 1431 functions ( 2.8%) were compiled, the rest were copied from previous compilation.
-    2 functions were new in current compilation
-    6 functions had inline decision re-evaluated but remain unchanged
+  49 of 1450 functions ( 3.4%) were compiled, the rest were copied from previous compilation.
+    3 functions were new in current compilation
+    7 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   Volume.vcxproj -> C:\Users\TUSHAR\source\repos\Volume\bin\x64\Release\Volume.exe
