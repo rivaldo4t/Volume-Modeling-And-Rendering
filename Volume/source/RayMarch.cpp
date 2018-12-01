@@ -185,10 +185,11 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, lu
 	lux::SField bx = std::make_shared<lux::SFBox>(1);
 	lux::SField g2 = std::make_shared<lux::SFUnion>(to1, to2);
 
-	float l = 200;
+	float l = 100;
+	float o = 6;
 	std::shared_ptr<lux::Light> key = std::make_shared<lux::Light>(lux::Vector(0.0, 1.0, 1.0),
-		lux::Vector(-2, -2, -2), l, l, l, 4 / l);
-	key->setColor(lux::Color(0.9, 0.35, 0.15, 1.0));
+		lux::Vector(-o, -o, -o), l, l, l, 2 * o / l);
+	key->setColor(lux::Color(0.35, 0.9, 0.1, 1.0));
 	lights = { key };
 
 	float dt = 0.0;
@@ -200,7 +201,7 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, lu
 		//roundTable(camera, k * stepDegrees);
 		
 		lux::VField rvf = std::make_shared<lux::VFRandom>();
-		g = std::make_shared<lux::AdvectedSField>(g2, rvf, 0.3 + 0.04 * ( k % 4));
+		g = std::make_shared<lux::AdvectedSField>(pl, rvf, 0.2 + 0.04 * ( k % 4));
 
 		param.updateParams();
 		dt += 0.0;
@@ -212,11 +213,11 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, lu
 
 		std::cout << "\n|0%|==|==|==|==|==|==|==|==|==|==|100%|\n|0%|";
 
+#pragma omp parallel for
 		for (int j = 0; j < img_h; ++j)
 		{
 			if ((j) % (img_h / 10) == 0)
 				std::cout << "==|";
-#pragma omp parallel for
 			for (int i = 0; i < img_w; ++i)
 			{
 				float x = float(i) / (img_w - 1);
