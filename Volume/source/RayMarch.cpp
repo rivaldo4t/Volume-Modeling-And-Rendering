@@ -5,7 +5,7 @@
 #include <ImfRgbaFile.h>
 namespace IMF = OPENEXR_IMF_NAMESPACE;
 
-#define DSM_GRID
+//#define DSM_GRID
 
 void roundTable(std::shared_ptr<Camera> camera, float stepDegrees)
 {
@@ -183,17 +183,18 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, lu
 	to2 = std::make_shared<lux::SFTranslate>(to2, lux::Vector(0.6, 0.7, 0.0));
 	lux::SField pl = std::make_shared<lux::SFPlane>(lux::Vector(), lux::Vector(0.0, -0.2, 0.0));
 	lux::SField bx = std::make_shared<lux::SFBox>(1);
+	lux::SField el = std::make_shared<lux::SFEllipse>(0.5, 0.3, lux::Vector(0.0, 0.0, 0.0), lux::Vector(1.0, 0.0, 0.0));
 	lux::SField g2 = std::make_shared<lux::SFUnion>(to1, to2);
 
-	float l = 500;
+	float l = 50;
 	float o = 1;
 	std::shared_ptr<lux::Light> key = std::make_shared<lux::Light>(lux::Vector(0.0, 1.0, 1.0),
 		lux::Vector(-o, -o, -o), 3 * l/5, 3 * l/5, 3 * l/5, 2 * o / (3 * l/5));
 	key->setColor(lux::Color(0.9, 0.35, 0.15, 1.0));
-	std::shared_ptr<lux::Light> fill = std::make_shared<lux::Light>(lux::Vector(0.0, -1.0, 0.5),
+	std::shared_ptr<lux::Light> fill = std::make_shared<lux::Light>(lux::Vector(0.0, 1.0, 1.0),
 		lux::Vector(-o, -o, -o), 3 * l / 5, 3 * l / 5, 3 * l / 5, 2 * o / (3 * l / 5));
-	fill->setColor(lux::Color(153.0 / 255.0, 50.0 / 255.0, 204.0 / 255.0, 1.0));
-	lights = { key, fill };
+	fill->setColor(lux::Color(76.0 / 255.0, 96.0 / 255.0, 254.0 / 255.0, 1.0));
+	lights = { fill };
 
 	float dt = 0.0;
 	for (int k = 0; k < num_frames; k++)
@@ -204,9 +205,9 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, lu
 		//roundTable(camera, k * stepDegrees);
 		
 		lux::VField rvf = std::make_shared<lux::VFRandom>();
-		g = std::make_shared<lux::AdvectedSField>(sp, rvf, 0.5);
+		g = std::make_shared<lux::PyroclasticField>(el, param, 4);
 
-		param.updateParams();
+		//param.updateParams();
 		dt += 0.0;
 
 #ifdef DSM_GRID
@@ -260,7 +261,7 @@ lux::Color marchRays(lux::Vector pos, lux::Vector dir, const lux::SField& g, con
 	float T = 1;
 	float delta_s = 0.01;
 	float delta_T;
-	float kappa = 800; //0.1 for wisp // 800 otherwise
+	float kappa = 50; //0.1 for wisp // 800
 	float s = sNear;
 
 	lux::Vector X = pos + sNear * dir;
