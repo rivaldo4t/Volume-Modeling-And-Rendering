@@ -1,6 +1,10 @@
 #include "Wisps.hpp"
 using namespace lux;
 
+void WispDot::setPscale(float p) { pScale = p; }
+void WispDot::setDscale(float d) { dScale = d; }
+void WispDot::setDensity(float d) { density = d; }
+
 void Wisp::stampWispDot(const lux::Vector& p, const float& d)
 {
 	if (!withinGrid(p))
@@ -29,7 +33,7 @@ void Wisp::stampWispDot(const lux::Vector& p, const float& d)
 	gridData[getIndex(i + 1, j + 1, k + 1)] += d * (wi) * (wj) * (wk);
 }
 
-void Wisp::stampWisp(NoiseParams& param)
+void Wisp::stampWisp(NoiseParams& param, lux::Vector guidePos, float psize, float dense)
 {
 	gridData.resize(Nx * Ny * Nz, 0);
 
@@ -49,7 +53,10 @@ void Wisp::stampWisp(NoiseParams& param)
 
 	std::cout << "Stamping Wisp Dots . . . . ";
 
-	WispDot dot(lux::Vector(), f1, f2, clum);
+	WispDot dot(guidePos, f1, f2, clum);
+	dot.setPscale(psize);
+	dot.setDscale(psize * 0.5);
+	dot.setDensity(dense);
 	for (int i = 0; i < numberOfDots; ++i)
 	{
 		dot.generateDot();

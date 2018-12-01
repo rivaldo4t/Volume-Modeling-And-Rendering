@@ -76,6 +76,7 @@ void ScalarGrid::pyroDisplace(NoiseParams& param)
 
 void ScalarGrid::levelSet(Triangles& triangles)
 {
+	std::cout << "Generating LevelSet . . . . ";
 	gridData.clear();
 	gridData.resize(Nx * Ny * Nz, 0);
 
@@ -114,7 +115,7 @@ void ScalarGrid::levelSet(Triangles& triangles)
 		}
 	}
 
-	std::cout << "Levelset generated\n";
+	std::cout << "Done\n";
 }
 
 void ScalarGrid::finiteDistanceGradient()

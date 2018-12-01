@@ -173,21 +173,20 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, lu
 	std::chrono::time_point<std::chrono::system_clock> start, end;
 	std::vector<IMF::Rgba> exr;
 	NoiseParams param;
-	//param.updateParams();
+	param.updateParams();
 
-	lux::SField sp = std::make_shared<lux::SFSphere>(lux::Vector(), 0.6);
+	lux::SField sp = std::make_shared<lux::SFSphere>(lux::Vector(), 0.001);
+	lux::SField to = std::make_shared<lux::SFTorus>(0.8, 0.08, lux::Vector(), lux::Vector(-1, 1, 1));
 	g = sp;
 
+	float l = 25;
 	std::shared_ptr<lux::Light> key = std::make_shared<lux::Light>(lux::Vector(0.0, 1.0, 1.0),
-	lux::Vector(-1, -1, -1), 25, 25, 25, 0.08);
-	//lux::Vector(-1, -1, -1), 250, 250, 250, 0.008);
+		//lux::Vector(-1, -1, -1), l, l, l, 2 / l);
+	lux::Vector(-1, -1, -1), 250, 250, 250, 0.008);
 	key->setColor(lux::Color(0.2, 0.2, 0.9, 1.0));
 	lights = { key };
 
-	lux::VField vf = std::make_shared<lux::VFConstant>(lux::Vector(0.0, 0.0, 0.0));
-	lux::VField gravity = std::make_shared<lux::VFConstant>(lux::Vector(0.0, 1.0, 0.0));
-
-	float dt = 0.1;
+	float dt = 0.0;
 	for (int k = 0; k < num_frames; k++)
 	{
 		start = std::chrono::system_clock::now();
@@ -195,18 +194,17 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, lu
 		exr.resize(img_h * img_w);
 		//roundTable(camera, k * stepDegrees);
 		
-		g = std::make_shared<lux::AdvectedSField>(g, vf, dt);
-		//auto g2 = std::make_shared<lux::ScalarGrid>(lux::Vector(-1, -1, -1), 250, 250, 250, 0.008);
-		//g2->stamp(g);
-		//g = g2;
+		auto w = std::make_shared<lux::Wisp>(lux::Vector(-1, -1, -1), 250, 250, 250, 0.008, 100000);
+		w->stampWisp(param, lux::Vector(float(k)/60 - 0.5, 0.0, 0.0), float(k+1)/5, float(k)/2);
+		//g = w;
+		auto g2 = std::make_shared<lux::SFUnion>(g, w);
+		auto g3 = std::make_shared<lux::ScalarGrid>(lux::Vector(-1, -1, -1), 250, 250, 250, 0.008);
+		g3->stamp(g2);
+		g = g3;
 
-		vf = std::make_shared<lux::AdvectedVField>(vf, vf, dt);
-		vf = vf + gravity * g;
-
-		auto temp2 = std::make_shared<lux::VectorGrid>(lux::Vector(-1, -1, -1), 250, 250, 250, 0.008);
-		temp2->stamp(vf);
-		temp2->gaussSeidelRelaxation();
-		vf = temp2;
+		param.updateParams();
+		//l += 50;
+		dt += 0.0;
 
 #ifdef DSM_GRID
 		for (auto l : lights)
@@ -259,7 +257,7 @@ lux::Color marchRays(lux::Vector pos, lux::Vector dir, const lux::SField& g, con
 	float T = 1;
 	float delta_s = 0.01;
 	float delta_T;
-	float kappa = 800; //0.1 for wisp
+	float kappa = 0.1; //0.1 for wisp
 	float s = sNear;
 
 	lux::Vector X = pos + sNear * dir;

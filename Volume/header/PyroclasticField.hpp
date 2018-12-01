@@ -23,7 +23,7 @@ namespace lux
 		}
 		const FieldDataType eval(const Vector& p) const
 		{
-			//return f->eval(p) + scalingFact * pow(abs(fspn.eval(p.unitvector())), gamma);
+			return f->eval(p) + scalingFact * pow(abs(fspn.eval(p.unitvector())), gamma);
 			
 			// using cpt
 			return f->eval(p) + scalingFact * pow(abs(fspn.eval(cpt.eval(p))), gamma);

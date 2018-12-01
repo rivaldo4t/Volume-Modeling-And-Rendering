@@ -103,7 +103,7 @@ bool loadObj(std::string fileName, Triangles& triangles)
 			attrib.normals[3 * idx.normal_index + 1],
 			attrib.normals[3 * idx.normal_index + 2] };*/
 
-			Triangle t(p0 / 2, p1 / 2, p2 / 2);
+			Triangle t(p0 / 5, p1 / 5, p2 / 5);
 			//t.n = (n0 + n1 + n2) / 3;
 			triangles.push_back(std::make_shared<Triangle>(t));
 

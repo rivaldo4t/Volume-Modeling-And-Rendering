@@ -26,9 +26,12 @@ namespace lux
 		{
 			offset = lux::Vector(0.1, 0.1, 0.1);
 			pScale = 0.5;
-			dScale = 2;
-			density = 10;
+			dScale = 0.5;
+			density = 5;
 		}
+		void setPscale(float p);
+		void setDscale(float d);
+		void setDensity(float d);
 		lux::Vector getPos() { return generatedPosition; }
 		float getDensity() { return density; }
 		void generateDot();
@@ -43,6 +46,6 @@ namespace lux
 		Wisp(lux::Vector l, int nx, unsigned int ny, unsigned int nz, double d, int n) :
 			ScalarGrid(l, nx, ny, nz, d), numberOfDots(n) {}
 		void stampWispDot(const lux::Vector& p, const float& d);
-		void stampWisp(NoiseParams& param);
+		void stampWisp(NoiseParams& param, lux::Vector guidePos = lux::Vector(), float size = 0.5, float dense = 5);
 	};
 }
