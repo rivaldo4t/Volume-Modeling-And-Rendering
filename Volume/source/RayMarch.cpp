@@ -5,7 +5,7 @@
 #include <ImfRgbaFile.h>
 namespace IMF = OPENEXR_IMF_NAMESPACE;
 
-#define DSM_GRID
+//#define DSM_GRID
 
 void roundTable(std::shared_ptr<Camera> camera, float stepDegrees)
 {
@@ -168,7 +168,7 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, lu
 {
 	std::cout << "\t\t  ...\n\t       Keep Calm\n\t\t  and\n\t  Let The Rays March\n\t\t  ...\n\n";
 
-	const int num_frames = 100;
+	const int num_frames = 60;
 	const float stepDegrees = 360.f / num_frames;
 	std::chrono::time_point<std::chrono::system_clock> start, end;
 	std::vector<IMF::Rgba> exr;
@@ -191,14 +191,13 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, lu
 	lux::SField el2 = std::make_shared<lux::SFEllipse>(0.3, 0.5, lux::Vector(0.0, 0.0, 0.0), lux::Vector(1.0, 0.0, 0.0));
 	el = std::make_shared<lux::SFRotate>(el, lux::Vector(0, 0, 1), 45);
 	el = std::make_shared<lux::SFIntersect>(el, pl2);
-	el = std::make_shared<lux::SFTranslate>(el, lux::Vector(-0.01, 0, 0));
+	el = std::make_shared<lux::SFTranslate>(el, lux::Vector(-0.005, 0, 0));
 	el2 = std::make_shared<lux::SFRotate>(el2, lux::Vector(0, 0, 1), -45);
 	el2 = std::make_shared<lux::SFIntersect>(el2, pl3);
-	el2 = std::make_shared<lux::SFTranslate>(el2, lux::Vector(0.01, 0, 0));
-	lux::SField g2 = std::make_shared<lux::SFUnion>(to1, to2);
+	el2 = std::make_shared<lux::SFTranslate>(el2, lux::Vector(0.005, 0, 0));
 	lux::SField g3 = std::make_shared<lux::SFUnion>(el, el2);
 
-	float l = 50;
+	float l = 300;
 	float o = 1;
 	std::shared_ptr<lux::Light> key = std::make_shared<lux::Light>(lux::Vector(0.0, 1.0, 1.0),
 		lux::Vector(-o, -o, -o), 3 * l/5, 3 * l/5, 3 * l/5, 2 * o / (3 * l/5));
@@ -217,10 +216,18 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, lu
 		//roundTable(camera, k * stepDegrees);
 		
 		lux::VField rvf = std::make_shared<lux::VFRandom>();
+		
+		to1 = std::make_shared<lux::SFRotate>(to1, lux::Vector(-1, 0, -1), k * 6);
+		to2 = std::make_shared<lux::SFRotate>(to2, lux::Vector(1, 0 , 1), k * 6);
+		lux::SField g2 = std::make_shared<lux::SFUnion>(to1, to2);
 		g2 = std::make_shared<lux::AdvectedSField>(g2, rvf, 0.2);
-		g3 = std::make_shared<lux::PyroclasticField>(g3, param, (k % 4) / 10.0);
+		
+		int framePeriod = 5;
+		float pyroScale = (k % framePeriod) <= 2 ? (k % framePeriod) / 10.0 : (framePeriod - (k % framePeriod)) / 10.0;
+		g3 = std::make_shared<lux::PyroclasticField>(g3, param, pyroScale);
+
 		g = std::make_shared<lux::SFUnion>(g2, g3);
-		g = std::make_shared<lux::SFRotate>(g, lux::Vector(0.0, 1.0, 0.0), k * 360.0 / 24.0);
+		g = std::make_shared<lux::SFRotate>(g, lux::Vector(0.0, 1.0, 0.0), k * 6);
 
 		param.updateParams();
 		dt += 0.0;
