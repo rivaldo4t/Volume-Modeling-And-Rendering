@@ -222,7 +222,7 @@ void render(const int img_w, const int img_h, std::shared_ptr<Camera> camera, lu
 		g = std::make_shared<lux::SFUnion>(g2, g3);
 		g = std::make_shared<lux::SFRotate>(g, lux::Vector(0.0, 1.0, 0.0), k * 360.0 / 24.0);
 
-		param.updateParams();
+		//param.updateParams();
 		dt += 0.0;
 
 #ifdef DSM_GRID
